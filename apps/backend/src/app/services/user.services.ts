@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 
-import { compareHashData, hashData } from "@/lib/hash";
-import { createToken } from "@/lib/jwt";
+import { compareHashData, hashData } from "@/utils/hash";
+import { createToken } from "@/utils/jwt";
 
 import ApiError from "@/shared/ApiError";
 

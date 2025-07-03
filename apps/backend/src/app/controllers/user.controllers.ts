@@ -2,7 +2,7 @@ import type { Request } from "express";
 
 import { StatusCodes } from "http-status-codes";
 
-import { deleteCookie, setCookie } from "@/lib/cookie";
+import { deleteCookie, setCookie } from "@/utils/cookie";
 
 import asyncHandler from "@/shared/asyncHandler";
 import { COOKIE_NAME } from "@/shared/constants";

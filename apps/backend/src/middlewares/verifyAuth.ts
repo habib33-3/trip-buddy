@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 
 import { StatusCodes } from "http-status-codes";
 
-import { verifyToken } from "@/lib/jwt";
+import { verifyToken } from "@/utils/jwt";
 
 const verifyAuth = (req: Request, res: Response, next: NextFunction): void => {
     const token = req.cookies.token;
