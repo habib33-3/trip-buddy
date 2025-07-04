@@ -1,3 +1,4 @@
+import antfu from "@antfu/eslint-config";
 import eslint from "@eslint/js";
 import eslintPluginN from "eslint-plugin-n";
 import eslintPluginSecurity from "eslint-plugin-security";
@@ -5,7 +6,6 @@ import eslintPluginSonarjs from "eslint-plugin-sonarjs";
 import eslintPluginUnicorn from "eslint-plugin-unicorn";
 import tseslint from "typescript-eslint";
 
-// === 🌐 Ignore Patterns ===
 const ignorePatterns = {
     ignores: [
         "**/dist/**",
@@ -17,13 +17,11 @@ const ignorePatterns = {
     ],
 };
 
-// === 📄 File-Specific Overrides ===
 const jsFileOverrides = {
     files: ["**/*.js", "**/*.mjs"],
     ...tseslint.configs.disableTypeChecked,
 };
 
-// === 🧠 TypeScript ESLint Rules ===
 const tsRules = {
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-explicit-any": "error",
@@ -49,7 +47,6 @@ const tsRules = {
     "@typescript-eslint/no-empty-object-type": "off",
 };
 
-// === 🐢 Node Plugin Rules ===
 const nodeRules = {
     "n/no-missing-require": "error",
     "n/no-extraneous-import": "error",
@@ -58,7 +55,6 @@ const nodeRules = {
     "n/no-process-exit": "error",
 };
 
-// === 🛡️ Security Plugin Rules ===
 const securityRules = {
     "security/detect-buffer-noassert": "error",
     "security/detect-child-process": "error",
@@ -75,7 +71,6 @@ const securityRules = {
     "security/detect-unsafe-regex": "error",
 };
 
-// === 🧠 SonarJS Rules ===
 const sonarRules = {
     "sonarjs/no-all-duplicated-branches": "error",
     "sonarjs/no-element-overwrite": "error",
@@ -94,12 +89,8 @@ const sonarRules = {
     "sonarjs/prefer-immediate-return": "error",
 };
 
-// === 🦄 Unicorn Rules ===
-const unicornRules = {
-    // Add or enable rules as needed
-};
+const unicornRules = {};
 
-// === 📜 General JavaScript Best Practices ===
 const jsBestPractices = {
     "no-var": "error",
     "no-implied-eval": "error",
@@ -154,7 +145,6 @@ const enforceAliasImports = {
     },
 };
 
-// === 🧠 Final Export ===
 export default tseslint.config(
     ignorePatterns,
     jsFileOverrides,

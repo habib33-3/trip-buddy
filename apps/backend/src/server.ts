@@ -2,7 +2,8 @@
 /* eslint-disable n/no-process-exit */
 import app from "./app/app";
 import { env } from "./config/env.config";
-import { disconnectPrisma } from "./db/prisma";
+import { prisma } from "./lib/prisma";
+import { redis } from "./lib/redis";
 import { logger } from "./shared/logger";
 
 let server: ReturnType<typeof app.listen>;
@@ -18,24 +19,37 @@ async function startServer() {
     }
 }
 
-async function shutdown() {
+const shutdown = async () => {
     logger.info("🧹 Graceful shutdown started...");
     try {
         if (server) {
-            await new Promise<void>((resolve, reject) => {
-                server.close((err) => (err ? reject(err) : resolve()));
-            });
+            await Promise.race([
+                new Promise<void>((resolve, reject) => {
+                    server.close((err) => (err ? reject(err) : resolve()));
+                }),
+
+                new Promise<void>((_, reject) =>
+                    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+                    setTimeout(() => reject(new Error("Shutdown timeout")), 10000)
+                ), // 10s timeout
+            ]);
             logger.info("✅ HTTP server closed.");
         }
-        await disconnectPrisma();
-    } catch (error) {
-        logger.error(`💥 Shutdown error: ${error}`);
-    } finally {
-        process.exit(0); // exit after shutdown is complete
-    }
-}
+        await prisma.$disconnect();
+        logger.info("✅ Prisma disconnected.");
 
-// Use anonymous functions for event handlers to avoid async/await in process.on
+        if (redis?.disconnect) {
+            redis.disconnect();
+            logger.info("✅ Redis disconnected.");
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        logger.error(`💥 Shutdown error: ${error.stack || error}`);
+    } finally {
+        process.exit(0);
+    }
+};
+
 process.on("SIGINT", () => {
     logger.info("📡 SIGINT received.");
     shutdown().catch((error) => {
