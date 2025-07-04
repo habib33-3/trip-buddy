@@ -6,7 +6,7 @@ export const setCookie = (res: Response, cookieName: string, cookieValue: string
     const isProduction = env.NODE_ENV === "production";
 
     res.cookie(cookieName, cookieValue, {
-        maxAge: env.TOKEN_EXPIRATION,
+        maxAge: env.ACCESS_TOKEN_EXPIRATION,
         httpOnly: true,
         secure: isProduction,
         sameSite: isProduction ? "none" : "lax",
@@ -14,7 +14,12 @@ export const setCookie = (res: Response, cookieName: string, cookieValue: string
 };
 
 export const deleteCookie = (res: Response, cookieName: string) => {
+    const isProduction = env.NODE_ENV === "production";
+
     res.clearCookie(cookieName, {
         maxAge: 0,
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
     });
 };

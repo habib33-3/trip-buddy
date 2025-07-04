@@ -1,13 +1,17 @@
 import { StatusCodes } from "http-status-codes";
 
+import { env } from "@/config/env.config";
+
+import { prisma } from "@/lib/prisma";
+import { redis } from "@/lib/redis";
+
 import { compareHashData, hashData } from "@/utils/hash";
-import { createToken } from "@/utils/jwt";
+import { generateAuthTokens, verifyToken } from "@/utils/jwt";
+import { generateRefreshTokenKey } from "@/utils/redis";
 
 import ApiError from "@/shared/ApiError";
 
 import type { RegisterUserType } from "@/validations/user.validations";
-
-import { prisma } from "@/db/prisma";
 
 export const findUserByEmail = async (email: string) => {
     return prisma.user.findUnique({ where: { email } });
@@ -36,14 +40,16 @@ export const registerUserService = async (data: RegisterUserType) => {
         },
     });
 
-    const token = createToken({
+    const { accessToken, refreshToken } = generateAuthTokens({
         id: user.id,
         email: user.email,
     });
 
+    await redis.setex(generateRefreshTokenKey(user.id), env.REFRESH_TOKEN_EXPIRATION, refreshToken);
+
     return {
         user,
-        token,
+        token: accessToken,
     };
 };
 
@@ -60,15 +66,58 @@ export const userLoginService = async (email: string, password: string) => {
         throw new ApiError(StatusCodes.UNAUTHORIZED, "Invalid credentials");
     }
 
-    const token = createToken({
+    const { accessToken, refreshToken } = generateAuthTokens({
         id: user.id,
         email: user.email,
     });
 
     const { password: _password, ...userWithoutPassword } = user;
 
+    await redis.set(generateRefreshTokenKey(user.id), refreshToken);
+
     return {
         user: userWithoutPassword,
-        token,
+        token: accessToken,
     };
+};
+
+export const refreshTokenService = async (refreshToken: string) => {
+    const decoded = verifyToken(refreshToken, "refresh_token");
+
+    if (!decoded) {
+        throw new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized");
+    }
+
+    const userExists = await findUserByEmail(decoded.email);
+
+    if (!userExists) {
+        throw new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized");
+    }
+
+    const key = generateRefreshTokenKey(decoded.id);
+    const cachedRefreshToken = await redis.get(key);
+
+    if (!cachedRefreshToken || refreshToken !== cachedRefreshToken) {
+        throw new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized");
+    }
+
+    const { accessToken } = generateAuthTokens({
+        id: decoded.id,
+        email: decoded.email,
+    });
+
+    return {
+        accessToken,
+    };
+};
+
+export const userLogoutService = async (refreshToken: string) => {
+    const decoded = verifyToken(refreshToken, "refresh_token");
+
+    if (!decoded || !decoded.id) {
+        return;
+    }
+
+    const key = generateRefreshTokenKey(decoded.id);
+    await redis.del(key);
 };

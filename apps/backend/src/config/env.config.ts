@@ -12,11 +12,16 @@ const envSchema = z.object({
     PORT: z.coerce.number().min(1).max(65535).default(DEFAULT_PORT),
     RATE_LIMIT_WINDOW_MS: z.coerce.number().min(1).default(DEFAULT_RATE_LIMIT_WINDOW_MS),
 
-    JWT_SECRET: z.string().trim().min(1, { message: "JWT_SECRET cannot be empty" }),
-
     DATABASE_URL: z.string().trim().url({ message: "DATABASE_URL must be a valid URL" }),
 
-    TOKEN_EXPIRATION: z
+    REDIS_URL: z.string().trim().url({ message: "REDIS_URL must be a valid URL" }),
+
+    ACCESS_TOKEN_SECRET: z
+        .string()
+        .trim()
+        .min(1, { message: "ACCESS_TOKEN_SECRET cannot be empty" }),
+
+    ACCESS_TOKEN_EXPIRATION: z
         .string()
         .trim()
         .transform((val, ctx) => {
@@ -25,7 +30,28 @@ const envSchema = z.object({
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
                     message:
-                        "TOKEN_EXPIRATION must be a valid duration string like '1h', '7d', etc.",
+                        "ACCESS_TOKEN_EXPIRATION must be a valid duration string like '1h', '7d', etc.",
+                });
+                return z.NEVER;
+            }
+            return result;
+        }),
+
+    REFRESH_TOKEN_SECRET: z
+        .string()
+        .trim()
+        .min(1, { message: "REFRESH_TOKEN_SECRET cannot be empty" }),
+
+    REFRESH_TOKEN_EXPIRATION: z
+        .string()
+        .trim()
+        .transform((val, ctx) => {
+            const result = ms(val as StringValue);
+            if (typeof result !== "number") {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message:
+                        "REFRESH_TOKEN_EXPIRATION must be a valid duration string like '1h', '7d', etc.",
                 });
                 return z.NEVER;
             }

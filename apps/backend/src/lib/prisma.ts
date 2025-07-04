@@ -27,10 +27,8 @@ export const prisma =
                 .then(() => logger.info("✅ Prisma connected"))
                 .catch((err) => {
                     logger.error(`❌ Prisma failed to connect:, ${err}`);
-                    throw new ApiError(
-                        StatusCodes.INTERNAL_SERVER_ERROR,
-                        "Prisma failed to connect"
-                    );
+                    // Log error but don't throw to prevent startup crash
+                    // Let individual operations handle connection errors
                 });
         }
 

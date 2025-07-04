@@ -4,13 +4,19 @@ import { StatusCodes } from "http-status-codes";
 
 import { deleteCookie, setCookie } from "@/utils/cookie";
 
+import ApiError from "@/shared/ApiError";
 import asyncHandler from "@/shared/asyncHandler";
-import { COOKIE_NAME } from "@/shared/constants";
+import { ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME } from "@/shared/constants";
 import sendResponse from "@/shared/sendResponse";
 
 import type { LoginUserType, RegisterUserType } from "@/validations/user.validations";
 
-import { registerUserService, userLoginService } from "@/services/user.services";
+import {
+    refreshTokenService,
+    registerUserService,
+    userLoginService,
+    userLogoutService,
+} from "@/services/user.services";
 
 export const registerUserHandler = asyncHandler(
     async (req: Request<{}, {}, RegisterUserType>, res) => {
@@ -18,7 +24,7 @@ export const registerUserHandler = asyncHandler(
 
         const result = await registerUserService(payload);
 
-        setCookie(res, COOKIE_NAME, result.token);
+        setCookie(res, ACCESS_TOKEN_COOKIE_NAME, result.token);
 
         sendResponse(req, res, {
             statusCode: StatusCodes.CREATED,
@@ -34,7 +40,7 @@ export const userLoginHandler = asyncHandler(async (req: Request<{}, {}, LoginUs
 
     const result = await userLoginService(email, password);
 
-    setCookie(res, COOKIE_NAME, result.token);
+    setCookie(res, ACCESS_TOKEN_COOKIE_NAME, result.token);
 
     sendResponse(req, res, {
         statusCode: StatusCodes.OK,
@@ -44,8 +50,36 @@ export const userLoginHandler = asyncHandler(async (req: Request<{}, {}, LoginUs
     });
 });
 
+export const userRefreshTokenHandler = asyncHandler(async (req, res) => {
+    // eslint-disable-next-line security/detect-object-injection
+    const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME] as string;
+
+    if (!refreshToken) {
+        throw new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized");
+    }
+
+    const result = await refreshTokenService(refreshToken);
+
+    setCookie(res, ACCESS_TOKEN_COOKIE_NAME, result.accessToken);
+
+    sendResponse(req, res, {
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: "User refresh token successfully",
+    });
+});
+
 export const userLogoutHandler = asyncHandler(async (req, res) => {
-    deleteCookie(res, COOKIE_NAME);
+    deleteCookie(res, ACCESS_TOKEN_COOKIE_NAME);
+
+    // eslint-disable-next-line security/detect-object-injection
+    const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME] as string;
+
+    if (!refreshToken) {
+        throw new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized");
+    }
+
+    await userLogoutService(refreshToken);
 
     sendResponse(req, res, {
         statusCode: StatusCodes.OK,

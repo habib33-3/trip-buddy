@@ -1,29 +1,41 @@
 import { StatusCodes } from "http-status-codes";
-import jwt, { type SignOptions } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 import { env } from "@/config/env.config";
 
 import ApiError from "@/shared/ApiError";
+import type { TokenTypes } from "@/shared/constants";
 
 import type { TokenPayload } from "@/types";
 
-const tokenOptions: SignOptions = {
-    expiresIn: env.TOKEN_EXPIRATION,
-    algorithm: "HS256",
+export const getTokenConfig = (tokenType: TokenTypes) => {
+    const isAccess = tokenType === "access_token";
+
+    return {
+        secret: isAccess ? env.ACCESS_TOKEN_SECRET : env.REFRESH_TOKEN_SECRET,
+        expiresIn: isAccess ? env.ACCESS_TOKEN_EXPIRATION : env.REFRESH_TOKEN_EXPIRATION,
+    };
 };
 
-export const createToken = (payload: TokenPayload): string => {
-    return jwt.sign(payload, env.JWT_SECRET, tokenOptions);
+export const createToken = (payload: TokenPayload, tokenType: TokenTypes): string => {
+    const { secret, expiresIn } = getTokenConfig(tokenType);
+
+    return jwt.sign(payload, secret, { expiresIn, algorithm: "HS256" });
 };
 
-export const verifyToken = (token: string): TokenPayload => {
+export const verifyToken = (token: string, tokenType: TokenTypes): TokenPayload => {
+    const { secret } = getTokenConfig(tokenType);
+
     try {
-        const decoded = jwt.verify(token, env.JWT_SECRET);
-        return decoded as TokenPayload;
-    } catch (error) {
-        throw new ApiError(
-            StatusCodes.UNAUTHORIZED,
-            `Invalid token: ${error instanceof Error ? error.message : "Unknown error"}`
-        );
+        return jwt.verify(token, secret) as TokenPayload;
+    } catch (_error) {
+        throw new ApiError(StatusCodes.UNAUTHORIZED, "Invalid or expired token");
     }
+};
+
+export const generateAuthTokens = (payload: TokenPayload) => {
+    return {
+        accessToken: createToken(payload, "access_token"),
+        refreshToken: createToken(payload, "refresh_token"),
+    };
 };

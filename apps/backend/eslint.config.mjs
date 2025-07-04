@@ -101,6 +101,7 @@ const unicornRules = {
 
 // === 📜 General JavaScript Best Practices ===
 const jsBestPractices = {
+    "no-var": "error",
     "no-implied-eval": "error",
     "no-script-url": "error",
     "no-buffer-constructor": "error",
