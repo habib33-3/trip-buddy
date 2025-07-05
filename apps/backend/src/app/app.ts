@@ -22,7 +22,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // CORS, Helmet, and Rate Limiter
-app.use(cors());
+app.use(
+    cors({
+        origin: ["http://localhost:5173"],
+        credentials: true,
+    })
+);
 app.use(helmet());
 app.use(limiter);
 

@@ -163,7 +163,7 @@ const globalReactRules = {
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
     "react/jsx-key": "error",
-    "react/self-closing-comp": "error",
+    "react/self-closing-comp": "warn",
     "react/jsx-no-constructed-context-values": "warn",
     "react/jsx-boolean-value": "warn",
     "react/destructuring-assignment": ["error", "always"],

@@ -17,6 +17,8 @@ import { handleZodError } from "@/errors/zodError";
 import type { ApiResponse } from "@/types";
 
 const handleException = (err: unknown, myResponseObj: ApiResponse<null>) => {
+    console.log(err);
+
     if (err instanceof PrismaClientValidationError) {
         handlePrismaValidationError(err, myResponseObj);
     } else if (err instanceof PrismaClientKnownRequestError) {

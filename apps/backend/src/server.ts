@@ -36,6 +36,7 @@ const shutdown = async () => {
             logger.info("✅ HTTP server closed.");
         }
         await prisma.$disconnect();
+
         logger.info("✅ Prisma disconnected.");
 
         if (redis?.disconnect) {
@@ -52,6 +53,7 @@ const shutdown = async () => {
 
 process.on("SIGINT", () => {
     logger.info("📡 SIGINT received.");
+
     shutdown().catch((error) => {
         logger.error(`Shutdown error: ${error}`);
     });
@@ -59,6 +61,7 @@ process.on("SIGINT", () => {
 
 process.on("SIGTERM", () => {
     logger.info("📡 SIGTERM received.");
+
     shutdown().catch((error) => {
         logger.error(`Shutdown error: ${error}`);
     });
@@ -66,6 +69,7 @@ process.on("SIGTERM", () => {
 
 process.on("uncaughtException", (error) => {
     logger.error(`🔥 Uncaught Exception: ${error}`);
+
     shutdown().catch((shutdownError) => {
         logger.error(`Shutdown error: ${shutdownError}`);
     });
@@ -73,6 +77,7 @@ process.on("uncaughtException", (error) => {
 
 process.on("unhandledRejection", (reason) => {
     logger.error(`💡 Unhandled Promise Rejection: ${reason}`);
+
     shutdown().catch((shutdownError) => {
         logger.error(`Shutdown error: ${shutdownError}`);
     });
@@ -81,5 +86,6 @@ process.on("unhandledRejection", (reason) => {
 // Start server and handle fatal errors during startup
 startServer().catch(async (error) => {
     logger.error(`❌ Fatal error during startup: ${error}`);
+
     await shutdown();
 });
