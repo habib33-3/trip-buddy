@@ -21,6 +21,8 @@ model User {
   name     String?
   password String
   role     String  @default("USER")
+  image    String?
+  initials String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
