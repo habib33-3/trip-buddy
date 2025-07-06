@@ -3,7 +3,12 @@ import "dotenv/config";
 import ms, { type StringValue } from "ms";
 import { z } from "zod";
 
-import { DEFAULT_PORT, DEFAULT_RATE_LIMIT_WINDOW_MS, ENV_ENUM } from "@/shared/constants";
+import {
+    DEFAULT_PORT,
+    DEFAULT_RATE_LIMIT_WINDOW_MS,
+    DEFAULT_REDIS_EXPIRATION,
+    ENV_ENUM,
+} from "@/shared/constants";
 import { logger } from "@/shared/logger";
 
 const envSchema = z.object({
@@ -57,6 +62,13 @@ const envSchema = z.object({
             }
             return result;
         }),
+
+    REDIS_EXPIRATION: z
+        .string()
+        .trim()
+        .regex(/^\d+$/, "Expiration must be a number")
+        .transform(Number)
+        .default(DEFAULT_REDIS_EXPIRATION),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
