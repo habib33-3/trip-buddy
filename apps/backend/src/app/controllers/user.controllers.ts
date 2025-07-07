@@ -24,7 +24,8 @@ export const registerUserHandler = asyncHandler(
 
         const result = await registerUserService(payload);
 
-        setCookie(res, ACCESS_TOKEN_COOKIE_NAME, result.token);
+        setCookie(res, ACCESS_TOKEN_COOKIE_NAME, result.token.accessToken);
+        setCookie(res, REFRESH_TOKEN_COOKIE_NAME, result.token.refreshToken);
 
         sendResponse(req, res, {
             statusCode: StatusCodes.CREATED,
@@ -40,7 +41,8 @@ export const userLoginHandler = asyncHandler(async (req: Request<{}, {}, LoginUs
 
     const result = await userLoginService(email, password);
 
-    setCookie(res, ACCESS_TOKEN_COOKIE_NAME, result.token);
+    setCookie(res, ACCESS_TOKEN_COOKIE_NAME, result.token.accessToken);
+    setCookie(res, REFRESH_TOKEN_COOKIE_NAME, result.token.refreshToken);
 
     sendResponse(req, res, {
         statusCode: StatusCodes.OK,
@@ -71,12 +73,13 @@ export const userRefreshTokenHandler = asyncHandler(async (req, res) => {
 
 export const userLogoutHandler = asyncHandler(async (req, res) => {
     deleteCookie(res, ACCESS_TOKEN_COOKIE_NAME);
+    deleteCookie(res, REFRESH_TOKEN_COOKIE_NAME);
 
     // eslint-disable-next-line security/detect-object-injection
     const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME] as string;
 
     if (!refreshToken) {
-        throw new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized");
+        throw new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized or session expired");
     }
 
     await userLogoutService(refreshToken);

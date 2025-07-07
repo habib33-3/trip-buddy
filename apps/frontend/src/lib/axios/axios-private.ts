@@ -1,18 +1,41 @@
-import type { AxiosError } from "axios";
-import axios from "axios";
+import axios, { type AxiosError } from "axios";
 import createAuthRefreshInterceptor from "axios-auth-refresh";
+
+import { env } from "@/config/env.config";
 
 import { useUserStore } from "@/stores/userStore";
 
 import { userLogoutApi, userRefreshTokenApi } from "@/api/userApi";
 
-export const axiosPrivate = axios.create({ withCredentials: true });
+export const axiosPrivate = axios.create({
+  baseURL: `${env.VITE_BACKEND_API_URL}/api/v1`,
+  withCredentials: true,
+});
+
+let isRedirecting = false;
+
+const safeRedirectToLogin = () => {
+  if (!isRedirecting) {
+    isRedirecting = true;
+    useUserStore.getState().clearUser();
+    window.location.href = "/login";
+  }
+};
+
+const handleRefreshToken = async () => {
+  try {
+    await userRefreshTokenApi();
+  } catch (error) {
+    console.error("Error refreshing token:", error);
+    safeRedirectToLogin();
+    throw error;
+  }
+};
 
 createAuthRefreshInterceptor(
   axiosPrivate,
   async () => {
-    await userRefreshTokenApi();
-
+    await handleRefreshToken();
     return Promise.resolve();
   },
   {
@@ -26,16 +49,10 @@ axiosPrivate.interceptors.response.use(
     if (error.response?.status === 403) {
       try {
         await userLogoutApi();
-
-        useUserStore.getState().clearUser();
-
-        window.location.href = "/login";
       } catch (logoutError) {
         console.error("Logout failed:", logoutError);
-
-        useUserStore.getState().clearUser();
-
-        window.location.href = "/login";
+      } finally {
+        safeRedirectToLogin();
       }
     }
     return Promise.reject(error);

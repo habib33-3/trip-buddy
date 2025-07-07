@@ -61,7 +61,10 @@ export const registerUserService = async (data: RegisterUserType) => {
 
     return {
         user,
-        token: accessToken,
+        token: {
+            accessToken,
+            refreshToken,
+        },
     };
 };
 
@@ -89,7 +92,10 @@ export const userLoginService = async (email: string, password: string) => {
 
     return {
         user: userWithoutPassword,
-        token: accessToken,
+        token: {
+            accessToken,
+            refreshToken,
+        },
     };
 };
 
