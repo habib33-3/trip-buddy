@@ -4,8 +4,8 @@ export const createTripSchema = z.object({
     body: z.object({
         title: z.string(),
         description: z.string(),
-        startDate: z.date(),
-        endDate: z.date(),
+        startDate: z.string().transform((value) => new Date(value)),
+        endDate: z.string().transform((value) => new Date(value)),
     }),
 });
 

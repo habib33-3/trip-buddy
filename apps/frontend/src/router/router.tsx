@@ -2,9 +2,9 @@ import { createBrowserRouter } from "react-router";
 
 import TripDashboardLayout from "@/layouts/TripDashboardLayout";
 
-import HomePage from "@/pages/HomePage/HomePage";
 import LoginPage from "@/pages/LoginPage/LoginPage";
 import RegisterPage from "@/pages/RegisterPage/RegisterPage";
+import TripsPage from "@/pages/TripsPage/TripsPage";
 
 const router = createBrowserRouter([
   {
@@ -21,7 +21,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <HomePage />,
+        element: <TripsPage />,
       },
     ],
   },

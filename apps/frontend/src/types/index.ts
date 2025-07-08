@@ -5,3 +5,11 @@ export type User = {
   image?: string;
   initials: string;
 };
+
+export type Trip = {
+  id: string;
+  title: string;
+  description: string;
+  startDate: Date;
+  endDate: Date;
+};
