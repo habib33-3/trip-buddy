@@ -1,10 +1,12 @@
 import { useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { QueryClient, useMutation } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+
+import { useUserStore } from "@/stores/userStore";
 
 import { createTripApi } from "@/api/tripApi";
 
@@ -18,6 +20,8 @@ import {
 const useCreateTrip = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const { user } = useUserStore();
+
   const form = useForm<CreateTripSchemaType>({
     defaultValues: {
       title: "",
@@ -28,11 +32,20 @@ const useCreateTrip = () => {
     resolver: zodResolver(createTripSchema),
   });
 
+  if (!isModalOpen) {
+    form.reset();
+  }
+
+  const query = new QueryClient();
+
   const mutate = useMutation({
     mutationFn: (data: CreateTripSchemaType) => createTripApi(data),
     onSuccess: (data) => {
       setIsModalOpen(false);
       form.reset();
+      void query.invalidateQueries({
+        queryKey: ["trips", user?.id],
+      });
       toast.success(data.message);
     },
     onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {

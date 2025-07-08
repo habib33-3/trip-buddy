@@ -21,7 +21,7 @@ const CreateTripModal = () => {
       onOpenChange={setIsModalOpen}
     >
       <DialogTrigger className="">
-        <Button>Create Trip</Button>
+        <Button asChild>Create Trip</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

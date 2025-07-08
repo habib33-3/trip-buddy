@@ -1,9 +1,15 @@
 import { prisma } from "@/lib/prisma";
-import { redis } from "@/lib/redis";
 
-import { generateTripCacheKey, setJsonToRedis } from "@/utils/redis";
+import {
+    generateTripCacheKey,
+    getJsonFromRedis,
+    setJsonToRedis,
+    updateRedisListCache,
+} from "@/utils/redis";
 
 import type { CreateTripSchemaType } from "@/validations/trip.validations";
+
+import type { Trip } from "@/generated/prisma";
 
 export const createTripService = async (payload: CreateTripSchemaType, userId: string) => {
     const trip = await prisma.trip.create({
@@ -16,10 +22,23 @@ export const createTripService = async (payload: CreateTripSchemaType, userId: s
         },
     });
 
-    const key = generateTripCacheKey(trip.id);
+    const key = generateTripCacheKey(userId);
 
-    await redis.del(key);
+    await updateRedisListCache<Trip>(key, trip);
 
-    await setJsonToRedis(key, trip);
     return trip;
+};
+
+export const getAllTripsService = async (userId: string) => {
+    const key = generateTripCacheKey(userId);
+
+    const cachedTrips = await getJsonFromRedis(key);
+    if (cachedTrips) return cachedTrips as Trip[];
+
+    const trips = await prisma.trip.findMany({ where: { userId } });
+    if (trips.length > 0) {
+        await setJsonToRedis(key, trips);
+    }
+
+    return trips;
 };

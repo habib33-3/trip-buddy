@@ -7,7 +7,7 @@ import sendResponse from "@/shared/sendResponse";
 
 import type { CreateTripSchemaType } from "@/validations/trip.validations";
 
-import { createTripService } from "@/services/trip.services";
+import { createTripService, getAllTripsService } from "@/services/trip.services";
 
 export const createTripHandler = asyncHandler(
     async (req: Request<{}, {}, CreateTripSchemaType>, res) => {
@@ -23,3 +23,16 @@ export const createTripHandler = asyncHandler(
         });
     }
 );
+
+export const getAllTripsHandler = asyncHandler(async (req, res) => {
+    const userId = req?.user?.id as string;
+
+    const result = await getAllTripsService(userId);
+
+    sendResponse(req, res, {
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: "Trips fetched successfully",
+        data: result,
+    });
+});
