@@ -1,7 +1,5 @@
-import { useState } from "react";
-
 import { zodResolver } from "@hookform/resolvers/zod";
-import { QueryClient, useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -12,14 +10,10 @@ import { createTripApi } from "@/api/tripApi";
 
 import type { ApiResponse } from "@/types/response";
 
-import {
-  type CreateTripSchemaType,
-  createTripSchema,
-} from "@/validations/tripValidation";
+import type { CreateTripSchemaType } from "@/validations/tripValidation";
+import { createTripSchema } from "@/validations/tripValidation";
 
 const useCreateTrip = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   const { user } = useUserStore();
 
   const form = useForm<CreateTripSchemaType>({
@@ -32,16 +26,11 @@ const useCreateTrip = () => {
     resolver: zodResolver(createTripSchema),
   });
 
-  if (!isModalOpen) {
-    form.reset();
-  }
-
-  const query = new QueryClient();
+  const query = useQueryClient();
 
   const mutate = useMutation({
     mutationFn: (data: CreateTripSchemaType) => createTripApi(data),
     onSuccess: (data) => {
-      setIsModalOpen(false);
       form.reset();
       void query.invalidateQueries({
         queryKey: ["trips", user?.id],
@@ -61,8 +50,6 @@ const useCreateTrip = () => {
     form,
     handleCreateTrip,
     isLoading: mutate.isPending || form.formState.isSubmitting,
-    isModalOpen,
-    setIsModalOpen,
   };
 };
 

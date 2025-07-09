@@ -1,5 +1,7 @@
 import useCreateTrip from "@/hooks/trip/useCreateTrip";
 
+import type { CreateTripSchemaType } from "@/validations/tripValidation";
+
 import { DatePickerField } from "@/ui/date-picker";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/ui/form";
 import { Input } from "@/ui/input";
@@ -8,14 +10,23 @@ import { Textarea } from "@/ui/textarea";
 
 import SubmitButton from "@/buttons/SubmitButtons";
 
-const CreateTripForm = () => {
+type Props = {
+  closeModal: () => void;
+};
+
+const CreateTripForm = ({ closeModal }: Props) => {
   const { form, isLoading, handleCreateTrip } = useCreateTrip();
+
+  const onSubmit = (data: CreateTripSchemaType) => {
+    handleCreateTrip(data);
+    closeModal();
+  };
 
   return (
     <Form {...form}>
       <form
         action=""
-        onSubmit={form.handleSubmit(handleCreateTrip)}
+        onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-4 overflow-y-auto p-4"
       >
         <FormField
