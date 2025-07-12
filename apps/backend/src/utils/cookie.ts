@@ -6,11 +6,11 @@ export const setCookie = (res: Response, cookieName: string, cookieValue: string
     const isProduction = env.NODE_ENV === "production";
 
     res.cookie(cookieName, cookieValue, {
-        maxAge: env.ACCESS_TOKEN_EXPIRATION,
         httpOnly: true,
-        secure: isProduction, // false on localhost
-        sameSite: isProduction ? "none" : "lax",
+        maxAge: env.ACCESS_TOKEN_EXPIRATION,
         path: "/", // explicitly set path
+        sameSite: isProduction ? "none" : "lax",
+        secure: isProduction, // false on localhost
     });
 };
 
@@ -19,8 +19,8 @@ export const deleteCookie = (res: Response, cookieName: string) => {
 
     res.clearCookie(cookieName, {
         httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? "none" : "lax",
         path: "/", // must match the original cookie path
+        sameSite: isProduction ? "none" : "lax",
+        secure: isProduction,
     });
 };

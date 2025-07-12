@@ -1,6 +1,7 @@
 import js from "@eslint/js";
 import prettier from "eslint-config-prettier";
 import eslintPluginN from "eslint-plugin-n";
+import eslintPluginPerfectionist from "eslint-plugin-perfectionist";
 import eslintPluginSecurity from "eslint-plugin-security";
 import eslintPluginSonarjs from "eslint-plugin-sonarjs";
 import eslintPluginUnicorn from "eslint-plugin-unicorn";
@@ -8,7 +9,6 @@ import { defineConfig } from "eslint/config";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 
-// 🔹 Ignore Patterns
 const ignorePatterns = {
     ignores: [
         "**/dist/**",
@@ -21,29 +21,28 @@ const ignorePatterns = {
     ],
 };
 
-// 🔹 Base JavaScript and TypeScript Recommended Configs
+// 🔹 Base recommended configs for JS and TS
 const baseConfigs = [
-    js.configs.recommended, // ESLint's recommended JavaScript rules
-    ...tseslint.configs.recommended, // TypeScript ESLint recommended rules
-    ...tseslint.configs.stylistic, // TypeScript ESLint stylistic rules
+    js.configs.recommended,
+    ...tseslint.configs.recommended,
+    ...tseslint.configs.stylistic,
 ];
 
-// 🔹 TypeScript Rules (common for both frontend/backend)
-const commonTypeScriptRules = {
+// 🔹 TypeScript rules
+const typescriptRules = {
     files: ["**/*.ts", "**/*.tsx"],
     languageOptions: {
-        parser: tseslint.parser, // Use tseslint parser
+        parser: tseslint.parser,
         parserOptions: {
-            project: ["./tsconfig.json", "./tsconfig.*.json"], // Adjust as needed for your project structure
             ecmaVersion: "latest",
             sourceType: "module",
+            project: ["./tsconfig.json", "./tsconfig.*.json"],
         },
     },
     plugins: {
         "@typescript-eslint": tseslint.plugin,
     },
     rules: {
-        // Overrides and additions to recommended TypeScript rules
         "@typescript-eslint/no-unused-vars": [
             "warn",
             {
@@ -56,7 +55,7 @@ const commonTypeScriptRules = {
         ],
         "@typescript-eslint/consistent-type-imports": "warn",
         "@typescript-eslint/consistent-type-definitions": ["warn", "type"],
-        "@typescript-eslint/no-explicit-any": "error", // Strict
+        "@typescript-eslint/no-explicit-any": "error",
         "@typescript-eslint/ban-ts-comment": [
             "error",
             { "ts-expect-error": "allow-with-description" },
@@ -79,7 +78,6 @@ const commonTypeScriptRules = {
         "@typescript-eslint/no-require-imports": "error",
         "@typescript-eslint/no-var-requires": "error",
         "@typescript-eslint/no-magic-numbers": [
-            // Harmonized
             "warn",
             {
                 ignore: [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -90,12 +88,12 @@ const commonTypeScriptRules = {
     },
 };
 
-// 🔹 Node.js specific rules
+// 🔹 Node.js rules for backend (express, etc)
 const nodeRules = {
-    files: ["**/*.js", "**/*.ts", "**/*.mjs"], // Apply to all relevant Node.js files
+    files: ["**/*.js", "**/*.ts", "**/*.mjs"],
     languageOptions: {
         globals: {
-            ...globals.node, // Node.js global variables
+            ...globals.node,
             ...globals.es2021,
         },
     },
@@ -106,10 +104,10 @@ const nodeRules = {
         "n/no-missing-require": "error",
         "n/no-extraneous-import": "error",
         "n/no-extraneous-require": "error",
-        "n/no-unsupported-features/es-syntax": "off", // Allow modern ES syntax
+        "n/no-unsupported-features/es-syntax": "off",
         "n/no-process-exit": "error",
-        "n/no-unpublished-import": ["error", { allowModules: [] }], // Adjust as needed
-        "n/no-unpublished-require": ["error", { allowModules: [] }], // Adjust as needed
+        "n/no-unpublished-import": ["error", { allowModules: [] }],
+        "n/no-unpublished-require": ["error", { allowModules: [] }],
         "n/prefer-node-protocol": "error",
         "n/callback-return": "error",
         "n/handle-callback-err": "error",
@@ -117,7 +115,7 @@ const nodeRules = {
         "n/no-mixed-requires": "error",
         "n/no-new-require": "error",
         "n/no-path-concat": "error",
-        "n/no-sync": ["error", { allowAtRootLevel: false }], // Disallow sync methods except at root
+        "n/no-sync": ["error", { allowAtRootLevel: false }],
         "n/prefer-global/buffer": ["error", "always"],
         "n/prefer-global/console": ["error", "always"],
         "n/prefer-global/process": ["error", "always"],
@@ -128,7 +126,7 @@ const nodeRules = {
     },
 };
 
-// 🔹 Unicorn plugin rules (common for both frontend/backend)
+// 🔹 Unicorn plugin rules
 const unicornRules = {
     plugins: {
         unicorn: eslintPluginUnicorn,
@@ -150,11 +148,11 @@ const unicornRules = {
         "unicorn/no-null": "off",
         "unicorn/no-array-reduce": "off",
         "unicorn/prevent-abbreviations": "off",
-        "unicorn/prefer-node-protocol": "error", // Enforce for backend
+        "unicorn/prefer-node-protocol": "error",
     },
 };
 
-// 🔹 Security plugin rules (common for both frontend/backend)
+// 🔹 Security plugin rules
 const securityRules = {
     plugins: {
         security: eslintPluginSecurity,
@@ -170,14 +168,13 @@ const securityRules = {
         "security/detect-no-csrf-before-method-override": "warn",
         "security/detect-possible-timing-attacks": "warn",
         "security/detect-non-literal-fs-filename": "warn",
-        // From backend config, apply to frontend if relevant
         "security/detect-buffer-noassert": "error",
         "security/detect-non-literal-require": "warn",
         "security/detect-pseudoRandomBytes": "error",
     },
 };
 
-// 🔹 SonarJS Rules (backend specific, good for code quality)
+// 🔹 SonarJS rules for code quality
 const sonarjsRules = {
     plugins: {
         sonarjs: eslintPluginSonarjs,
@@ -201,10 +198,36 @@ const sonarjsRules = {
     },
 };
 
-// 🔹 General JavaScript Best Practices (common for both frontend/backend)
+// 🔹 Perfectionist plugin for sorting imports and objects
+const perfectionistRules = {
+    plugins: {
+        perfectionist: eslintPluginPerfectionist,
+    },
+    rules: {
+        "perfectionist/sort-imports": [
+            "warn",
+            {
+                groups: [
+                    "builtin",
+                    "external",
+                    "internal",
+                    "parent",
+                    "sibling",
+                    "index",
+                    "unknown",
+                ],
+                order: "asc",
+                type: "natural",
+            },
+        ],
+        "perfectionist/sort-objects": ["warn", { order: "asc", type: "natural" }],
+    },
+};
+
+// 🔹 General JavaScript best practices
 const commonJsBestPractices = {
     rules: {
-        "no-console": ["warn", { allow: ["warn", "error", "info"] }], // Allow specific console methods
+        "no-console": ["warn", { allow: ["warn", "error", "info"] }],
         "no-implicit-coercion": "warn",
         "prefer-const": "error",
         "no-else-return": "warn",
@@ -217,21 +240,21 @@ const commonJsBestPractices = {
             {
                 selector: "ForInStatement",
                 message:
-                    "for..in loops iterate over the entire prototype chain. Use Object.{keys,values,entries}, and iterate over the resulting array.",
+                    "for..in loops iterate over the entire prototype chain. Use Object.{keys,values,entries} and iterate over the resulting array.",
             },
         ],
-        "no-alert": "off", // Not relevant for backend
+        "no-alert": "off",
         "no-return-await": "error",
         "prefer-template": "error",
         "prefer-destructuring": ["warn", { object: true, array: false }],
         "no-lonely-if": "warn",
         "object-shorthand": ["error", "always"],
-        "sort-imports": ["warn", { ignoreDeclarationSort: true }], // Let Prettier handle sorting
+        "sort-imports": ["warn", { ignoreDeclarationSort: true }],
         "no-var": "error",
         "no-implied-eval": "error",
         "no-script-url": "error",
         "no-buffer-constructor": "error",
-        "no-process-env": "warn", // Warn about direct process.env access
+        "no-process-env": "warn",
         "require-atomic-updates": "error",
         "no-caller": "error",
         "no-eval": "error",
@@ -259,7 +282,7 @@ const commonJsBestPractices = {
     },
 };
 
-// 🔹 Alias enforcement (no relative deep imports) (common for both frontend/backend)
+// 🔹 Alias enforcement (no deep relative imports)
 const enforceAliasImports = {
     rules: {
         "no-restricted-imports": [
@@ -271,25 +294,26 @@ const enforceAliasImports = {
     },
     settings: {
         "import/resolver": {
-            typescript: {}, // Ensure TypeScript path aliases are resolved
+            typescript: {},
         },
     },
 };
 
-// ✅ Final ESLint config definition for Backend
+// ✅ Export final ESLint config for Express + TypeScript backend
 export default defineConfig([
     ignorePatterns,
     {
-        // Disable type-checking for plain JS files if any exist
+        // Disable type-checked linting on plain JS files
         files: ["**/*.js", "**/*.mjs"],
         ...tseslint.configs.disableTypeChecked[0],
     },
     ...baseConfigs,
-    commonTypeScriptRules,
+    typescriptRules,
     nodeRules,
     unicornRules,
     securityRules,
     sonarjsRules,
+    perfectionistRules,
     commonJsBestPractices,
     enforceAliasImports,
     prettier,

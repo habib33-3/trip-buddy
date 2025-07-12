@@ -3,16 +3,16 @@ import z from "zod";
 export const createTripSchema = z.object({
     body: z
         .object({
-            title: z.string().min(1, "Title is required"),
             description: z.string().min(1, "Description is required"),
-            startDate: z
-                .string()
-                .refine((val) => !isNaN(Date.parse(val)), "Invalid start date")
-                .transform((val) => new Date(val)),
             endDate: z
                 .string()
                 .refine((val) => !isNaN(Date.parse(val)), "Invalid end date")
                 .transform((val) => new Date(val)),
+            startDate: z
+                .string()
+                .refine((val) => !isNaN(Date.parse(val)), "Invalid start date")
+                .transform((val) => new Date(val)),
+            title: z.string().min(1, "Title is required"),
         })
         .refine(
             (data) => {
@@ -30,18 +30,18 @@ export type CreateTripSchemaType = z.infer<typeof createTripSchema>["body"];
 export const updateTripSchema = z.object({
     body: z
         .object({
-            title: z.string().min(1, "Title is required").optional(),
             description: z.string().min(1, "Description is required").optional(),
-            startDate: z
-                .string()
-                .refine((val) => !isNaN(Date.parse(val)), "Invalid start date")
-                .transform((val) => new Date(val))
-                .optional(),
             endDate: z
                 .string()
                 .refine((val) => !isNaN(Date.parse(val)), "Invalid end date")
                 .transform((val) => new Date(val))
                 .optional(),
+            startDate: z
+                .string()
+                .refine((val) => !isNaN(Date.parse(val)), "Invalid start date")
+                .transform((val) => new Date(val))
+                .optional(),
+            title: z.string().min(1, "Title is required").optional(),
         })
         .refine(
             (data) => {

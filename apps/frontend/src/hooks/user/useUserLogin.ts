@@ -32,6 +32,9 @@ const useUserLogin = () => {
 
   const mutate = useMutation({
     mutationFn: async (data: UserLoginSchemaType) => userLoginApi(data),
+    onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
+      toast.error(error.response?.data.message);
+    },
     onSuccess: async (data) => {
       setUser(data.data as User);
 
@@ -41,9 +44,6 @@ const useUserLogin = () => {
 
       toast.success(data.message);
     },
-    onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
-      toast.error(error.response?.data.message);
-    },
   });
 
   const handleLoginUser = (data: UserLoginSchemaType) => {
@@ -52,8 +52,8 @@ const useUserLogin = () => {
 
   return {
     form,
-    isLoading: mutate.isPending || form.formState.isSubmitting,
     handleLoginUser,
+    isLoading: mutate.isPending || form.formState.isSubmitting,
   };
 };
 

@@ -34,10 +34,10 @@ const getTripById = async (key: string, tripId: string, userId: string): Promise
 export const createTripService = async (payload: CreateTripSchemaType, userId: string) => {
     const trip = await prisma.trip.create({
         data: {
-            title: payload.title,
             description: payload.description,
-            startDate: payload.startDate,
             endDate: payload.endDate,
+            startDate: payload.startDate,
+            title: payload.title,
             userId,
         },
     });
@@ -89,8 +89,8 @@ export const updateTripService = async (
     }
 
     const updatedTrip = await prisma.trip.update({
-        where: { id: tripId, userId },
         data: { ...payload },
+        where: { id: tripId, userId },
     });
 
     await updateSingleItemInRedisList<Trip>(key, tripId, updatedTrip);

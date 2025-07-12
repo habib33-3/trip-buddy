@@ -8,8 +8,8 @@ const validationMiddleware =
         try {
             const originalData = {
                 body: req.body,
-                query: req.query,
                 params: req.params,
+                query: req.query,
             };
 
             const validatedData = await schema.parseAsync(originalData);

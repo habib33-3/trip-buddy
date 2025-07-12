@@ -56,27 +56,27 @@ export const registerUserService = async (data: RegisterUserType) => {
         select: {
             createdAt: true,
             email: true,
+            id: true,
+            image: true,
+            initials: true,
             name: true,
             updatedAt: true,
-            id: true,
-            initials: true,
-            image: true,
         },
     });
 
     const { accessToken, refreshToken } = generateAuthTokens({
-        id: user.id,
         email: user.email,
+        id: user.id,
     });
 
     await redis.setex(generateRefreshTokenKey(user.id), env.REFRESH_TOKEN_EXPIRATION, refreshToken);
 
     return {
-        user,
         token: {
             accessToken,
             refreshToken,
         },
+        user,
     };
 };
 
@@ -94,8 +94,8 @@ export const userLoginService = async (email: string, password: string) => {
     }
 
     const { accessToken, refreshToken } = generateAuthTokens({
-        id: user.id,
         email: user.email,
+        id: user.id,
     });
 
     const { password: _password, ...userWithoutPassword } = user;
@@ -103,11 +103,11 @@ export const userLoginService = async (email: string, password: string) => {
     await redis.set(generateRefreshTokenKey(user.id), refreshToken);
 
     return {
-        user: userWithoutPassword,
         token: {
             accessToken,
             refreshToken,
         },
+        user: userWithoutPassword,
     };
 };
 
@@ -132,8 +132,8 @@ export const refreshTokenService = async (refreshToken: string) => {
     }
 
     const { accessToken } = generateAuthTokens({
-        id: decoded.id,
         email: decoded.email,
+        id: decoded.id,
     });
 
     return {

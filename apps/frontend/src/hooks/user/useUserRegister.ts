@@ -24,16 +24,19 @@ const useUserRegister = () => {
 
   const form = useForm<RegisterUserSchemaType>({
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
       confirmPassword: "",
+      email: "",
+      name: "",
+      password: "",
     },
     resolver: zodResolver(registerUserSchema),
   });
 
   const mutate = useMutation({
     mutationFn: async (data: RegisterUserSchemaType) => userRegisterApi(data),
+    onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
+      toast.error(error.response?.data.message || "Something went wrong");
+    },
     onSuccess: async (data) => {
       setUser(data.data as User);
 
@@ -41,9 +44,6 @@ const useUserRegister = () => {
       await navigate("/trips");
 
       toast.success(data.message);
-    },
-    onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
-      toast.error(error.response?.data.message || "Something went wrong");
     },
   });
 

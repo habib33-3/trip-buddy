@@ -13,10 +13,10 @@ type Props = {
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
 const SubmitButton = ({
-  loading,
-  title,
-  loadingText,
   className,
+  loading,
+  loadingText,
+  title,
   ...props
 }: Props) => {
   return (

@@ -16,8 +16,8 @@ type Props = {
 };
 
 const UpdateTripForm = ({ closeModal }: Props) => {
-  const { form, isLoading, handleUpdateTrip } = useUpdateTrip();
-  const { trip, status } = useGetSingleTrip();
+  const { form, handleUpdateTrip, isLoading } = useUpdateTrip();
+  const { status, trip } = useGetSingleTrip();
 
   if (isLoading || status === "pending") {
     return <p>Loading...</p>;

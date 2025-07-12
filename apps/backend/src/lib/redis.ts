@@ -11,9 +11,9 @@ declare global {
 const redisClient =
     global._redis ??
     new Redis(env.REDIS_URL, {
-        maxRetriesPerRequest: null,
         enableReadyCheck: true,
         lazyConnect: false,
+        maxRetriesPerRequest: null,
         reconnectOnError: (err) => {
             const targetMessages = ["READONLY", "ECONNRESET"];
             const shouldReconnect = targetMessages.some((msg) => err.message.includes(msg));

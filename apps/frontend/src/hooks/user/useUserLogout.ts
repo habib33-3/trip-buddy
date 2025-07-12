@@ -13,12 +13,12 @@ const useUserLogout = () => {
 
   const mutate = useMutation({
     mutationFn: async () => userLogoutApi(),
+    onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
+      toast.error(error.response?.data.message || "Something went wrong");
+    },
     onSuccess: (data) => {
       clearUser();
       toast.success(data.message);
-    },
-    onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
-      toast.error(error.response?.data.message || "Something went wrong");
     },
   });
 

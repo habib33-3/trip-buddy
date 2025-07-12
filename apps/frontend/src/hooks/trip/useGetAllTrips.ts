@@ -7,17 +7,17 @@ import { getAllTripsApi } from "@/api/tripApi";
 const useGetAllTrips = () => {
   const { user } = useUserStore();
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["trips", user?.id],
-    queryFn: getAllTripsApi,
+  const { data, isError, isLoading } = useQuery({
     enabled: Boolean(user?.id),
+    queryFn: getAllTripsApi,
+    queryKey: ["trips", user?.id],
     refetchOnWindowFocus: false,
   });
 
   return {
-    trips: data?.data,
-    isLoading,
     isError,
+    isLoading,
+    trips: data?.data,
   };
 };
 

@@ -93,9 +93,9 @@ function DropdownMenuItem({
 }
 
 function DropdownMenuCheckboxItem({
-  className,
-  children,
   checked,
+  children,
+  className,
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.CheckboxItem>) {
   return (
@@ -130,8 +130,8 @@ function DropdownMenuRadioGroup({
 }
 
 function DropdownMenuRadioItem({
-  className,
   children,
+  className,
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.RadioItem>) {
   return (
@@ -214,9 +214,9 @@ function DropdownMenuSub({
 }
 
 function DropdownMenuSubTrigger({
+  children,
   className,
   inset,
-  children,
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.SubTrigger> & {
   inset?: boolean;

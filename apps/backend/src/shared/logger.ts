@@ -14,9 +14,9 @@ type LoggerOptions = {
 };
 
 const defaultOptions: LoggerOptions = {
+    colorize: true,
     logLevel: "info",
     showTimestamp: true,
-    colorize: true,
 };
 
 const getTimestamp = () => new Date().toISOString();
@@ -146,11 +146,11 @@ export function createLogger(options: LoggerOptions = {}) {
     ];
 
     return {
-        middleware, // Use this in your app
-        info: (message: string) => log("info", message),
-        warn: (message: string) => log("warn", message),
-        error: (message: string) => log("error", message),
         debug: (message: string) => log("debug", message),
+        error: (message: string) => log("error", message),
+        info: (message: string) => log("info", message),
+        middleware, // Use this in your app
+        warn: (message: string) => log("warn", message),
     };
 }
 

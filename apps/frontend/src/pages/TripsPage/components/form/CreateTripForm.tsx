@@ -15,7 +15,7 @@ type Props = {
 };
 
 const CreateTripForm = ({ closeModal }: Props) => {
-  const { form, isLoading, handleCreateTrip } = useCreateTrip();
+  const { form, handleCreateTrip, isLoading } = useCreateTrip();
 
   const onSubmit = (data: CreateTripSchemaType) => {
     handleCreateTrip(data);

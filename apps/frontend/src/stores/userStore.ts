@@ -13,13 +13,13 @@ export const useUserStore = create<UseUserStore>()(
   persist(
     (set) => {
       return {
-        user: null,
-        setUser: (user: User) => {
-          set({ user });
-        },
         clearUser: () => {
           set({ user: null });
         },
+        setUser: (user: User) => {
+          set({ user });
+        },
+        user: null,
       };
     },
     { name: "user-store" }

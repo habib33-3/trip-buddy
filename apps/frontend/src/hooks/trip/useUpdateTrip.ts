@@ -19,14 +19,14 @@ import useGetSingleTrip from "./useGetSingleTrip";
 
 const useUpdateTrip = () => {
   const { tripId } = useParams<{ tripId: string }>();
-  const { trip, status } = useGetSingleTrip();
+  const { status, trip } = useGetSingleTrip();
 
   const defaultValues = useMemo(
     () => ({
-      title: trip?.title || "",
       description: trip?.description || "",
-      startDate: trip?.startDate ? new Date(trip.startDate) : new Date(),
       endDate: trip?.endDate ? new Date(trip.endDate) : new Date(),
+      startDate: trip?.startDate ? new Date(trip.startDate) : new Date(),
+      title: trip?.title || "",
     }),
     [trip]
   );
@@ -41,15 +41,15 @@ const useUpdateTrip = () => {
   const mutation = useMutation({
     mutationFn: async (data: UpdateTripSchemaType) =>
       updateTripApi(tripId as string, data),
+    onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
+      toast.error(error.response?.data.message || "Something went wrong");
+    },
     onSuccess: async (data) => {
       await query.invalidateQueries({
         queryKey: ["trip", tripId],
       });
 
       toast.success(data.message);
-    },
-    onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
-      toast.error(error.response?.data.message || "Something went wrong");
     },
   });
 
@@ -62,8 +62,8 @@ const useUpdateTrip = () => {
 
   return {
     form,
-    isLoading,
     handleUpdateTrip,
+    isLoading,
   };
 };
 

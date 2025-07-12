@@ -2,10 +2,10 @@ import z from "zod";
 
 export const createTripSchema = z
   .object({
-    title: z.string(),
-    startDate: z.date(),
-    endDate: z.date(),
     description: z.string(),
+    endDate: z.date(),
+    startDate: z.date(),
+    title: z.string(),
   })
   .refine((data) => data.startDate < data.endDate, {
     message: "Start date must be before end date",
@@ -16,10 +16,10 @@ export type CreateTripSchemaType = z.infer<typeof createTripSchema>;
 
 export const updateTripSchema = z
   .object({
-    title: z.string().optional(),
-    startDate: z.date().optional(),
-    endDate: z.date().optional(),
     description: z.string().optional(),
+    endDate: z.date().optional(),
+    startDate: z.date().optional(),
+    title: z.string().optional(),
   })
   .refine(
     (data) => {

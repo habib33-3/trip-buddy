@@ -50,6 +50,7 @@ const useFormField = () => {
   const formState = useFormState({ name: fieldContext.name });
   const fieldState = getFieldState(fieldContext.name, formState);
 
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (!fieldContext) {
     throw new Error("useFormField should be used within <FormField>");
   }
@@ -57,11 +58,11 @@ const useFormField = () => {
   const { id } = itemContext;
 
   return {
+    formDescriptionId: `${id}-form-item-description`,
+    formItemId: `${id}-form-item`,
+    formMessageId: `${id}-form-item-message`,
     id,
     name: fieldContext.name,
-    formItemId: `${id}-form-item`,
-    formDescriptionId: `${id}-form-item-description`,
-    formMessageId: `${id}-form-item-message`,
     ...fieldState,
   };
 };
@@ -107,7 +108,7 @@ function FormLabel({
 }
 
 function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
-  const { error, formItemId, formDescriptionId, formMessageId } =
+  const { error, formDescriptionId, formItemId, formMessageId } =
     useFormField();
 
   return (

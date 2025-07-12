@@ -24,16 +24,19 @@ const useCreateTrip = () => {
 
   const form = useForm<CreateTripSchemaType>({
     defaultValues: {
-      title: "",
       description: "",
-      startDate: tomorrow,
       endDate: nextWeek,
+      startDate: tomorrow,
+      title: "",
     },
     resolver: zodResolver(createTripSchema),
   });
 
   const mutation = useMutation({
     mutationFn: createTripApi,
+    onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
+      toast.error(error.response?.data.message || "Failed to create trip");
+    },
     onSuccess: (data) => {
       form.reset();
 
@@ -46,9 +49,6 @@ const useCreateTrip = () => {
       }
 
       toast.success(data.message);
-    },
-    onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
-      toast.error(error.response?.data.message || "Failed to create trip");
     },
   });
 

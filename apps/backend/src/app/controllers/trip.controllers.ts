@@ -22,10 +22,10 @@ export const createTripHandler = asyncHandler(
         const result = await createTripService(req.body, userId);
 
         sendResponse(req, res, {
+            data: result,
+            message: "Trip created successfully",
             statusCode: StatusCodes.CREATED,
             success: true,
-            message: "Trip created successfully",
-            data: result,
         });
     }
 );
@@ -36,10 +36,10 @@ export const getAllTripsHandler = asyncHandler(async (req, res) => {
     const result = await getAllTripsService(userId);
 
     sendResponse(req, res, {
+        data: result,
+        message: "Trips fetched successfully",
         statusCode: StatusCodes.OK,
         success: true,
-        message: "Trips fetched successfully",
-        data: result,
     });
 });
 
@@ -50,10 +50,10 @@ export const getSingleTripHandler = asyncHandler(async (req: Request<{ id: strin
     const result = await getSingleTripService(tripId, userId);
 
     sendResponse(req, res, {
+        data: result,
+        message: "Trip fetched successfully",
         statusCode: StatusCodes.OK,
         success: true,
-        message: "Trip fetched successfully",
-        data: result,
     });
 });
 
@@ -65,10 +65,10 @@ export const updateTripHandler = asyncHandler(
         const result = await updateTripService(tripId, req.body, userId);
 
         sendResponse(req, res, {
+            data: result,
+            message: "Trip updated successfully",
             statusCode: StatusCodes.OK,
             success: true,
-            message: "Trip updated successfully",
-            data: result,
         });
     }
 );
@@ -80,8 +80,8 @@ export const deleteTripHandler = asyncHandler(async (req: Request<{ id: string }
     await deleteTripService(tripId, userId);
 
     sendResponse(req, res, {
+        message: "Trip deleted successfully",
         statusCode: StatusCodes.OK,
         success: true,
-        message: "Trip deleted successfully",
     });
 });

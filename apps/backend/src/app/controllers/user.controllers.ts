@@ -28,10 +28,10 @@ export const registerUserHandler = asyncHandler(
         setCookie(res, REFRESH_TOKEN_COOKIE_NAME, result.token.refreshToken);
 
         sendResponse(req, res, {
+            data: result.user,
+            message: "User created successfully",
             statusCode: StatusCodes.CREATED,
             success: true,
-            message: "User created successfully",
-            data: result.user,
         });
     }
 );
@@ -45,10 +45,10 @@ export const userLoginHandler = asyncHandler(async (req: Request<{}, {}, LoginUs
     setCookie(res, REFRESH_TOKEN_COOKIE_NAME, result.token.refreshToken);
 
     sendResponse(req, res, {
+        data: result.user,
+        message: "User login successfully",
         statusCode: StatusCodes.OK,
         success: true,
-        message: "User login successfully",
-        data: result.user,
     });
 });
 
@@ -65,9 +65,9 @@ export const userRefreshTokenHandler = asyncHandler(async (req, res) => {
     setCookie(res, ACCESS_TOKEN_COOKIE_NAME, result.accessToken);
 
     sendResponse(req, res, {
+        message: "User refresh token successfully",
         statusCode: StatusCodes.OK,
         success: true,
-        message: "User refresh token successfully",
     });
 });
 
@@ -85,8 +85,8 @@ export const userLogoutHandler = asyncHandler(async (req, res) => {
     deleteCookie(res, REFRESH_TOKEN_COOKIE_NAME);
 
     sendResponse(req, res, {
+        message: "User logout successfully",
         statusCode: StatusCodes.OK,
         success: true,
-        message: "User logout successfully",
     });
 });

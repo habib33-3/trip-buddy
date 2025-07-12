@@ -24,10 +24,10 @@ type DatePickerFieldProps<T extends FieldValues> = {
 };
 
 export function DatePickerField<T extends FieldValues>({
-  field,
-  label,
   description,
   disabledDate,
+  field,
+  label,
 }: DatePickerFieldProps<T>) {
   return (
     <FormItem className="flex flex-col">

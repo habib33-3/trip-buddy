@@ -9,26 +9,26 @@ import TripsPage from "@/pages/TripsPage/TripsPage";
 
 const router = createBrowserRouter([
   {
-    path: "/register",
     element: <RegisterPage />,
+    path: "/register",
   },
   {
-    path: "/login",
     element: <LoginPage />,
+    path: "/login",
   },
   {
-    path: "/trips",
-    element: <TripDashboardLayout />,
     children: [
       {
-        path: "",
         element: <TripsPage />,
+        path: "",
       },
       {
-        path: ":tripId",
         element: <TripsDetailsPage />,
+        path: ":tripId",
       },
     ],
+    element: <TripDashboardLayout />,
+    path: "/trips",
   },
 ]);
 
