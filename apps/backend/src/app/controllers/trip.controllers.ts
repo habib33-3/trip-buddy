@@ -5,9 +5,15 @@ import { StatusCodes } from "http-status-codes";
 import asyncHandler from "@/shared/asyncHandler";
 import sendResponse from "@/shared/sendResponse";
 
-import type { CreateTripSchemaType } from "@/validations/trip.validations";
+import type { CreateTripSchemaType, UpdateTripSchemaType } from "@/validations/trip.validations";
 
-import { createTripService, getAllTripsService } from "@/services/trip.services";
+import {
+    createTripService,
+    deleteTripService,
+    getAllTripsService,
+    getSingleTripService,
+    updateTripService,
+} from "@/services/trip.services";
 
 export const createTripHandler = asyncHandler(
     async (req: Request<{}, {}, CreateTripSchemaType>, res) => {
@@ -34,5 +40,48 @@ export const getAllTripsHandler = asyncHandler(async (req, res) => {
         success: true,
         message: "Trips fetched successfully",
         data: result,
+    });
+});
+
+export const getSingleTripHandler = asyncHandler(async (req: Request<{ id: string }>, res) => {
+    const tripId = req.params.id;
+    const userId = req?.user?.id as string;
+
+    const result = await getSingleTripService(tripId, userId);
+
+    sendResponse(req, res, {
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: "Trip fetched successfully",
+        data: result,
+    });
+});
+
+export const updateTripHandler = asyncHandler(
+    async (req: Request<{ id: string }, {}, UpdateTripSchemaType>, res) => {
+        const tripId = req.params.id;
+        const userId = req?.user?.id as string;
+
+        const result = await updateTripService(tripId, req.body, userId);
+
+        sendResponse(req, res, {
+            statusCode: StatusCodes.OK,
+            success: true,
+            message: "Trip fetched successfully",
+            data: result,
+        });
+    }
+);
+
+export const deleteTripHandler = asyncHandler(async (req: Request<{ id: string }>, res) => {
+    const tripId = req.params.id;
+    const userId = req?.user?.id as string;
+
+    await deleteTripService(tripId, userId);
+
+    sendResponse(req, res, {
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: "Trip deleted successfully",
     });
 });

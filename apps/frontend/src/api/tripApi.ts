@@ -2,7 +2,10 @@ import { axiosPrivate } from "@/lib/axios/axios-private";
 
 import type { ApiResponse } from "@/types/response";
 
-import type { CreateTripSchemaType } from "@/validations/tripValidation";
+import type {
+  CreateTripSchemaType,
+  UpdateTripSchemaType,
+} from "@/validations/tripValidation";
 
 import type { Trip } from "../types";
 
@@ -14,6 +17,29 @@ export const createTripApi = async (payload: CreateTripSchemaType) => {
 
 export const getAllTripsApi = async () => {
   const res = await axiosPrivate.get<ApiResponse<Trip[]>>("/trip");
+
+  return res.data;
+};
+
+export const getSingleTripsApi = async (id: string) => {
+  const res = await axiosPrivate.get<ApiResponse<Trip>>(`/trip/${id}`);
+
+  return res.data;
+};
+
+export const updateTripApi = async (
+  id: string,
+  payload: UpdateTripSchemaType
+) => {
+  const res = await axiosPrivate.put<ApiResponse<Trip>>(`/trip/${id}`, payload);
+
+  return res.data;
+};
+
+export const deleteTripApi = async (id: string) => {
+  const res = await axiosPrivate.delete<ApiResponse<{ message: string }>>(
+    `/trip/${id}`
+  );
 
   return res.data;
 };

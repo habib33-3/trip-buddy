@@ -4,6 +4,7 @@ import TripDashboardLayout from "@/layouts/TripDashboardLayout";
 
 import LoginPage from "@/pages/LoginPage/LoginPage";
 import RegisterPage from "@/pages/RegisterPage/RegisterPage";
+import TripsDetailsPage from "@/pages/TripDetailsPage/TripsDetailsPage";
 import TripsPage from "@/pages/TripsPage/TripsPage";
 
 const router = createBrowserRouter([
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
       {
         path: "",
         element: <TripsPage />,
+      },
+      {
+        path: ":tripId",
+        element: <TripsDetailsPage />,
       },
     ],
   },
