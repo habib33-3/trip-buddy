@@ -16,8 +16,10 @@ import unicorn from "eslint-plugin-unicorn";
 import { defineConfig, globalIgnores } from "eslint/config";
 import globals from "globals";
 
+// 🔹 Base JS config
 const baseJsConfig = js.configs.recommended;
 
+// 🔹 TypeScript config
 const typescriptRules = {
   files: ["**/*.ts", "**/*.tsx"],
   languageOptions: {
@@ -33,6 +35,7 @@ const typescriptRules = {
     ...typescriptPlugin.configs.recommended.rules,
     ...typescriptPlugin.configs["recommended-requiring-type-checking"].rules,
     ...typescriptPlugin.configs["strict-type-checked"].rules,
+
     "@typescript-eslint/no-unused-vars": [
       "warn",
       {
@@ -66,6 +69,7 @@ const typescriptRules = {
   },
 };
 
+// 🔹 React recommended config with version detection
 const reactRecommendedConfig = {
   ...reactRecommended,
   settings: {
@@ -75,8 +79,10 @@ const reactRecommendedConfig = {
   },
 };
 
+// 🔹 JSX runtime config from React
 const reactJsxRuntimeConfig = jsxRuntime;
 
+// 🔹 React Hooks
 const reactHooksRules = {
   plugins: {
     "react-hooks": reactHooks,
@@ -87,6 +93,7 @@ const reactHooksRules = {
   },
 };
 
+// 🔹 TanStack Query plugin rules
 const tanstackQueryRules = {
   files: ["**/*.ts", "**/*.tsx"],
   plugins: {
@@ -98,6 +105,7 @@ const tanstackQueryRules = {
   },
 };
 
+// 🔹 Unicorn plugin rules
 const unicornRules = {
   plugins: {
     unicorn,
@@ -123,6 +131,7 @@ const unicornRules = {
   },
 };
 
+// 🔹 Tailwind plugin rules
 const tailwindRules = {
   plugins: {
     "better-tailwindcss": tailwindPlugin,
@@ -144,6 +153,7 @@ const tailwindRules = {
   },
 };
 
+// 🔹 Global React and JS best practices
 const globalReactRules = {
   languageOptions: {
     globals: {
@@ -159,6 +169,7 @@ const globalReactRules = {
     },
   },
   rules: {
+    // React rules
     "react/jsx-uses-react": "off",
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
@@ -172,6 +183,14 @@ const globalReactRules = {
     "react/no-danger": "error",
     "react/no-unstable-nested-components": "warn",
     "react/jsx-no-leaked-render": "warn",
+    "react/jsx-no-useless-fragment": "warn",
+    "react/no-unused-prop-types": "warn",
+    "react/jsx-curly-brace-presence": [
+      "warn",
+      { props: "never", children: "never" },
+    ],
+
+    // JS best practices
     "no-console": ["warn", { allow: ["warn", "error", "info"] }],
     "no-implicit-coercion": "warn",
     "prefer-const": "error",
@@ -204,15 +223,10 @@ const globalReactRules = {
     "no-lonely-if": "warn",
     "object-shorthand": ["error", "always"],
     "sort-imports": ["warn", { ignoreDeclarationSort: true }],
-    "react/jsx-no-useless-fragment": "warn",
-    "react/no-unused-prop-types": "warn",
-    "react/jsx-curly-brace-presence": [
-      "warn",
-      { props: "never", children: "never" },
-    ],
   },
 };
 
+// 🔹 Accessibility (JSX A11y) rules
 const jsxA11yRules = {
   plugins: {
     "jsx-a11y": jsxA11y,
@@ -234,6 +248,7 @@ const jsxA11yRules = {
   },
 };
 
+// 🔹 Security plugin rules
 const securityRules = {
   plugins: {
     security,
@@ -252,6 +267,7 @@ const securityRules = {
   },
 };
 
+// 🔹 Unsanitized rules
 const noUnsanitizedRules = {
   plugins: {
     "no-unsanitized": noUnsanitized,
@@ -262,6 +278,7 @@ const noUnsanitizedRules = {
   },
 };
 
+// 🔹 React DOM and React X plugin rules
 const reactDomReactXRules = {
   plugins: {
     "react-x": reactX,
@@ -273,6 +290,7 @@ const reactDomReactXRules = {
   },
 };
 
+// 🔹 Alias enforcement (no relative deep imports)
 const enforceAliasImports = {
   rules: {
     "no-restricted-imports": [
@@ -289,6 +307,7 @@ const enforceAliasImports = {
   },
 };
 
+// ✅ Final ESLint config definition
 export default defineConfig([
   globalIgnores(["**/node_modules/", "**/dist/"]),
   baseJsConfig,
