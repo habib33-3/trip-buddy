@@ -36,11 +36,15 @@ const useCreateTrip = () => {
     mutationFn: createTripApi,
     onSuccess: (data) => {
       form.reset();
+
       if (user?.id) {
-        void query.invalidateQueries({
-          queryKey: ["trips", user.id],
-        });
+        query
+          .invalidateQueries({
+            queryKey: ["trips", user.id],
+          })
+          .catch(console.error);
       }
+
       toast.success(data.message);
     },
     onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {

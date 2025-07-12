@@ -10,9 +10,9 @@ const asyncHandler = <P = any, ResBody = any, ReqBody = any, ReqQuery = any>(
         next: NextFunction
     ) => {
         try {
-            await fn(req, res, next);
+            return await fn(req, res, next);
         } catch (error) {
-            next(error);
+            return next(error);
         }
     };
 };

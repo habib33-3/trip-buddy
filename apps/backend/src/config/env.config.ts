@@ -78,7 +78,7 @@ if (!parsedEnv.success) {
         .map((err) => `❌ ${err.path.join(".")}: ${err.message}`)
         .join("\n");
 
-    logger.error("❌ Invalid environment variables:\n" + formattedErrors);
+    logger.error(`❌ Invalid environment variables:\n${formattedErrors}`);
     throw new Error("Invalid environment variables. Exiting...");
 }
 

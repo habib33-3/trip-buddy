@@ -12,7 +12,7 @@ const useUserLogout = () => {
   const { clearUser } = useUserStore();
 
   const mutate = useMutation({
-    mutationFn: () => userLogoutApi(),
+    mutationFn: async () => userLogoutApi(),
     onSuccess: (data) => {
       clearUser();
       toast.success(data.message);

@@ -19,8 +19,8 @@ const verifyAuth = (req: Request, _res: Response, next: NextFunction): void => {
         const decoded = verifyToken(token, "access_token");
 
         req.user = decoded;
-        next();
-    } catch (_err) {
+        return next();
+    } catch {
         throw new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized token");
     }
 };

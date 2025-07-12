@@ -14,9 +14,10 @@ const useDeleteTrip = () => {
   const navigate = useNavigate();
 
   const mutate = useMutation({
-    mutationFn: () => deleteTripApi(tripId as string),
-    onSuccess: (data) => {
-      void navigate("/trips");
+    mutationFn: async () => deleteTripApi(tripId as string),
+    onSuccess: async (data) => {
+      await navigate("/trips");
+
       toast.success(data.message);
     },
     onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {

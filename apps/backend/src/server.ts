@@ -1,4 +1,3 @@
-/* eslint-disable no-process-exit */
 /* eslint-disable n/no-process-exit */
 import app from "./app/app";
 import { env } from "./config/env.config";
@@ -45,6 +44,7 @@ const shutdown = async () => {
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         logger.error(`💥 Shutdown error: ${error.stack || error}`);
     } finally {
         process.exit(0);

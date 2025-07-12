@@ -91,6 +91,10 @@ export function createLogger(options: LoggerOptions = {}) {
             case "debug":
                 logMessage += chalk.blue.bold("[DEBUG] ") + message;
                 break;
+            case "info":
+                logMessage += chalk.green.bold("[INFO] ") + message;
+                break;
+
             default:
                 logMessage += chalk.green.bold("[INFO] ") + message;
         }

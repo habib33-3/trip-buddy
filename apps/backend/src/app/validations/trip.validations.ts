@@ -25,6 +25,8 @@ export const createTripSchema = z.object({
         ),
 });
 
+export type CreateTripSchemaType = z.infer<typeof createTripSchema>["body"];
+
 export const updateTripSchema = z.object({
     body: z
         .object({
@@ -54,3 +56,5 @@ export const updateTripSchema = z.object({
             }
         ),
 });
+
+export type UpdateTripSchemaType = z.infer<typeof updateTripSchema>["body"];

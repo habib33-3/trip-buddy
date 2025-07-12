@@ -33,12 +33,14 @@ const useUserRegister = () => {
   });
 
   const mutate = useMutation({
-    mutationFn: (data: RegisterUserSchemaType) => userRegisterApi(data),
-    onSuccess: (data) => {
+    mutationFn: async (data: RegisterUserSchemaType) => userRegisterApi(data),
+    onSuccess: async (data) => {
       setUser(data.data as User);
-      toast.success(data.message);
+
       form.reset();
-      void navigate("/trips");
+      await navigate("/trips");
+
+      toast.success(data.message);
     },
     onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
       toast.error(error.response?.data.message || "Something went wrong");

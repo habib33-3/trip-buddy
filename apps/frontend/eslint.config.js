@@ -6,6 +6,8 @@ import prettier from "eslint-config-prettier";
 import tailwindPlugin from "eslint-plugin-better-tailwindcss";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import noUnsanitized from "eslint-plugin-no-unsanitized";
+// For common TypeScript configs
+import reactPlugin from "eslint-plugin-react";
 import reactDom from "eslint-plugin-react-dom";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactX from "eslint-plugin-react-x";
@@ -13,83 +15,166 @@ import jsxRuntime from "eslint-plugin-react/configs/jsx-runtime.js";
 import reactRecommended from "eslint-plugin-react/configs/recommended.js";
 import security from "eslint-plugin-security";
 import unicorn from "eslint-plugin-unicorn";
-import { defineConfig, globalIgnores } from "eslint/config";
+import { defineConfig } from "eslint/config";
 import globals from "globals";
+import tseslint from "typescript-eslint";
 
-// 🔹 Base JS config
-const baseJsConfig = js.configs.recommended;
+// 🔹 Ignore Patterns
+const ignorePatterns = {
+  ignores: [
+    "**/dist/**",
+    "**/node_modules/**",
+    "**/coverage/**",
+    "**/public/**",
+    "**/views/**",
+    "./src/generated/**",
+    "**/*.mjs",
+  ],
+};
 
-// 🔹 TypeScript config
-const typescriptRules = {
+// 🔹 Base JavaScript and TypeScript Recommended Configs
+const baseConfigs = [
+  js.configs.recommended, // ESLint's recommended JavaScript rules
+  ...tseslint.configs.recommended, // TypeScript ESLint recommended rules
+  ...tseslint.configs.stylistic, // TypeScript ESLint stylistic rules
+];
+
+// 🔹 TypeScript Rules (common for both frontend/backend)
+const commonTypeScriptRules = {
   files: ["**/*.ts", "**/*.tsx"],
   languageOptions: {
     parser: typescriptParser,
     parserOptions: {
-      project: ["./tsconfig.json", "./tsconfig.*.json"],
+      project: ["./tsconfig.json", "./tsconfig.*.json"], // Adjust as needed for your project structure
+      ecmaVersion: "latest",
+      sourceType: "module",
     },
   },
   plugins: {
     "@typescript-eslint": typescriptPlugin,
   },
   rules: {
-    ...typescriptPlugin.configs.recommended.rules,
-    ...typescriptPlugin.configs["recommended-requiring-type-checking"].rules,
-    ...typescriptPlugin.configs["strict-type-checked"].rules,
-
+    // Overrides and additions to recommended TypeScript rules
     "@typescript-eslint/no-unused-vars": [
       "warn",
       {
-        vars: "all",
         args: "after-used",
-        ignoreRestSiblings: true,
-        varsIgnorePattern: "^_",
         argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+        caughtErrorsIgnorePattern: "^_", // From backend config
+        ignoreRestSiblings: true, // From frontend config
       },
     ],
     "@typescript-eslint/consistent-type-imports": "warn",
+    "@typescript-eslint/consistent-type-definitions": ["warn", "type"],
+    "@typescript-eslint/no-explicit-any": "error", // Strict
+    "@typescript-eslint/ban-ts-comment": [
+      "error", // Stricter than original frontend config
+      { "ts-expect-error": "allow-with-description" },
+    ],
     "@typescript-eslint/no-misused-promises": [
       "error",
       { checksVoidReturn: false },
     ],
-    "@typescript-eslint/explicit-module-boundary-types": "off",
-    "@typescript-eslint/no-explicit-any": "error",
-    "@typescript-eslint/ban-ts-comment": "warn",
+    "@typescript-eslint/explicit-module-boundary-types": "off", // Often too strict for React components
     "@typescript-eslint/strict-boolean-expressions": "off",
     "@typescript-eslint/no-empty-interface": "warn",
     "@typescript-eslint/switch-exhaustiveness-check": "error",
     "@typescript-eslint/no-floating-promises": "error",
     "@typescript-eslint/prefer-ts-expect-error": "warn",
-    "@typescript-eslint/consistent-type-definitions": ["warn", "type"],
     "@typescript-eslint/prefer-readonly": "warn",
     "@typescript-eslint/prefer-enum-initializers": "warn",
     "@typescript-eslint/no-unnecessary-type-arguments": "warn",
     "@typescript-eslint/no-unsafe-assignment": "warn",
     "@typescript-eslint/no-unsafe-member-access": "warn",
     "@typescript-eslint/no-unsafe-return": "warn",
+    "@typescript-eslint/await-thenable": "error", // From backend config
+    "@typescript-eslint/promise-function-async": "error", // From backend config
+    "@typescript-eslint/no-require-imports": "error", // From backend config
+    "@typescript-eslint/no-var-requires": "error", // From backend config
+    "@typescript-eslint/no-magic-numbers": [
+      // Harmonized
+      "warn",
+      {
+        ignore: [
+          -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 200, 400, 401, 403, 404, 500,
+        ],
+        enforceConst: true,
+      },
+    ],
+    "@typescript-eslint/no-empty-object-type": "off", // From backend config
   },
 };
 
-// 🔹 React recommended config with version detection
-const reactRecommendedConfig = {
-  ...reactRecommended,
-  settings: {
-    react: {
-      version: "detect",
+// 🔹 React specific configurations
+const reactConfigs = {
+  files: ["**/*.tsx", "**/*.jsx"],
+  languageOptions: {
+    globals: {
+      ...globals.browser,
+      ...globals.es2021,
+      React: "readonly",
+      JSX: "readonly",
+    },
+    parserOptions: {
+      ecmaFeatures: { jsx: true },
     },
   },
-};
-
-// 🔹 JSX runtime config from React
-const reactJsxRuntimeConfig = jsxRuntime;
-
-// 🔹 React Hooks
-const reactHooksRules = {
+  settings: {
+    react: {
+      version: "detect", // Automatically detect React version
+    },
+  },
   plugins: {
     "react-hooks": reactHooks,
+    "jsx-a11y": jsxA11y,
+    "react-x": reactX,
+    "react-dom": reactDom,
+    react: reactPlugin,
   },
   rules: {
-    ...reactHooks.configs.recommended.rules,
-    "react-hooks/exhaustive-deps": "warn",
+    ...reactRecommended.rules, // React recommended rules
+    ...jsxRuntime.rules, // Rules for new JSX transform
+    ...reactHooks.configs.recommended.rules, // React Hooks rules
+    ...(reactX.configs?.["recommended-typescript"]?.rules ?? {}), // React-x rules
+    ...(reactDom.configs?.recommended?.rules ?? {}), // React-dom rules
+
+    // React specific overrides and additions
+    "react/jsx-uses-react": "off", // Not needed with new JSX transform
+    "react/react-in-jsx-scope": "off", // Not needed with new JSX transform
+    "react/prop-types": "off", // Use TypeScript for type checking
+    "react/jsx-key": "error",
+    "react/self-closing-comp": "warn",
+    "react/jsx-no-constructed-context-values": "warn",
+    "react/jsx-boolean-value": "warn",
+    "react/destructuring-assignment": ["error", "always"],
+    "react/no-array-index-key": "warn",
+    "react/no-deprecated": "warn",
+    "react/no-danger": "error",
+    "react/no-unstable-nested-components": "warn",
+    "react/jsx-no-leaked-render": "warn",
+    "react/jsx-no-useless-fragment": "warn",
+    "react/no-unused-prop-types": "warn",
+    "react/jsx-curly-brace-presence": [
+      "warn",
+      { props: "never", children: "never" },
+    ],
+    "react-hooks/exhaustive-deps": "warn", // Ensure all dependencies are listed
+
+    // JSX A11y rules
+    ...jsxA11y.configs.recommended.rules,
+    "jsx-a11y/anchor-is-valid": [
+      "error",
+      {
+        components: ["Link"],
+        specialLink: ["hrefLeft", "hrefRight"],
+        aspects: ["invalidHref", "preferButton"],
+      },
+    ],
+    "jsx-a11y/alt-text": "warn",
+    "jsx-a11y/click-events-have-key-events": "warn",
+    "jsx-a11y/no-static-element-interactions": "warn",
+    "jsx-a11y/no-noninteractive-element-interactions": "warn",
   },
 };
 
@@ -105,7 +190,7 @@ const tanstackQueryRules = {
   },
 };
 
-// 🔹 Unicorn plugin rules
+// 🔹 Unicorn plugin rules (common for both frontend/backend)
 const unicornRules = {
   plugins: {
     unicorn,
@@ -127,18 +212,18 @@ const unicornRules = {
     "unicorn/no-null": "off",
     "unicorn/no-array-reduce": "off",
     "unicorn/prevent-abbreviations": "off",
-    "unicorn/prefer-node-protocol": "off",
+    "unicorn/prefer-node-protocol": "off", // More relevant for backend, but harmless here
   },
 };
 
-// 🔹 Tailwind plugin rules
+// 🔹 Tailwind CSS plugin rules
 const tailwindRules = {
   plugins: {
     "better-tailwindcss": tailwindPlugin,
   },
   settings: {
     "better-tailwindcss": {
-      entryPoint: "src/index.css",
+      entryPoint: "src/index.css", // Adjust if your main CSS file is elsewhere
     },
   },
   rules: {
@@ -153,49 +238,14 @@ const tailwindRules = {
   },
 };
 
-// 🔹 Global React and JS best practices
-const globalReactRules = {
-  languageOptions: {
-    globals: {
-      ...globals.browser,
-      ...globals.es2021,
-      React: "readonly",
-      JSX: "readonly",
-    },
-    parserOptions: {
-      ecmaFeatures: { jsx: true },
-      ecmaVersion: "latest",
-      sourceType: "module",
-    },
-  },
+// 🔹 General JavaScript Best Practices (common for both frontend/backend)
+const commonJsBestPractices = {
   rules: {
-    // React rules
-    "react/jsx-uses-react": "off",
-    "react/react-in-jsx-scope": "off",
-    "react/prop-types": "off",
-    "react/jsx-key": "error",
-    "react/self-closing-comp": "warn",
-    "react/jsx-no-constructed-context-values": "warn",
-    "react/jsx-boolean-value": "warn",
-    "react/destructuring-assignment": ["error", "always"],
-    "react/no-array-index-key": "warn",
-    "react/no-deprecated": "warn",
-    "react/no-danger": "error",
-    "react/no-unstable-nested-components": "warn",
-    "react/jsx-no-leaked-render": "warn",
-    "react/jsx-no-useless-fragment": "warn",
-    "react/no-unused-prop-types": "warn",
-    "react/jsx-curly-brace-presence": [
-      "warn",
-      { props: "never", children: "never" },
-    ],
-
-    // JS best practices
-    "no-console": ["warn", { allow: ["warn", "error", "info"] }],
+    "no-console": ["warn", { allow: ["warn", "error", "info"] }], // Allow specific console methods
     "no-implicit-coercion": "warn",
     "prefer-const": "error",
     "no-else-return": "warn",
-    "no-unused-expressions": "warn",
+    "no-unused-expressions": "error", // Stricter than original frontend config
     "consistent-return": "warn",
     eqeqeq: ["error", "always"],
     "no-throw-literal": "warn",
@@ -207,48 +257,43 @@ const globalReactRules = {
           "for..in loops iterate over the entire prototype chain. Use Object.{keys,values,entries}, and iterate over the resulting array.",
       },
     ],
-    "no-alert": "warn",
-    "no-magic-numbers": [
-      "warn",
-      {
-        ignore: [
-          0, 1, -1, 2, 3, 4, 5, 6, 7, 8, 9, 200, 400, 401, 403, 404, 500,
-        ],
-        enforceConst: true,
-      },
-    ],
+    "no-alert": "warn", // Frontend specific, but keeping here as a general warning
     "no-return-await": "error",
     "prefer-template": "error",
     "prefer-destructuring": ["warn", { object: true, array: false }],
     "no-lonely-if": "warn",
     "object-shorthand": ["error", "always"],
-    "sort-imports": ["warn", { ignoreDeclarationSort: true }],
+    "sort-imports": ["warn", { ignoreDeclarationSort: true }], // Let Prettier handle sorting
+    "no-var": "error", // From backend config
+    "no-implied-eval": "error", // From backend config
+    "no-script-url": "error", // From backend config
+    "no-caller": "error", // From backend config
+    "no-eval": "error", // From backend config
+    "no-extend-native": "error", // From backend config
+    "no-extra-bind": "error", // From backend config
+    "no-floating-decimal": "error", // From backend config
+    "no-iterator": "error", // From backend config
+    "no-labels": "error", // From backend config
+    "no-lone-blocks": "error", // From backend config
+    "no-multi-str": "error", // From backend config
+    "no-new-func": "error", // From backend config
+    "no-new-wrappers": "error", // From backend config
+    "no-octal-escape": "error", // From backend config
+    "no-proto": "error", // From backend config
+    "no-self-compare": "error", // From backend config
+    "no-sequences": "error", // From backend config
+    "no-useless-call": "error", // From backend config
+    "no-useless-concat": "error", // From backend config
+    "no-useless-return": "error", // From backend config
+    "no-void": "error", // From backend config
+    "no-with": "error", // From backend config
+    "prefer-promise-reject-errors": "error", // From backend config
+    radix: "error", // From backend config
+    "no-duplicate-imports": "off", // From backend config
   },
 };
 
-// 🔹 Accessibility (JSX A11y) rules
-const jsxA11yRules = {
-  plugins: {
-    "jsx-a11y": jsxA11y,
-  },
-  rules: {
-    ...jsxA11y.recommended,
-    "jsx-a11y/anchor-is-valid": [
-      "error",
-      {
-        components: ["Link"],
-        specialLink: ["hrefLeft", "hrefRight"],
-        aspects: ["invalidHref", "preferButton"],
-      },
-    ],
-    "jsx-a11y/alt-text": "warn",
-    "jsx-a11y/click-events-have-key-events": "warn",
-    "jsx-a11y/no-static-element-interactions": "warn",
-    "jsx-a11y/no-noninteractive-element-interactions": "warn",
-  },
-};
-
-// 🔹 Security plugin rules
+// 🔹 Security plugin rules (common for both frontend/backend)
 const securityRules = {
   plugins: {
     security,
@@ -257,17 +302,21 @@ const securityRules = {
     "security/detect-object-injection": "warn",
     "security/detect-non-literal-regexp": "warn",
     "security/detect-unsafe-regex": "warn",
-    "security/detect-child-process": "error",
+    "security/detect-child-process": "error", // Error for frontend as well
     "security/detect-disable-mustache-escape": "warn",
     "security/detect-eval-with-expression": "error",
     "security/detect-new-buffer": "error",
     "security/detect-no-csrf-before-method-override": "warn",
     "security/detect-possible-timing-attacks": "warn",
     "security/detect-non-literal-fs-filename": "warn",
+    // From backend config, apply to frontend if relevant
+    "security/detect-buffer-noassert": "error",
+    "security/detect-non-literal-require": "warn",
+    "security/detect-pseudoRandomBytes": "error",
   },
 };
 
-// 🔹 Unsanitized rules
+// 🔹 No Unsanitized rules (common for both frontend/backend, but more critical for frontend)
 const noUnsanitizedRules = {
   plugins: {
     "no-unsanitized": noUnsanitized,
@@ -278,19 +327,7 @@ const noUnsanitizedRules = {
   },
 };
 
-// 🔹 React DOM and React X plugin rules
-const reactDomReactXRules = {
-  plugins: {
-    "react-x": reactX,
-    "react-dom": reactDom,
-  },
-  rules: {
-    ...(reactX.configs?.["recommended-typescript"]?.rules ?? {}),
-    ...(reactDom.configs?.recommended?.rules ?? {}),
-  },
-};
-
-// 🔹 Alias enforcement (no relative deep imports)
+// 🔹 Alias enforcement (no relative deep imports) (common for both frontend/backend)
 const enforceAliasImports = {
   rules: {
     "no-restricted-imports": [
@@ -302,27 +339,23 @@ const enforceAliasImports = {
   },
   settings: {
     "import/resolver": {
-      typescript: {},
+      typescript: {}, // Ensure TypeScript path aliases are resolved
     },
   },
 };
 
-// ✅ Final ESLint config definition
+// ✅ Final ESLint config definition for Frontend
 export default defineConfig([
-  globalIgnores(["**/node_modules/", "**/dist/"]),
-  baseJsConfig,
-  typescriptRules,
-  reactRecommendedConfig,
-  reactJsxRuntimeConfig,
-  reactHooksRules,
+  ignorePatterns,
+  ...baseConfigs,
+  commonTypeScriptRules,
+  reactConfigs,
   tanstackQueryRules,
   unicornRules,
-  globalReactRules,
-  jsxA11yRules,
+  commonJsBestPractices,
   securityRules,
   noUnsanitizedRules,
-  reactDomReactXRules,
   enforceAliasImports,
   tailwindRules,
-  prettier,
+  prettier, // Always put prettier last to disable conflicting rules
 ]);

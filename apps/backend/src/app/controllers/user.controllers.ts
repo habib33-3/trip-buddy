@@ -53,7 +53,7 @@ export const userLoginHandler = asyncHandler(async (req: Request<{}, {}, LoginUs
 });
 
 export const userRefreshTokenHandler = asyncHandler(async (req, res) => {
-    // eslint-disable-next-line security/detect-object-injection
+    // eslint-disable-next-line security/detect-object-injection, @typescript-eslint/no-unsafe-member-access
     const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME] as string;
 
     if (!refreshToken) {
@@ -72,7 +72,7 @@ export const userRefreshTokenHandler = asyncHandler(async (req, res) => {
 });
 
 export const userLogoutHandler = asyncHandler(async (req, res) => {
-    // eslint-disable-next-line security/detect-object-injection
+    // eslint-disable-next-line security/detect-object-injection, @typescript-eslint/no-unsafe-member-access
     const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME] as string;
 
     if (!refreshToken) {

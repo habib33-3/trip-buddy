@@ -9,7 +9,7 @@ const useGetSingleTrip = () => {
 
   const { data, status } = useQuery({
     queryKey: ["trip", tripId],
-    queryFn: () => getSingleTripsApi(tripId as string),
+    queryFn: async () => getSingleTripsApi(tripId!),
   });
 
   return {

@@ -39,10 +39,10 @@ const useUpdateTrip = () => {
   const query = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: (data: UpdateTripSchemaType) =>
+    mutationFn: async (data: UpdateTripSchemaType) =>
       updateTripApi(tripId as string, data),
-    onSuccess: (data) => {
-      void query.invalidateQueries({
+    onSuccess: async (data) => {
+      await query.invalidateQueries({
         queryKey: ["trip", tripId],
       });
 

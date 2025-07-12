@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { NextFunction, Request, Response } from "express";
 
 import type { AnyZodObject } from "zod";
@@ -15,9 +16,9 @@ const validationMiddleware =
 
             Object.assign(req, validatedData);
 
-            next();
+            return next();
         } catch (error) {
-            next(error);
+            return next(error);
         }
     };
 
