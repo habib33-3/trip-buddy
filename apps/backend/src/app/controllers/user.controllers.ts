@@ -72,9 +72,6 @@ export const userRefreshTokenHandler = asyncHandler(async (req, res) => {
 });
 
 export const userLogoutHandler = asyncHandler(async (req, res) => {
-    deleteCookie(res, ACCESS_TOKEN_COOKIE_NAME);
-    deleteCookie(res, REFRESH_TOKEN_COOKIE_NAME);
-
     // eslint-disable-next-line security/detect-object-injection
     const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME] as string;
 
@@ -83,6 +80,9 @@ export const userLogoutHandler = asyncHandler(async (req, res) => {
     }
 
     await userLogoutService(refreshToken);
+
+    deleteCookie(res, ACCESS_TOKEN_COOKIE_NAME);
+    deleteCookie(res, REFRESH_TOKEN_COOKIE_NAME);
 
     sendResponse(req, res, {
         statusCode: StatusCodes.OK,

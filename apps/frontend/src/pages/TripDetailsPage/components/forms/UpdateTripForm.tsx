@@ -29,7 +29,6 @@ const UpdateTripForm = ({ closeModal }: Props) => {
 
   const onSubmit = (data: UpdateTripSchemaType) => {
     handleUpdateTrip(data);
-
     closeModal();
   };
 

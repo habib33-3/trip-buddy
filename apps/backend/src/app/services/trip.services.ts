@@ -25,10 +25,10 @@ const getTripById = async (key: string, tripId: string, userId: string): Promise
 
     if (!trip) {
         logger.info(`Cache miss: ${key}`);
-        return null;
+        return prisma.trip.findUnique({ where: { id: tripId, userId } });
     }
 
-    return prisma.trip.findUnique({ where: { id: tripId, userId } });
+    return trip;
 };
 
 export const createTripService = async (payload: CreateTripSchemaType, userId: string) => {

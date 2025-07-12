@@ -18,9 +18,21 @@ export const findUserByEmail = async (email: string) => {
 };
 
 export const generateInitials = (name: string) => {
+    if (!name || typeof name !== "string") {
+        return "";
+    }
+
+    const trimmed = name.trim();
+    if (!trimmed) {
+        return "";
+    }
+
     return name
+        .trim()
         .split(" ")
+        .filter((word) => word.length > 0)
         .map((word) => word.charAt(0))
+        .map((char) => char.toUpperCase())
         .join("");
 };
 

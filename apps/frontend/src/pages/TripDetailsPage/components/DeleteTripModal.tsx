@@ -35,8 +35,8 @@ const DeleteTripModal = () => {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+            This action cannot be undone. This will permanently delete this trip
+            and all associated data.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

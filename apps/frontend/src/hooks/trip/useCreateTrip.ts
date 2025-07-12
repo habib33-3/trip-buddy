@@ -15,26 +15,32 @@ import { createTripSchema } from "@/validations/tripValidation";
 
 const useCreateTrip = () => {
   const { user } = useUserStore();
+  const query = useQueryClient();
+
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const nextWeek = new Date();
+  nextWeek.setDate(nextWeek.getDate() + 7);
 
   const form = useForm<CreateTripSchemaType>({
     defaultValues: {
       title: "",
       description: "",
-      startDate: new Date(),
-      endDate: new Date(),
+      startDate: tomorrow,
+      endDate: nextWeek,
     },
     resolver: zodResolver(createTripSchema),
   });
 
-  const query = useQueryClient();
-
-  const mutate = useMutation({
-    mutationFn: (data: CreateTripSchemaType) => createTripApi(data),
+  const mutation = useMutation({
+    mutationFn: createTripApi,
     onSuccess: (data) => {
       form.reset();
-      void query.invalidateQueries({
-        queryKey: ["trips", user?.id],
-      });
+      if (user?.id) {
+        void query.invalidateQueries({
+          queryKey: ["trips", user.id],
+        });
+      }
       toast.success(data.message);
     },
     onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
@@ -43,13 +49,13 @@ const useCreateTrip = () => {
   });
 
   const handleCreateTrip = (data: CreateTripSchemaType) => {
-    mutate.mutate(data);
+    mutation.mutate(data);
   };
 
   return {
     form,
     handleCreateTrip,
-    isLoading: mutate.isPending || form.formState.isSubmitting,
+    isLoading: mutation.isPending || form.formState.isSubmitting,
   };
 };
 

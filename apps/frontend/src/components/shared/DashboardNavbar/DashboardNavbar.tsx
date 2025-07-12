@@ -13,7 +13,11 @@ const DashboardNavbar = () => {
   const { user } = useUserStore();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white">
+    <header
+      className="sticky top-0 z-50 w-full border-b bg-white"
+      role="banner"
+      aria-label="Main navigation"
+    >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
         <Link
           to="/"

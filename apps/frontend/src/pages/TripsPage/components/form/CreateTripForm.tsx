@@ -34,8 +34,12 @@ const CreateTripForm = ({ closeModal }: Props) => {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <Label>Trip Title</Label>
+              <Label>Description</Label>
               <FormControl>
+                <Textarea
+                  placeholder="Trip Description"
+                  {...field}
+                />
                 <Input
                   type="text"
                   placeholder="Trip Title"
