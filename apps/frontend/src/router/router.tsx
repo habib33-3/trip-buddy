@@ -1,22 +1,13 @@
 import { createBrowserRouter } from "react-router";
 
-import RootLayout from "@/layouts/RootLayout";
+import TripDashboardLayout from "@/layouts/TripDashboardLayout";
 
-import HomePage from "@/pages/HomePage/HomePage";
 import LoginPage from "@/pages/LoginPage/LoginPage";
 import RegisterPage from "@/pages/RegisterPage/RegisterPage";
+import TripsDetailsPage from "@/pages/TripDetailsPage/TripsDetailsPage";
+import TripsPage from "@/pages/TripsPage/TripsPage";
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <RootLayout />,
-    children: [
-      {
-        path: "",
-        element: <HomePage />,
-      },
-    ],
-  },
   {
     path: "/register",
     element: <RegisterPage />,
@@ -24,6 +15,20 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <LoginPage />,
+  },
+  {
+    path: "/trips",
+    element: <TripDashboardLayout />,
+    children: [
+      {
+        path: "",
+        element: <TripsPage />,
+      },
+      {
+        path: ":tripId",
+        element: <TripsDetailsPage />,
+      },
+    ],
   },
 ]);
 

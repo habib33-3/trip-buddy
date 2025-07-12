@@ -8,8 +8,9 @@ export const setCookie = (res: Response, cookieName: string, cookieValue: string
     res.cookie(cookieName, cookieValue, {
         maxAge: env.ACCESS_TOKEN_EXPIRATION,
         httpOnly: true,
-        secure: isProduction,
+        secure: isProduction, // false on localhost
         sameSite: isProduction ? "none" : "lax",
+        path: "/", // explicitly set path
     });
 };
 
@@ -17,9 +18,9 @@ export const deleteCookie = (res: Response, cookieName: string) => {
     const isProduction = env.NODE_ENV === "production";
 
     res.clearCookie(cookieName, {
-        maxAge: 0,
         httpOnly: true,
         secure: isProduction,
         sameSite: isProduction ? "none" : "lax",
+        path: "/", // must match the original cookie path
     });
 };

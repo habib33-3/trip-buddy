@@ -17,6 +17,25 @@ export const findUserByEmail = async (email: string) => {
     return prisma.user.findUnique({ where: { email } });
 };
 
+export const generateInitials = (name: string) => {
+    if (!name || typeof name !== "string") {
+        return "";
+    }
+
+    const trimmed = name.trim();
+    if (!trimmed) {
+        return "";
+    }
+
+    return name
+        .trim()
+        .split(" ")
+        .filter((word) => word.length > 0)
+        .map((word) => word.charAt(0))
+        .map((char) => char.toUpperCase())
+        .join("");
+};
+
 export const registerUserService = async (data: RegisterUserType) => {
     const isUserExists = await findUserByEmail(data.email);
 
@@ -24,11 +43,14 @@ export const registerUserService = async (data: RegisterUserType) => {
         throw new ApiError(StatusCodes.CONFLICT, "User already exists");
     }
 
+    const initial = generateInitials(data.name);
+
     const hashedPassword = await hashData(data.password);
 
     const user = await prisma.user.create({
         data: {
             ...data,
+            initials: initial,
             password: hashedPassword,
         },
         select: {
@@ -37,6 +59,8 @@ export const registerUserService = async (data: RegisterUserType) => {
             name: true,
             updatedAt: true,
             id: true,
+            initials: true,
+            image: true,
         },
     });
 
@@ -49,7 +73,10 @@ export const registerUserService = async (data: RegisterUserType) => {
 
     return {
         user,
-        token: accessToken,
+        token: {
+            accessToken,
+            refreshToken,
+        },
     };
 };
 
@@ -77,7 +104,10 @@ export const userLoginService = async (email: string, password: string) => {
 
     return {
         user: userWithoutPassword,
-        token: accessToken,
+        token: {
+            accessToken,
+            refreshToken,
+        },
     };
 };
 
@@ -115,7 +145,7 @@ export const userLogoutService = async (refreshToken: string) => {
     const decoded = verifyToken(refreshToken, "refresh_token");
 
     if (!decoded || !decoded.id) {
-        return;
+        throw new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized");
     }
 
     const key = generateRefreshTokenKey(decoded.id);

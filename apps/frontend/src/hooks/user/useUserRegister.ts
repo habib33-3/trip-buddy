@@ -38,7 +38,7 @@ const useUserRegister = () => {
       setUser(data.data as User);
       toast.success(data.message);
       form.reset();
-      void navigate("/");
+      void navigate("/trips");
     },
     onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
       toast.error(error.response?.data.message || "Something went wrong");

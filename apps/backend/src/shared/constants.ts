@@ -13,3 +13,5 @@ export const ENV_ENUM = ["development", "test", "production"] as const;
 export const tokenTypes = ["access_token", "refresh_token"] as const;
 
 export type TokenTypes = (typeof tokenTypes)[number];
+
+export const DEFAULT_REDIS_EXPIRATION = "3600";
