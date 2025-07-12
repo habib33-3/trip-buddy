@@ -34,7 +34,7 @@ const CreateTripForm = ({ closeModal }: Props) => {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <Label>Email</Label>
+              <Label>Trip Title</Label>
               <FormControl>
                 <Input
                   type="text"
@@ -51,7 +51,7 @@ const CreateTripForm = ({ closeModal }: Props) => {
           name="description"
           render={({ field }) => (
             <FormItem>
-              <Label>Email</Label>
+              <Label>Trip Title</Label>
               <FormControl>
                 <Textarea
                   placeholder="Trip Title"

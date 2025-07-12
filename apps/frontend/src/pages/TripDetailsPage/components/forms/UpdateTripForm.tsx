@@ -38,6 +38,7 @@ const UpdateTripForm = ({ closeModal }: Props) => {
       <form
         action=""
         onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-col gap-4 p-3"
       >
         <FormField
           control={form.control}
@@ -48,7 +49,6 @@ const UpdateTripForm = ({ closeModal }: Props) => {
               <FormControl>
                 <Input
                   type="text"
-                  defaultValue={trip?.title}
                   placeholder={trip?.title}
                   {...field}
                 />

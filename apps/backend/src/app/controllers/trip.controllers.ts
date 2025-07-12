@@ -67,7 +67,7 @@ export const updateTripHandler = asyncHandler(
         sendResponse(req, res, {
             statusCode: StatusCodes.OK,
             success: true,
-            message: "Trip fetched successfully",
+            message: "Trip updated successfully",
             data: result,
         });
     }
