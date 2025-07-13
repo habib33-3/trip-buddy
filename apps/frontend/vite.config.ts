@@ -22,12 +22,12 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "src"),
       "@/api": path.resolve(__dirname, "src/api"),
       "@/assets": path.resolve(__dirname, "src/assets"),
       "@/buttons": path.resolve(__dirname, "src/components/buttons"),
       "@/components": path.resolve(__dirname, "src/components"),
       "@/config": path.resolve(__dirname, "src/config"),
+      "@/constants": path.resolve(__dirname, "src/constants"),
       "@/form": path.resolve(__dirname, "src/components/form"),
       "@/hooks": path.resolve(__dirname, "src/hooks"),
       "@/layouts": path.resolve(__dirname, "src/layouts"),
@@ -37,7 +37,7 @@ export default defineConfig({
       "@/router": path.resolve(__dirname, "src/router"),
       "@/services": path.resolve(__dirname, "src/services"),
       "@/shared": path.resolve(__dirname, "src/components/shared"),
-      "@/store": path.resolve(__dirname, "src/store"),
+      "@/stores": path.resolve(__dirname, "src/stores"),
       "@/types": path.resolve(__dirname, "src/types"),
       "@/ui": path.resolve(__dirname, "src/components/ui"),
       "@/utils": path.resolve(__dirname, "src/utils"),

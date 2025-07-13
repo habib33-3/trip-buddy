@@ -2,33 +2,45 @@ import { createBrowserRouter } from "react-router";
 
 import TripDashboardLayout from "@/layouts/TripDashboardLayout";
 
+import ErrorPage from "@/pages/ErrorPage/ErrorPage";
 import LoginPage from "@/pages/LoginPage/LoginPage";
+import NotFoundPage from "@/pages/NotFoundPage/NotFoundPage";
 import RegisterPage from "@/pages/RegisterPage/RegisterPage";
 import TripsDetailsPage from "@/pages/TripDetailsPage/TripsDetailsPage";
 import TripsPage from "@/pages/TripsPage/TripsPage";
 
 const router = createBrowserRouter([
   {
-    element: <RegisterPage />,
-    path: "/register",
-  },
-  {
-    element: <LoginPage />,
-    path: "/login",
-  },
-  {
     children: [
       {
-        element: <TripsPage />,
-        path: "",
+        element: <RegisterPage />,
+        path: "register",
       },
       {
-        element: <TripsDetailsPage />,
-        path: ":tripId",
+        element: <LoginPage />,
+        path: "login",
+      },
+      {
+        children: [
+          {
+            element: <TripsPage />,
+            path: "",
+          },
+          {
+            element: <TripsDetailsPage />,
+            path: ":tripId",
+          },
+        ],
+        element: <TripDashboardLayout />,
+        path: "trips",
+      },
+      {
+        element: <NotFoundPage />,
+        path: "*",
       },
     ],
-    element: <TripDashboardLayout />,
-    path: "/trips",
+    errorElement: <ErrorPage />,
+    path: "/",
   },
 ]);
 

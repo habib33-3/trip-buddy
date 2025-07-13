@@ -1,18 +1,17 @@
 import useGetSingleTrip from "@/hooks/trip/useGetSingleTrip";
 
+import Loader from "@/shared/Loader";
+
+import ErrorPage from "../ErrorPage/ErrorPage";
 import DeleteTripModal from "./components/DeleteTripModal";
 import UpdateTripModal from "./components/UpdateTripModal";
 
 const TripsDetailsPage = () => {
   const { status, trip } = useGetSingleTrip();
 
-  if (status === "pending")
-    return <p className="mt-10 text-center text-gray-500">Loading...</p>;
+  if (status === "pending") return <Loader />;
 
-  if (status === "error")
-    return (
-      <p className="mt-10 text-center text-red-500">Something went wrong.</p>
-    );
+  if (status === "error") return <ErrorPage />;
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-10">
