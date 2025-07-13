@@ -277,22 +277,6 @@ const perfectionistRules = {
     perfectionist,
   },
   rules: {
-    "perfectionist/sort-imports": [
-      "warn",
-      {
-        groups: [
-          "builtin",
-          "external",
-          "internal",
-          "parent",
-          "sibling",
-          "index",
-          "unknown",
-        ],
-        order: "asc",
-        type: "natural",
-      },
-    ],
     "perfectionist/sort-objects": ["warn", { order: "asc", type: "natural" }],
   },
 };
