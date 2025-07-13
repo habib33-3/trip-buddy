@@ -2,9 +2,9 @@ import { useMutation } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { toast } from "sonner";
 
-import { useUserStore } from "@/stores/userStore";
+import { useUserStore } from "@/stores/useAuthStore";
 
-import { userLogoutApi } from "@/api/userApi";
+import { userLogoutApi } from "@/api/authApi";
 
 import type { ApiResponse } from "@/types/response";
 

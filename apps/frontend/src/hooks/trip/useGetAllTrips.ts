@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { useUserStore } from "@/stores/userStore";
+import { useUserStore } from "@/stores/useAuthStore";
 
 import { getAllTripsApi } from "@/api/tripApi";
 

@@ -3,13 +3,13 @@ import { persist } from "zustand/middleware";
 
 import type { User } from "../types";
 
-type UseUserStore = {
+type UseAuthStore = {
   user: User | null;
   setUser: (user: User) => void;
   clearUser: () => void;
 };
 
-export const useUserStore = create<UseUserStore>()(
+export const useAuthStore = create<UseAuthStore>()(
   persist(
     (set) => {
       return {

@@ -11,11 +11,9 @@ import { generateRefreshTokenKey } from "@/utils/redis";
 
 import ApiError from "@/shared/ApiError";
 
-import type { RegisterUserType } from "@/validations/user.validations";
+import type { RegisterUserType } from "@/validations/auth.validations";
 
-export const findUserByEmail = async (email: string) => {
-    return prisma.user.findUnique({ where: { email } });
-};
+import { findUserByEmail } from "./user.service";
 
 export const generateInitials = (name: string) => {
     if (!name || typeof name !== "string") {

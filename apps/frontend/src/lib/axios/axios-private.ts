@@ -3,9 +3,9 @@ import createAuthRefreshInterceptor from "axios-auth-refresh";
 
 import { env } from "@/config/env.config";
 
-import { useUserStore } from "@/stores/userStore";
+import { useUserStore } from "@/stores/useAuthStore";
 
-import { userLogoutApi, userRefreshTokenApi } from "@/api/userApi";
+import { userLogoutApi, userRefreshTokenApi } from "@/api/authApi";
 
 export const axiosPrivate = axios.create({
   baseURL: `${env.VITE_BACKEND_API_URL}/api/v1`,

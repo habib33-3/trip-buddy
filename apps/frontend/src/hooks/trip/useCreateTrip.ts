@@ -4,7 +4,7 @@ import type { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { useUserStore } from "@/stores/userStore";
+import { useUserStore } from "@/stores/useAuthStore";
 
 import { createTripApi } from "@/api/tripApi";
 

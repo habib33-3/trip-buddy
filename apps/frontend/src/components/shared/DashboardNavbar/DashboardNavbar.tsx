@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 
-import { useUserStore } from "@/stores/userStore";
+import { useUserStore } from "@/stores/useAuthStore";
 
 import { navLinks } from "@/constants/index";
 

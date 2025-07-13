@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from "react-router";
 
-import { useUserStore } from "@/stores/userStore";
+import { useUserStore } from "@/stores/useAuthStore";
 
 import DashboardNavbar from "@/shared/DashboardNavbar/DashboardNavbar";
 

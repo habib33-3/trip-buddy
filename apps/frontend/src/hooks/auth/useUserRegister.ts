@@ -6,55 +6,57 @@ import type { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { useUserStore } from "@/stores/userStore";
+import { useUserStore } from "@/stores/useAuthStore";
 
-import { userLoginApi } from "@/api/userApi";
+import { userRegisterApi } from "@/api/authApi";
 
 import type { User } from "@/types/index";
 import type { ApiResponse } from "@/types/response";
 
-import type { UserLoginSchemaType } from "@/validations/userValidation";
-import { userLoginSchema } from "@/validations/userValidation";
+import {
+  type RegisterUserSchemaType,
+  registerUserSchema,
+} from "@/validations/authValidation";
 
-const useUserLogin = () => {
+const useUserRegister = () => {
   const navigate = useNavigate();
-
   const { setUser } = useUserStore();
 
-  const form = useForm<UserLoginSchemaType>({
+  const form = useForm<RegisterUserSchemaType>({
     defaultValues: {
+      confirmPassword: "",
       email: "",
+      name: "",
       password: "",
     },
-
-    resolver: zodResolver(userLoginSchema),
+    resolver: zodResolver(registerUserSchema),
   });
 
   const mutate = useMutation({
-    mutationFn: async (data: UserLoginSchemaType) => userLoginApi(data),
+    mutationFn: async (data: RegisterUserSchemaType) => userRegisterApi(data),
     onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
-      toast.error(error.response?.data.message);
+      toast.error(error.response?.data.message || "Something went wrong");
     },
     onSuccess: async (data) => {
       setUser(data.data as User);
 
       form.reset();
-
       await navigate("/trips");
 
       toast.success(data.message);
     },
   });
 
-  const handleLoginUser = (data: UserLoginSchemaType) => {
+  const handleRegisterUser = (data: RegisterUserSchemaType) => {
     mutate.mutate(data);
   };
 
   return {
     form,
-    handleLoginUser,
+
+    handleRegisterUser,
     isLoading: mutate.isPending || form.formState.isSubmitting,
   };
 };
 
-export default useUserLogin;
+export default useUserRegister;

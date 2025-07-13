@@ -1,6 +1,6 @@
 import PasswordField from "@/components/form-fields/PasswordField";
 
-import useUserRegister from "@/hooks/user/useUserRegister";
+import useUserRegister from "@/hooks/auth/useUserRegister";
 
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/ui/form";
 import { Input } from "@/ui/input";

@@ -1,10 +1,10 @@
-import { useUserStore } from "@/stores/userStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 import CreateTripModal from "./components/CreateTripModal";
 import RecentTrip from "./components/RecentTrip";
 
 const TripsPage = () => {
-  const { user } = useUserStore();
+  const { user } = useAuthStore();
 
   return (
     <section className="mx-auto mt-10 min-h-screen max-w-7xl rounded-2xl bg-gray-100 p-4 sm:p-6">
