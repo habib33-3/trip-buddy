@@ -1,11 +1,11 @@
 import { Navigate, Outlet } from "react-router";
 
-import { useUserStore } from "@/stores/useAuthStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 import DashboardNavbar from "@/shared/DashboardNavbar/DashboardNavbar";
 
 const TripDashboardLayout = () => {
-  const { user } = useUserStore();
+  const { user } = useAuthStore();
 
   if (!user) {
     return <Navigate to="/login" />;

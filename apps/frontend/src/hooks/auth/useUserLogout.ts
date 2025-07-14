@@ -2,14 +2,14 @@ import { useMutation } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { toast } from "sonner";
 
-import { useUserStore } from "@/stores/useAuthStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 import { userLogoutApi } from "@/api/authApi";
 
 import type { ApiResponse } from "@/types/response";
 
 const useUserLogout = () => {
-  const { clearUser } = useUserStore();
+  const { clearUser } = useAuthStore();
 
   const mutate = useMutation({
     mutationFn: async () => userLogoutApi(),

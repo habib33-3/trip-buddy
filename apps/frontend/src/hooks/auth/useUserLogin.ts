@@ -6,7 +6,7 @@ import type { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { useUserStore } from "@/stores/useAuthStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 import { userLoginApi } from "@/api/authApi";
 
@@ -19,7 +19,7 @@ import { userLoginSchema } from "@/validations/authValidation";
 const useUserLogin = () => {
   const navigate = useNavigate();
 
-  const { setUser } = useUserStore();
+  const { setUser } = useAuthStore();
 
   const form = useForm<UserLoginSchemaType>({
     defaultValues: {

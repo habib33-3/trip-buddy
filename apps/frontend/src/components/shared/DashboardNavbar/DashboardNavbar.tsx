@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 
-import { useUserStore } from "@/stores/useAuthStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 import { navLinks } from "@/constants/index";
 
@@ -10,7 +10,7 @@ import AvatarDropdown from "./AvatarDropdown";
 import MenuButton from "./MenuButton";
 
 const DashboardNavbar = () => {
-  const { user } = useUserStore();
+  const { user } = useAuthStore();
 
   return (
     <header

@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { useUserStore } from "@/stores/useAuthStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 import { getAllTripsApi } from "@/api/tripApi";
 
 const useGetAllTrips = () => {
-  const { user } = useUserStore();
+  const { user } = useAuthStore();
 
   const { data, isError, isLoading } = useQuery({
     enabled: Boolean(user?.id),

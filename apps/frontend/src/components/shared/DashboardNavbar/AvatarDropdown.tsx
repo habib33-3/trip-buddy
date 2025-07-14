@@ -2,7 +2,7 @@ import { Link } from "react-router";
 
 import useUserLogout from "@/hooks/auth/useUserLogout";
 
-import { useUserStore } from "@/stores/useAuthStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/ui/avatar";
 import {
@@ -15,7 +15,7 @@ import {
 } from "@/ui/dropdown-menu";
 
 const AvatarDropdown = () => {
-  const { user } = useUserStore();
+  const { user } = useAuthStore();
   const { handleLogout, isLoading } = useUserLogout();
 
   return (
