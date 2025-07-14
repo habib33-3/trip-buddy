@@ -12,7 +12,11 @@ export const setJsonToRedis = async <T>(key: string, value: T): Promise<void> =>
             .expire(key, env.REDIS_EXPIRATION)
             .exec();
     } catch (error) {
-        logger.error(`Redis setJsonToRedis error for key: ${key}, ${error}`);
+        logger.error(
+            `Redis setJsonToRedis error for key: ${key}, ${
+                error instanceof Error ? error.message : String(error)
+            }`
+        );
     }
 };
 
@@ -22,7 +26,11 @@ export const getJsonFromRedis = async <T>(key: string): Promise<T | null> => {
         if (!value) return null;
         return JSON.parse(value) as T;
     } catch (error) {
-        logger.error(`Redis getJsonFromRedis parse error for key: ${key}, ${error}`);
+        logger.error(
+            `Redis getJsonFromRedis parse error for key: ${key}, ${
+                error instanceof Error ? error.message : String(error)
+            }`
+        );
         return null;
     }
 };
@@ -31,17 +39,25 @@ export const refreshRedisTTL = async (key: string): Promise<void> => {
     try {
         await redis.expire(key, env.REDIS_EXPIRATION);
     } catch (error) {
-        logger.error(`Redis refreshRedisTTL error for key: ${key}, ${error}`);
+        logger.error(
+            `Redis refreshRedisTTL error for key: ${key}, ${
+                error instanceof Error ? error.message : String(error)
+            }`
+        );
     }
 };
 
 export const updateRedisListCache = async <T>(key: string, newItem: T): Promise<void> => {
     try {
-        const cachedData = await getJsonFromRedis<T[]>(key);
+        const cachedData = await getJsonFromRedis<Array<T>>(key);
         const updatedList = Array.isArray(cachedData) ? [newItem, ...cachedData] : [newItem];
-        await setJsonToRedis<T[]>(key, updatedList);
+        await setJsonToRedis<Array<T>>(key, updatedList);
     } catch (error) {
-        logger.error(`Redis updateRedisListCache error for key: ${key}, ${error}`);
+        logger.error(
+            `Redis updateRedisListCache error for key: ${key}, ${
+                error instanceof Error ? error.message : String(error)
+            }`
+        );
     }
 };
 
@@ -51,7 +67,7 @@ export const updateSingleItemInRedisList = async <T extends { id: string }>(
     updatedItem: T
 ): Promise<void> => {
     try {
-        const cachedList = await getJsonFromRedis<T[]>(key);
+        const cachedList = await getJsonFromRedis<Array<T>>(key);
         if (!Array.isArray(cachedList)) {
             logger.debug(`No list to update in Redis for key: ${key}`);
             return;
@@ -59,7 +75,11 @@ export const updateSingleItemInRedisList = async <T extends { id: string }>(
         const updatedList = cachedList.map((item) => (item.id === itemId ? updatedItem : item));
         await setJsonToRedis(key, updatedList);
     } catch (error) {
-        logger.error(`Redis updateSingleItemInRedisList error for key: ${key}, ${error}`);
+        logger.error(
+            `Redis updateSingleItemInRedisList error for key: ${key}, ${
+                error instanceof Error ? error.message : String(error)
+            }`
+        );
     }
 };
 
@@ -68,7 +88,7 @@ export const removeFromRedisListCache = async <T extends { id: string }>(
     itemId: string
 ): Promise<void> => {
     try {
-        const cachedList = await getJsonFromRedis<T[]>(key);
+        const cachedList = await getJsonFromRedis<Array<T>>(key);
         if (!Array.isArray(cachedList)) {
             logger.debug(`No list to remove from in Redis for key: ${key}`);
             return;
@@ -76,7 +96,11 @@ export const removeFromRedisListCache = async <T extends { id: string }>(
         const filteredList = cachedList.filter((item) => item.id !== itemId);
         await setJsonToRedis(key, filteredList);
     } catch (error) {
-        logger.error(`Redis removeFromRedisListCache error for key: ${key}, ${error}`);
+        logger.error(
+            `Redis removeFromRedisListCache error for key: ${key}, ${
+                error instanceof Error ? error.message : String(error)
+            }`
+        );
     }
 };
 
@@ -85,14 +109,19 @@ export const findByIdFromRedisList = async <T extends { id: string }>(
     id: string
 ): Promise<T | null> => {
     try {
-        const cachedList = await getJsonFromRedis<T[]>(key);
+        const cachedList = await getJsonFromRedis<Array<T>>(key);
         if (!Array.isArray(cachedList)) return null;
         return cachedList.find((item) => item.id === id) ?? null;
     } catch (error) {
-        logger.error(`Redis findByIdFromRedisList error for key: ${key}, ${error}`);
+        logger.error(
+            `Redis findByIdFromRedisList error for key: ${key}, ${
+                error instanceof Error ? error.message : String(error)
+            }`
+        );
         return null;
     }
 };
 
+// Key Generators
 export const generateRefreshTokenKey = (userId: string): string => `refreshToken:${userId}`;
 export const generateTripCacheKey = (userId: string): string => `trip:${userId}`;

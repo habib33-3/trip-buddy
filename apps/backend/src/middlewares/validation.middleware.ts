@@ -16,9 +16,9 @@ const validationMiddleware =
 
             Object.assign(req, validatedData);
 
-            return next();
+            next();
         } catch (error) {
-            return next(error);
+            next(error);
         }
     };
 

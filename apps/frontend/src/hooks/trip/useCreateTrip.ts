@@ -35,7 +35,7 @@ const useCreateTrip = () => {
   const mutation = useMutation({
     mutationFn: createTripApi,
     onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
-      toast.error(error.response?.data.message || "Failed to create trip");
+      toast.error(error.response?.data.message ?? "Failed to create trip");
     },
     onSuccess: (data) => {
       form.reset();

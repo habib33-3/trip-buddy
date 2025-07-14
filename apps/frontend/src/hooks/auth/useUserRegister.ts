@@ -35,7 +35,7 @@ const useUserRegister = () => {
   const mutate = useMutation({
     mutationFn: async (data: RegisterUserSchemaType) => userRegisterApi(data),
     onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
-      toast.error(error.response?.data.message || "Something went wrong");
+      toast.error(error.response?.data.message ?? "Something went wrong");
     },
     onSuccess: async (data) => {
       setUser(data.data as User);

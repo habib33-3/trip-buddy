@@ -48,7 +48,7 @@ const globalErrorMiddleware = (err: unknown, req: Request, res: Response, _next:
     sendResponse(req, res, response);
 
     // Log the error for debugging
-    logger.error(response.message || "Something went wrong");
+    logger.error(response.message ?? "Something went wrong");
 };
 
 export default globalErrorMiddleware;

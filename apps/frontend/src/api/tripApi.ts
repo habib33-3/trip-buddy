@@ -16,7 +16,7 @@ export const createTripApi = async (payload: CreateTripSchemaType) => {
 };
 
 export const getAllTripsApi = async () => {
-  const res = await axiosPrivate.get<ApiResponse<Trip[]>>("/trip");
+  const res = await axiosPrivate.get<ApiResponse<Array<Trip>>>("/trip");
 
   return res.data;
 };

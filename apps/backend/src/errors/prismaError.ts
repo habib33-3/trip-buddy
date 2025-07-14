@@ -8,9 +8,12 @@ import type { ApiResponse } from "@/types";
 
 export const formatPrismaMeta = (meta: unknown): string => {
     if (!meta || typeof meta !== "object") return "";
-    return Object.entries(meta)
-        .map(([key, value]) => `${key}: ${value}`)
-        .join(", ");
+    return (
+        Object.entries(meta)
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(", ")
+    );
 };
 
 export const handlePrismaValidationError = (

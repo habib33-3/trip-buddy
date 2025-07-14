@@ -6,11 +6,11 @@ import { cn } from "@/lib/utils";
 
 import { Button } from "@/ui/button";
 
-type Props = {
+type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   title?: string;
   loading: boolean;
   loadingText?: string;
-} & ButtonHTMLAttributes<HTMLButtonElement>;
+};
 
 const SubmitButton = ({
   className,

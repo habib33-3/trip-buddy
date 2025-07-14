@@ -36,7 +36,7 @@ const CalendarChevron = ({
   ...props
 }: {
   className?: string;
-  orientation?: "left" | "right" | "down" | "up";
+  orientation?: "down" | "left" | "right" | "up";
 }) => {
   if (orientation === "left") {
     return (
@@ -77,7 +77,7 @@ const CalendarWeekNumber = ({
   );
 };
 
-function Calendar({
+const Calendar = ({
   buttonVariant = "ghost",
   captionLayout = "label",
   className,
@@ -88,7 +88,7 @@ function Calendar({
   ...props
 }: React.ComponentProps<typeof DayPicker> & {
   buttonVariant?: React.ComponentProps<typeof Button>["variant"];
-}) {
+}) => {
   const defaultClassNames = getDefaultClassNames();
 
   return (
@@ -197,14 +197,14 @@ function Calendar({
       {...props}
     />
   );
-}
+};
 
-function CalendarDayButton({
+const CalendarDayButton = ({
   className,
   day,
   modifiers,
   ...props
-}: React.ComponentProps<typeof DayButton>) {
+}: React.ComponentProps<typeof DayButton>) => {
   const defaultClassNames = getDefaultClassNames();
 
   const ref = React.useRef<HTMLButtonElement>(null);
@@ -234,6 +234,6 @@ function CalendarDayButton({
       {...props}
     />
   );
-}
+};
 
 export { Calendar, CalendarDayButton };

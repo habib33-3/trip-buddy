@@ -17,7 +17,7 @@ import {
 
 export const createTripHandler = asyncHandler(
     async (req: Request<{}, {}, CreateTripSchemaType>, res) => {
-        const userId = req?.user?.id as string;
+        const userId = req.user?.id as string;
 
         const result = await createTripService(req.body, userId);
 
@@ -31,7 +31,7 @@ export const createTripHandler = asyncHandler(
 );
 
 export const getAllTripsHandler = asyncHandler(async (req, res) => {
-    const userId = req?.user?.id as string;
+    const userId = req.user?.id as string;
 
     const result = await getAllTripsService(userId);
 
@@ -45,7 +45,7 @@ export const getAllTripsHandler = asyncHandler(async (req, res) => {
 
 export const getSingleTripHandler = asyncHandler(async (req: Request<{ id: string }>, res) => {
     const tripId = req.params.id;
-    const userId = req?.user?.id as string;
+    const userId = req.user?.id as string;
 
     const result = await getSingleTripService(tripId, userId);
 
@@ -60,7 +60,7 @@ export const getSingleTripHandler = asyncHandler(async (req: Request<{ id: strin
 export const updateTripHandler = asyncHandler(
     async (req: Request<{ id: string }, {}, UpdateTripSchemaType>, res) => {
         const tripId = req.params.id;
-        const userId = req?.user?.id as string;
+        const userId = req.user?.id as string;
 
         const result = await updateTripService(tripId, req.body, userId);
 
@@ -75,7 +75,7 @@ export const updateTripHandler = asyncHandler(
 
 export const deleteTripHandler = asyncHandler(async (req: Request<{ id: string }>, res) => {
     const tripId = req.params.id;
-    const userId = req?.user?.id as string;
+    const userId = req.user?.id as string;
 
     await deleteTripService(tripId, userId);
 

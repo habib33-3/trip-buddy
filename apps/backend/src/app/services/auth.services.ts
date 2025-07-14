@@ -112,10 +112,6 @@ export const userLoginService = async (email: string, password: string) => {
 export const refreshTokenService = async (refreshToken: string) => {
     const decoded = verifyToken(refreshToken, "refresh_token");
 
-    if (!decoded) {
-        throw new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized");
-    }
-
     const userExists = await findUserByEmail(decoded.email);
 
     if (!userExists) {
@@ -141,10 +137,6 @@ export const refreshTokenService = async (refreshToken: string) => {
 
 export const userLogoutService = async (refreshToken: string) => {
     const decoded = verifyToken(refreshToken, "refresh_token");
-
-    if (!decoded || !decoded.id) {
-        throw new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized");
-    }
 
     const key = generateRefreshTokenKey(decoded.id);
     await redis.del(key);

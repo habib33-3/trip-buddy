@@ -4,8 +4,8 @@ import chalk from "chalk";
 import { StatusCodes } from "http-status-codes";
 import morgan from "morgan";
 
-type LogLevel = "info" | "warn" | "error" | "debug";
-type HTTPMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS";
+type LogLevel = "debug" | "error" | "info" | "warn";
+type HTTPMethod = "DELETE" | "GET" | "HEAD" | "OPTIONS" | "PATCH" | "POST" | "PUT";
 
 type LoggerOptions = {
     logLevel?: LogLevel;
@@ -70,7 +70,7 @@ export function createLogger(options: LoggerOptions = {}) {
                     return -1;
             }
         };
-        return getLevelValue(level) <= getLevelValue(config.logLevel!);
+        return getLevelValue(level) <= getLevelValue(config.logLevel as LogLevel);
     };
 
     const log = (level: LogLevel, message: string) => {

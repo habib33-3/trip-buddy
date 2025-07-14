@@ -23,10 +23,10 @@ const useUpdateTrip = () => {
 
   const defaultValues = useMemo(
     () => ({
-      description: trip?.description || "",
+      description: trip?.description ?? "",
       endDate: trip?.endDate ? new Date(trip.endDate) : new Date(),
       startDate: trip?.startDate ? new Date(trip.startDate) : new Date(),
-      title: trip?.title || "",
+      title: trip?.title ?? "",
     }),
     [trip]
   );
@@ -42,7 +42,7 @@ const useUpdateTrip = () => {
     mutationFn: async (data: UpdateTripSchemaType) =>
       updateTripApi(tripId as string, data),
     onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
-      toast.error(error.response?.data.message || "Something went wrong");
+      toast.error(error.response?.data.message ?? "Something went wrong");
     },
     onSuccess: async (data) => {
       await query.invalidateQueries({

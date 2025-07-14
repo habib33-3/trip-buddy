@@ -52,7 +52,7 @@ export const createTripService = async (payload: CreateTripSchemaType, userId: s
 export const getAllTripsService = async (userId: string) => {
     const key = generateTripCacheKey(userId);
 
-    const cachedTrips = await getJsonFromRedis<Trip[]>(key);
+    const cachedTrips = await getJsonFromRedis<Array<Trip>>(key);
 
     if (cachedTrips?.length) {
         logger.info(`Cache hit: ${key}`);
@@ -63,7 +63,7 @@ export const getAllTripsService = async (userId: string) => {
     logger.info(`Cache miss: ${key}`);
     const trips = await prisma.trip.findMany({ where: { userId } });
 
-    if (trips.length) {
+    if (trips.length > 0) {
         await setJsonToRedis(key, trips);
     }
 

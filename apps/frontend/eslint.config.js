@@ -56,14 +56,25 @@ const commonTypeScriptRules = {
     "@typescript-eslint": typescriptPlugin,
   },
   rules: {
+    "@typescript-eslint/array-type": ["warn", { default: "generic" }],
+
     "@typescript-eslint/await-thenable": "error",
     "@typescript-eslint/ban-ts-comment": [
       "error",
       { "ts-expect-error": "allow-with-description" },
     ],
+    "@typescript-eslint/consistent-indexed-object-style": ["warn", "record"],
     "@typescript-eslint/consistent-type-definitions": ["warn", "type"],
     "@typescript-eslint/consistent-type-imports": "warn",
     "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/naming-convention": [
+      "warn",
+      {
+        format: ["camelCase", "PascalCase", "UPPER_CASE"],
+        leadingUnderscore: "allow",
+        selector: "variableLike",
+      },
+    ],
     "@typescript-eslint/no-confusing-void-expression": [
       "warn",
       { ignoreArrowShorthand: true },
@@ -85,11 +96,11 @@ const commonTypeScriptRules = {
       "error",
       { checksVoidReturn: false },
     ],
-    // === Added null/undefined safety rules ===
     "@typescript-eslint/no-non-null-assertion": "error",
     "@typescript-eslint/no-require-imports": "error",
     "@typescript-eslint/no-unnecessary-condition": "warn",
     "@typescript-eslint/no-unnecessary-type-arguments": "warn",
+    "@typescript-eslint/no-unnecessary-type-assertion": "warn",
     "@typescript-eslint/no-unsafe-argument": "warn",
     "@typescript-eslint/no-unsafe-assignment": "warn",
     "@typescript-eslint/no-unsafe-call": "warn",
@@ -107,10 +118,18 @@ const commonTypeScriptRules = {
     ],
     "@typescript-eslint/no-var-requires": "error",
     "@typescript-eslint/prefer-enum-initializers": "warn",
+
+    "@typescript-eslint/prefer-for-of": "warn",
+    "@typescript-eslint/prefer-function-type": "warn",
+
+    "@typescript-eslint/prefer-includes": "warn",
+    "@typescript-eslint/prefer-nullish-coalescing": "warn",
+    "@typescript-eslint/prefer-optional-chain": "warn",
+
     "@typescript-eslint/prefer-readonly": "warn",
+    "@typescript-eslint/prefer-string-starts-ends-with": "warn",
     "@typescript-eslint/prefer-ts-expect-error": "warn",
     "@typescript-eslint/promise-function-async": "error",
-
     "@typescript-eslint/restrict-template-expressions": [
       "warn",
       {
@@ -119,8 +138,19 @@ const commonTypeScriptRules = {
         allowNumber: true,
       },
     ],
+    "@typescript-eslint/sort-type-constituents": "warn",
     "@typescript-eslint/strict-boolean-expressions": "off",
     "@typescript-eslint/switch-exhaustiveness-check": "error",
+    "@typescript-eslint/typedef": [
+      "warn",
+      {
+        arrowParameter: false,
+        memberVariableDeclaration: true,
+        propertyDeclaration: true,
+        variableDeclaration: false,
+      },
+    ],
+    "@typescript-eslint/unified-signatures": "warn",
   },
 };
 
@@ -165,6 +195,13 @@ const reactConfigs = {
     "jsx-a11y/no-noninteractive-element-interactions": "warn",
     "jsx-a11y/no-static-element-interactions": "warn",
     "react/destructuring-assignment": ["error", "always"],
+    "react/function-component-definition": [
+      "warn",
+      {
+        namedComponents: "arrow-function",
+        unnamedComponents: "arrow-function",
+      },
+    ],
     "react/jsx-boolean-value": "warn",
     "react/jsx-curly-brace-presence": [
       "warn",
@@ -232,6 +269,7 @@ const unicornRules = {
     unicorn,
   },
   rules: {
+    "unicorn/error-message": "warn",
     "unicorn/explicit-length-check": "warn",
     "unicorn/filename-case": [
       "error",
@@ -243,16 +281,25 @@ const unicornRules = {
         ignore: ["^[A-Za-z0-9]+\\.[A-Za-z0-9]+$"],
       },
     ],
+    "unicorn/no-abusive-eslint-disable": "error",
     "unicorn/no-array-reduce": "off",
     "unicorn/no-empty-file": "warn",
+    "unicorn/no-invalid-remove-event-listener": "warn",
     "unicorn/no-null": "off",
+    "unicorn/no-useless-length-check": "warn",
     "unicorn/no-useless-undefined": "warn",
+    "unicorn/prefer-array-find": "warn",
+    "unicorn/prefer-array-flat": "warn",
+    "unicorn/prefer-array-flat-map": "warn",
+    "unicorn/prefer-array-index-of": "warn",
+    "unicorn/prefer-date-now": "warn",
     "unicorn/prefer-default-parameters": "warn",
     "unicorn/prefer-logical-operator-over-ternary": "warn",
     "unicorn/prefer-module": "error",
     "unicorn/prefer-node-protocol": "off",
     "unicorn/prefer-optional-catch-binding": "error",
     "unicorn/prefer-spread": "error",
+    "unicorn/prefer-ternary": "warn",
     "unicorn/prevent-abbreviations": "off",
   },
 };
