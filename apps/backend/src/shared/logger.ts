@@ -4,8 +4,8 @@ import chalk from "chalk";
 import { StatusCodes } from "http-status-codes";
 import morgan from "morgan";
 
-type LogLevel = "info" | "warn" | "error" | "debug";
-type HTTPMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS";
+type LogLevel = "debug" | "error" | "info" | "warn";
+type HTTPMethod = "DELETE" | "GET" | "HEAD" | "OPTIONS" | "PATCH" | "POST" | "PUT";
 
 type LoggerOptions = {
     logLevel?: LogLevel;
@@ -14,9 +14,9 @@ type LoggerOptions = {
 };
 
 const defaultOptions: LoggerOptions = {
+    colorize: true,
     logLevel: "info",
     showTimestamp: true,
-    colorize: true,
 };
 
 const getTimestamp = () => new Date().toISOString();
@@ -70,7 +70,7 @@ export function createLogger(options: LoggerOptions = {}) {
                     return -1;
             }
         };
-        return getLevelValue(level) <= getLevelValue(config.logLevel!);
+        return getLevelValue(level) <= getLevelValue(config.logLevel as LogLevel);
     };
 
     const log = (level: LogLevel, message: string) => {
@@ -91,6 +91,10 @@ export function createLogger(options: LoggerOptions = {}) {
             case "debug":
                 logMessage += chalk.blue.bold("[DEBUG] ") + message;
                 break;
+            case "info":
+                logMessage += chalk.green.bold("[INFO] ") + message;
+                break;
+
             default:
                 logMessage += chalk.green.bold("[INFO] ") + message;
         }
@@ -142,11 +146,11 @@ export function createLogger(options: LoggerOptions = {}) {
     ];
 
     return {
-        middleware, // Use this in your app
-        info: (message: string) => log("info", message),
-        warn: (message: string) => log("warn", message),
-        error: (message: string) => log("error", message),
         debug: (message: string) => log("debug", message),
+        error: (message: string) => log("error", message),
+        info: (message: string) => log("info", message),
+        middleware, // Use this in your app
+        warn: (message: string) => log("warn", message),
     };
 }
 

@@ -8,9 +8,12 @@ import type { ApiResponse } from "@/types";
 
 export const formatPrismaMeta = (meta: unknown): string => {
     if (!meta || typeof meta !== "object") return "";
-    return Object.entries(meta)
-        .map(([key, value]) => `${key}: ${value}`)
-        .join(", ");
+    return (
+        Object.entries(meta)
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(", ")
+    );
 };
 
 export const handlePrismaValidationError = (
@@ -30,13 +33,12 @@ export const handlePrismaKnownRequestError = (
 
     switch (err.code) {
         case "P2002":
-            myResponseObj.message =
-                "Unique constraint failed on the field(s): " + formatPrismaMeta(err.meta ?? {});
+            myResponseObj.message = `Unique constraint failed on the field(s): ${formatPrismaMeta(err.meta ?? {})}`;
             break;
         case "P2003":
-            myResponseObj.message =
-                "Foreign key constraint failed on the field(s): " +
-                formatPrismaMeta(err.meta ?? {});
+            myResponseObj.message = `Foreign key constraint failed on the field(s): ${formatPrismaMeta(
+                err.meta ?? {}
+            )}`;
             break;
         case "P2025":
             myResponseObj.message = "An operation failed because a required record was not found.";

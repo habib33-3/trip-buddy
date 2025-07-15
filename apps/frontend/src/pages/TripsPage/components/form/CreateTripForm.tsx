@@ -15,7 +15,7 @@ type Props = {
 };
 
 const CreateTripForm = ({ closeModal }: Props) => {
-  const { form, isLoading, handleCreateTrip } = useCreateTrip();
+  const { form, handleCreateTrip, isLoading } = useCreateTrip();
 
   const onSubmit = (data: CreateTripSchemaType) => {
     handleCreateTrip(data);
@@ -34,12 +34,8 @@ const CreateTripForm = ({ closeModal }: Props) => {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <Label>Description</Label>
+              <Label>Trip Title</Label>
               <FormControl>
-                <Textarea
-                  placeholder="Trip Description"
-                  {...field}
-                />
                 <Input
                   type="text"
                   placeholder="Trip Title"

@@ -34,10 +34,10 @@ const getTripById = async (key: string, tripId: string, userId: string): Promise
 export const createTripService = async (payload: CreateTripSchemaType, userId: string) => {
     const trip = await prisma.trip.create({
         data: {
-            title: payload.title,
             description: payload.description,
-            startDate: payload.startDate,
             endDate: payload.endDate,
+            startDate: payload.startDate,
+            title: payload.title,
             userId,
         },
     });
@@ -52,7 +52,7 @@ export const createTripService = async (payload: CreateTripSchemaType, userId: s
 export const getAllTripsService = async (userId: string) => {
     const key = generateTripCacheKey(userId);
 
-    const cachedTrips = await getJsonFromRedis<Trip[]>(key);
+    const cachedTrips = await getJsonFromRedis<Array<Trip>>(key);
 
     if (cachedTrips?.length) {
         logger.info(`Cache hit: ${key}`);
@@ -63,7 +63,7 @@ export const getAllTripsService = async (userId: string) => {
     logger.info(`Cache miss: ${key}`);
     const trips = await prisma.trip.findMany({ where: { userId } });
 
-    if (trips.length) {
+    if (trips.length > 0) {
         await setJsonToRedis(key, trips);
     }
 
@@ -89,8 +89,8 @@ export const updateTripService = async (
     }
 
     const updatedTrip = await prisma.trip.update({
-        where: { id: tripId, userId },
         data: { ...payload },
+        where: { id: tripId, userId },
     });
 
     await updateSingleItemInRedisList<Trip>(key, tripId, updatedTrip);

@@ -17,71 +17,71 @@ import {
 
 export const createTripHandler = asyncHandler(
     async (req: Request<{}, {}, CreateTripSchemaType>, res) => {
-        const userId = req?.user?.id as string;
+        const userId = req.user?.id as string;
 
         const result = await createTripService(req.body, userId);
 
         sendResponse(req, res, {
+            data: result,
+            message: "Trip created successfully",
             statusCode: StatusCodes.CREATED,
             success: true,
-            message: "Trip created successfully",
-            data: result,
         });
     }
 );
 
 export const getAllTripsHandler = asyncHandler(async (req, res) => {
-    const userId = req?.user?.id as string;
+    const userId = req.user?.id as string;
 
     const result = await getAllTripsService(userId);
 
     sendResponse(req, res, {
+        data: result,
+        message: "Trips fetched successfully",
         statusCode: StatusCodes.OK,
         success: true,
-        message: "Trips fetched successfully",
-        data: result,
     });
 });
 
 export const getSingleTripHandler = asyncHandler(async (req: Request<{ id: string }>, res) => {
     const tripId = req.params.id;
-    const userId = req?.user?.id as string;
+    const userId = req.user?.id as string;
 
     const result = await getSingleTripService(tripId, userId);
 
     sendResponse(req, res, {
+        data: result,
+        message: "Trip fetched successfully",
         statusCode: StatusCodes.OK,
         success: true,
-        message: "Trip fetched successfully",
-        data: result,
     });
 });
 
 export const updateTripHandler = asyncHandler(
     async (req: Request<{ id: string }, {}, UpdateTripSchemaType>, res) => {
         const tripId = req.params.id;
-        const userId = req?.user?.id as string;
+        const userId = req.user?.id as string;
 
         const result = await updateTripService(tripId, req.body, userId);
 
         sendResponse(req, res, {
+            data: result,
+            message: "Trip updated successfully",
             statusCode: StatusCodes.OK,
             success: true,
-            message: "Trip updated successfully",
-            data: result,
         });
     }
 );
 
 export const deleteTripHandler = asyncHandler(async (req: Request<{ id: string }>, res) => {
     const tripId = req.params.id;
-    const userId = req?.user?.id as string;
+    const userId = req.user?.id as string;
 
     await deleteTripService(tripId, userId);
 
     sendResponse(req, res, {
+        message: "Trip deleted successfully",
         statusCode: StatusCodes.OK,
         success: true,
-        message: "Trip deleted successfully",
     });
 });

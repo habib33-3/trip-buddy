@@ -21,8 +21,8 @@ type PasswordFieldProps<T extends FieldValues> = {
 
 const PasswordField = <T extends FieldValues>({
   form,
-  name,
   label,
+  name,
   placeholder,
 }: PasswordFieldProps<T>) => {
   const [showPassword, setShowPassword] = useState(false);

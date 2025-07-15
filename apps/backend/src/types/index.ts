@@ -14,7 +14,7 @@ export type ApiResponse<T> = {
     data?: T | null;
 };
 
-export type TokenPayload = {
+export type TokenPayload = JwtPayload & {
     id: string;
     email: string;
-} & JwtPayload;
+};

@@ -1,23 +1,23 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { useUserStore } from "@/stores/userStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 import { getAllTripsApi } from "@/api/tripApi";
 
 const useGetAllTrips = () => {
-  const { user } = useUserStore();
+  const { user } = useAuthStore();
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["trips", user?.id],
-    queryFn: getAllTripsApi,
+  const { data, isError, isLoading } = useQuery({
     enabled: Boolean(user?.id),
+    queryFn: getAllTripsApi,
+    queryKey: ["trips", user?.id],
     refetchOnWindowFocus: false,
   });
 
   return {
-    trips: data?.data,
-    isLoading,
     isError,
+    isLoading,
+    trips: data?.data,
   };
 };
 

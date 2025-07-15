@@ -24,8 +24,8 @@ app.use(cookieParser());
 // CORS, Helmet, and Rate Limiter
 app.use(
     cors({
-        origin: ["http://localhost:5173"],
         credentials: true,
+        origin: ["http://localhost:5173"],
     })
 );
 app.use(helmet());

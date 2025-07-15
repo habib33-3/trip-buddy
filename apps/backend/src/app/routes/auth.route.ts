@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { loginUserSchema, registerUserSchema } from "@/validations/user.validations";
+import { loginUserSchema, registerUserSchema } from "@/validations/auth.validations";
 
 import validationMiddleware from "@/middlewares/validation.middleware";
 import verifyAuth from "@/middlewares/verifyAuth";
@@ -10,7 +10,7 @@ import {
     userLoginHandler,
     userLogoutHandler,
     userRefreshTokenHandler,
-} from "@/controllers/user.controllers";
+} from "@/controllers/auth.controllers";
 
 const router = Router();
 
@@ -22,4 +22,4 @@ router.post("/logout", verifyAuth, userLogoutHandler);
 
 router.post("/refresh-token", verifyAuth, userRefreshTokenHandler);
 
-export const userRouter = router;
+export const authRouter = router;

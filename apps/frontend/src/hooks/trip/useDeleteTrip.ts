@@ -14,13 +14,14 @@ const useDeleteTrip = () => {
   const navigate = useNavigate();
 
   const mutate = useMutation({
-    mutationFn: () => deleteTripApi(tripId as string),
-    onSuccess: (data) => {
-      void navigate("/trips");
-      toast.success(data.message);
-    },
+    mutationFn: async () => deleteTripApi(tripId as string),
     onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
-      toast.error(error.response?.data.message || "Something went wrong");
+      toast.error(error.response?.data.message ?? "Something went wrong");
+    },
+    onSuccess: async (data) => {
+      await navigate("/trips");
+
+      toast.success(data.message);
     },
   });
 

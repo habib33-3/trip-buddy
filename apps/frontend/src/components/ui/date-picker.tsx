@@ -23,12 +23,12 @@ type DatePickerFieldProps<T extends FieldValues> = {
   disabledDate?: (date: Date) => boolean;
 };
 
-export function DatePickerField<T extends FieldValues>({
-  field,
-  label,
+export const DatePickerField = <T extends FieldValues>({
   description,
   disabledDate,
-}: DatePickerFieldProps<T>) {
+  field,
+  label,
+}: DatePickerFieldProps<T>) => {
   return (
     <FormItem className="flex flex-col">
       <FormLabel>{label}</FormLabel>
@@ -68,4 +68,4 @@ export function DatePickerField<T extends FieldValues>({
       <FormMessage />
     </FormItem>
   );
-}
+};

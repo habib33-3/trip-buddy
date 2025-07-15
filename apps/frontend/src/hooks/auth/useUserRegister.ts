@@ -6,9 +6,9 @@ import type { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { useUserStore } from "@/stores/userStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
-import { userRegisterApi } from "@/api/userApi";
+import { userRegisterApi } from "@/api/authApi";
 
 import type { User } from "@/types/index";
 import type { ApiResponse } from "@/types/response";
@@ -16,32 +16,34 @@ import type { ApiResponse } from "@/types/response";
 import {
   type RegisterUserSchemaType,
   registerUserSchema,
-} from "@/validations/userValidation";
+} from "@/validations/authValidation";
 
 const useUserRegister = () => {
   const navigate = useNavigate();
-  const { setUser } = useUserStore();
+  const { setUser } = useAuthStore();
 
   const form = useForm<RegisterUserSchemaType>({
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
       confirmPassword: "",
+      email: "",
+      name: "",
+      password: "",
     },
     resolver: zodResolver(registerUserSchema),
   });
 
   const mutate = useMutation({
-    mutationFn: (data: RegisterUserSchemaType) => userRegisterApi(data),
-    onSuccess: (data) => {
-      setUser(data.data as User);
-      toast.success(data.message);
-      form.reset();
-      void navigate("/trips");
-    },
+    mutationFn: async (data: RegisterUserSchemaType) => userRegisterApi(data),
     onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
-      toast.error(error.response?.data.message || "Something went wrong");
+      toast.error(error.response?.data.message ?? "Something went wrong");
+    },
+    onSuccess: async (data) => {
+      setUser(data.data as User);
+
+      form.reset();
+      await navigate("/trips");
+
+      toast.success(data.message);
     },
   });
 

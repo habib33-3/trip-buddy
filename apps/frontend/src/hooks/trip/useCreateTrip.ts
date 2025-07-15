@@ -4,7 +4,7 @@ import type { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { useUserStore } from "@/stores/userStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 import { createTripApi } from "@/api/tripApi";
 
@@ -14,7 +14,7 @@ import type { CreateTripSchemaType } from "@/validations/tripValidation";
 import { createTripSchema } from "@/validations/tripValidation";
 
 const useCreateTrip = () => {
-  const { user } = useUserStore();
+  const { user } = useAuthStore();
   const query = useQueryClient();
 
   const tomorrow = new Date();
@@ -24,27 +24,31 @@ const useCreateTrip = () => {
 
   const form = useForm<CreateTripSchemaType>({
     defaultValues: {
-      title: "",
       description: "",
-      startDate: tomorrow,
       endDate: nextWeek,
+      startDate: tomorrow,
+      title: "",
     },
     resolver: zodResolver(createTripSchema),
   });
 
   const mutation = useMutation({
     mutationFn: createTripApi,
+    onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
+      toast.error(error.response?.data.message ?? "Failed to create trip");
+    },
     onSuccess: (data) => {
       form.reset();
+
       if (user?.id) {
-        void query.invalidateQueries({
-          queryKey: ["trips", user.id],
-        });
+        query
+          .invalidateQueries({
+            queryKey: ["trips", user.id],
+          })
+          .catch(console.error);
       }
+
       toast.success(data.message);
-    },
-    onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
-      toast.error(error.response?.data.message || "Failed to create trip");
     },
   });
 

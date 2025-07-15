@@ -6,20 +6,20 @@ import type { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { useUserStore } from "@/stores/userStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
-import { userLoginApi } from "@/api/userApi";
+import { userLoginApi } from "@/api/authApi";
 
 import type { User } from "@/types/index";
 import type { ApiResponse } from "@/types/response";
 
-import type { UserLoginSchemaType } from "@/validations/userValidation";
-import { userLoginSchema } from "@/validations/userValidation";
+import type { UserLoginSchemaType } from "@/validations/authValidation";
+import { userLoginSchema } from "@/validations/authValidation";
 
 const useUserLogin = () => {
   const navigate = useNavigate();
 
-  const { setUser } = useUserStore();
+  const { setUser } = useAuthStore();
 
   const form = useForm<UserLoginSchemaType>({
     defaultValues: {
@@ -31,16 +31,18 @@ const useUserLogin = () => {
   });
 
   const mutate = useMutation({
-    mutationFn: (data: UserLoginSchemaType) => userLoginApi(data),
-    onSuccess: (data) => {
-      setUser(data.data as User);
-
-      toast.success(data.message);
-      form.reset();
-      void navigate("/trips");
-    },
+    mutationFn: async (data: UserLoginSchemaType) => userLoginApi(data),
     onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
       toast.error(error.response?.data.message);
+    },
+    onSuccess: async (data) => {
+      setUser(data.data as User);
+
+      form.reset();
+
+      await navigate("/trips");
+
+      toast.success(data.message);
     },
   });
 
@@ -50,8 +52,8 @@ const useUserLogin = () => {
 
   return {
     form,
-    isLoading: mutate.isPending || form.formState.isSubmitting,
     handleLoginUser,
+    isLoading: mutate.isPending || form.formState.isSubmitting,
   };
 };
 

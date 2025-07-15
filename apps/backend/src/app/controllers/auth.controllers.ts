@@ -9,14 +9,14 @@ import asyncHandler from "@/shared/asyncHandler";
 import { ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME } from "@/shared/constants";
 import sendResponse from "@/shared/sendResponse";
 
-import type { LoginUserType, RegisterUserType } from "@/validations/user.validations";
+import type { LoginUserType, RegisterUserType } from "@/validations/auth.validations";
 
 import {
     refreshTokenService,
     registerUserService,
     userLoginService,
     userLogoutService,
-} from "@/services/user.services";
+} from "@/services/auth.services";
 
 export const registerUserHandler = asyncHandler(
     async (req: Request<{}, {}, RegisterUserType>, res) => {
@@ -28,10 +28,10 @@ export const registerUserHandler = asyncHandler(
         setCookie(res, REFRESH_TOKEN_COOKIE_NAME, result.token.refreshToken);
 
         sendResponse(req, res, {
+            data: result.user,
+            message: "User created successfully",
             statusCode: StatusCodes.CREATED,
             success: true,
-            message: "User created successfully",
-            data: result.user,
         });
     }
 );
@@ -45,15 +45,15 @@ export const userLoginHandler = asyncHandler(async (req: Request<{}, {}, LoginUs
     setCookie(res, REFRESH_TOKEN_COOKIE_NAME, result.token.refreshToken);
 
     sendResponse(req, res, {
+        data: result.user,
+        message: "User login successfully",
         statusCode: StatusCodes.OK,
         success: true,
-        message: "User login successfully",
-        data: result.user,
     });
 });
 
 export const userRefreshTokenHandler = asyncHandler(async (req, res) => {
-    // eslint-disable-next-line security/detect-object-injection
+    // eslint-disable-next-line security/detect-object-injection, @typescript-eslint/no-unsafe-member-access
     const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME] as string;
 
     if (!refreshToken) {
@@ -65,14 +65,14 @@ export const userRefreshTokenHandler = asyncHandler(async (req, res) => {
     setCookie(res, ACCESS_TOKEN_COOKIE_NAME, result.accessToken);
 
     sendResponse(req, res, {
+        message: "User refresh token successfully",
         statusCode: StatusCodes.OK,
         success: true,
-        message: "User refresh token successfully",
     });
 });
 
 export const userLogoutHandler = asyncHandler(async (req, res) => {
-    // eslint-disable-next-line security/detect-object-injection
+    // eslint-disable-next-line security/detect-object-injection, @typescript-eslint/no-unsafe-member-access
     const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME] as string;
 
     if (!refreshToken) {
@@ -85,8 +85,8 @@ export const userLogoutHandler = asyncHandler(async (req, res) => {
     deleteCookie(res, REFRESH_TOKEN_COOKIE_NAME);
 
     sendResponse(req, res, {
+        message: "User logout successfully",
         statusCode: StatusCodes.OK,
         success: true,
-        message: "User logout successfully",
     });
 });

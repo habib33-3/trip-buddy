@@ -3,9 +3,9 @@ import createAuthRefreshInterceptor from "axios-auth-refresh";
 
 import { env } from "@/config/env.config";
 
-import { useUserStore } from "@/stores/userStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
-import { userLogoutApi, userRefreshTokenApi } from "@/api/userApi";
+import { userLogoutApi, userRefreshTokenApi } from "@/api/authApi";
 
 export const axiosPrivate = axios.create({
   baseURL: `${env.VITE_BACKEND_API_URL}/api/v1`,
@@ -17,7 +17,7 @@ let isRedirecting = false;
 const safeRedirectToLogin = () => {
   if (!isRedirecting) {
     isRedirecting = true;
-    useUserStore.getState().clearUser();
+    useAuthStore.getState().clearUser();
     window.location.href = "/login";
   }
 };

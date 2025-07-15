@@ -8,13 +8,13 @@ const useGetSingleTrip = () => {
   const { tripId } = useParams();
 
   const { data, status } = useQuery({
+    queryFn: async () => getSingleTripsApi(tripId as string),
     queryKey: ["trip", tripId],
-    queryFn: () => getSingleTripsApi(tripId as string),
   });
 
   return {
-    trip: data?.data,
     status,
+    trip: data?.data,
   };
 };
 

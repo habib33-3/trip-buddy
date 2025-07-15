@@ -17,8 +17,6 @@ import { handleZodError } from "@/errors/zodError";
 import type { ApiResponse } from "@/types";
 
 const handleException = (err: unknown, myResponseObj: ApiResponse<null>) => {
-    console.log(err);
-
     if (err instanceof PrismaClientValidationError) {
         handlePrismaValidationError(err, myResponseObj);
     } else if (err instanceof PrismaClientKnownRequestError) {
@@ -37,10 +35,10 @@ const handleException = (err: unknown, myResponseObj: ApiResponse<null>) => {
 
 const globalErrorMiddleware = (err: unknown, req: Request, res: Response, _next: NextFunction) => {
     const response: ApiResponse<null> = {
-        success: false,
-        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: "Internal Server Error",
         data: null,
+        message: "Internal Server Error",
+        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+        success: false,
     };
 
     // Handle specific errors
@@ -50,7 +48,7 @@ const globalErrorMiddleware = (err: unknown, req: Request, res: Response, _next:
     sendResponse(req, res, response);
 
     // Log the error for debugging
-    logger.error(response.message || "Something went wrong");
+    logger.error(response.message ?? "Something went wrong");
 };
 
 export default globalErrorMiddleware;

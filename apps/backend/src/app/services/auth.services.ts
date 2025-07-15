@@ -11,11 +11,9 @@ import { generateRefreshTokenKey } from "@/utils/redis";
 
 import ApiError from "@/shared/ApiError";
 
-import type { RegisterUserType } from "@/validations/user.validations";
+import type { RegisterUserType } from "@/validations/auth.validations";
 
-export const findUserByEmail = async (email: string) => {
-    return prisma.user.findUnique({ where: { email } });
-};
+import { findUserByEmail } from "./user.service";
 
 export const generateInitials = (name: string) => {
     if (!name || typeof name !== "string") {
@@ -56,27 +54,27 @@ export const registerUserService = async (data: RegisterUserType) => {
         select: {
             createdAt: true,
             email: true,
+            id: true,
+            image: true,
+            initials: true,
             name: true,
             updatedAt: true,
-            id: true,
-            initials: true,
-            image: true,
         },
     });
 
     const { accessToken, refreshToken } = generateAuthTokens({
-        id: user.id,
         email: user.email,
+        id: user.id,
     });
 
     await redis.setex(generateRefreshTokenKey(user.id), env.REFRESH_TOKEN_EXPIRATION, refreshToken);
 
     return {
-        user,
         token: {
             accessToken,
             refreshToken,
         },
+        user,
     };
 };
 
@@ -94,29 +92,25 @@ export const userLoginService = async (email: string, password: string) => {
     }
 
     const { accessToken, refreshToken } = generateAuthTokens({
-        id: user.id,
         email: user.email,
+        id: user.id,
     });
 
     const { password: _password, ...userWithoutPassword } = user;
 
-    await redis.set(generateRefreshTokenKey(user.id), refreshToken);
+    await redis.setex(generateRefreshTokenKey(user.id), env.REFRESH_TOKEN_EXPIRATION, refreshToken);
 
     return {
-        user: userWithoutPassword,
         token: {
             accessToken,
             refreshToken,
         },
+        user: userWithoutPassword,
     };
 };
 
 export const refreshTokenService = async (refreshToken: string) => {
     const decoded = verifyToken(refreshToken, "refresh_token");
-
-    if (!decoded) {
-        throw new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized");
-    }
 
     const userExists = await findUserByEmail(decoded.email);
 
@@ -132,8 +126,8 @@ export const refreshTokenService = async (refreshToken: string) => {
     }
 
     const { accessToken } = generateAuthTokens({
-        id: decoded.id,
         email: decoded.email,
+        id: decoded.id,
     });
 
     return {
@@ -143,10 +137,6 @@ export const refreshTokenService = async (refreshToken: string) => {
 
 export const userLogoutService = async (refreshToken: string) => {
     const decoded = verifyToken(refreshToken, "refresh_token");
-
-    if (!decoded || !decoded.id) {
-        throw new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized");
-    }
 
     const key = generateRefreshTokenKey(decoded.id);
     await redis.del(key);

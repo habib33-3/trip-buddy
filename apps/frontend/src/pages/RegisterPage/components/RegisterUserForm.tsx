@@ -1,6 +1,6 @@
 import PasswordField from "@/components/form-fields/PasswordField";
 
-import useUserRegister from "@/hooks/user/useUserRegister";
+import useUserRegister from "@/hooks/auth/useUserRegister";
 
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/ui/form";
 import { Input } from "@/ui/input";
@@ -9,7 +9,7 @@ import { Label } from "@/ui/label";
 import SubmitButton from "@/buttons/SubmitButtons";
 
 const RegisterUserForm = () => {
-  const { form, isLoading, handleRegisterUser } = useUserRegister();
+  const { form, handleRegisterUser, isLoading } = useUserRegister();
 
   return (
     <div className="w-full max-w-md space-y-6 rounded-2xl bg-white p-8 shadow-lg">
