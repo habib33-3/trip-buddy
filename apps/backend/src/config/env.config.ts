@@ -31,8 +31,10 @@ const envSchema = z.object({
         .string()
         .trim()
         .min(1, { message: "ACCESS_TOKEN_SECRET cannot be empty" }),
-    DATABASE_URL: z.string().trim().url({ message: "DATABASE_URL must be a valid URL" }),
+    APP_EMAIL: z.string().default("yYJdH@example.com"),
+    APP_NAME: z.string().default("Express API Template"),
 
+    DATABASE_URL: z.string().trim().url({ message: "DATABASE_URL must be a valid URL" }),
     NODE_ENV: z.enum(ENV_ENUM).default("production"),
 
     // eslint-disable-next-line @typescript-eslint/no-magic-numbers

@@ -13,3 +13,11 @@ export type Trip = {
   startDate: Date;
   endDate: Date;
 };
+
+export type Location = {
+  id: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  tripId: string;
+};

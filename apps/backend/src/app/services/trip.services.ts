@@ -20,7 +20,11 @@ import type { CreateTripSchemaType, UpdateTripSchemaType } from "@/validations/t
 
 import type { Trip } from "@/generated/prisma";
 
-const getTripById = async (key: string, tripId: string, userId: string): Promise<Trip | null> => {
+export const getTripById = async (
+    key: string,
+    tripId: string,
+    userId: string
+): Promise<Trip | null> => {
     const trip = await findByIdFromRedisList<Trip>(key, tripId);
 
     if (!trip) {
@@ -52,7 +56,7 @@ export const createTripService = async (payload: CreateTripSchemaType, userId: s
 export const getAllTripsService = async (userId: string) => {
     const key = generateTripCacheKey(userId);
 
-    const cachedTrips = await getJsonFromRedis<Array<Trip>>(key);
+    const cachedTrips = await getJsonFromRedis<Trip[]>(key);
 
     if (cachedTrips?.length) {
         logger.info(`Cache hit: ${key}`);

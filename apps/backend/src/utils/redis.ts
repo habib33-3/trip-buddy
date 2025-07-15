@@ -49,9 +49,9 @@ export const refreshRedisTTL = async (key: string): Promise<void> => {
 
 export const updateRedisListCache = async <T>(key: string, newItem: T): Promise<void> => {
     try {
-        const cachedData = await getJsonFromRedis<Array<T>>(key);
+        const cachedData = await getJsonFromRedis<T[]>(key);
         const updatedList = Array.isArray(cachedData) ? [newItem, ...cachedData] : [newItem];
-        await setJsonToRedis<Array<T>>(key, updatedList);
+        await setJsonToRedis<T[]>(key, updatedList);
     } catch (error) {
         logger.error(
             `Redis updateRedisListCache error for key: ${key}, ${
@@ -67,7 +67,7 @@ export const updateSingleItemInRedisList = async <T extends { id: string }>(
     updatedItem: T
 ): Promise<void> => {
     try {
-        const cachedList = await getJsonFromRedis<Array<T>>(key);
+        const cachedList = await getJsonFromRedis<T[]>(key);
         if (!Array.isArray(cachedList)) {
             logger.debug(`No list to update in Redis for key: ${key}`);
             return;
@@ -88,7 +88,7 @@ export const removeFromRedisListCache = async <T extends { id: string }>(
     itemId: string
 ): Promise<void> => {
     try {
-        const cachedList = await getJsonFromRedis<Array<T>>(key);
+        const cachedList = await getJsonFromRedis<T[]>(key);
         if (!Array.isArray(cachedList)) {
             logger.debug(`No list to remove from in Redis for key: ${key}`);
             return;
@@ -109,7 +109,7 @@ export const findByIdFromRedisList = async <T extends { id: string }>(
     id: string
 ): Promise<T | null> => {
     try {
-        const cachedList = await getJsonFromRedis<Array<T>>(key);
+        const cachedList = await getJsonFromRedis<T[]>(key);
         if (!Array.isArray(cachedList)) return null;
         return cachedList.find((item) => item.id === id) ?? null;
     } catch (error) {

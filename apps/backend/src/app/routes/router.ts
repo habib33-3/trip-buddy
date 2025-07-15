@@ -1,11 +1,12 @@
 import { Router } from "express";
 
 import { authRouter } from "./auth.route";
+import { locationsRouter } from "./locations.routes";
 import { tripRouter } from "./trip.route";
 
 const router = Router();
 
-const routes = [
+const routes: { path: string; router: Router }[] = [
     {
         path: "/auth",
         router: authRouter,
@@ -13,6 +14,10 @@ const routes = [
     {
         path: "/trip",
         router: tripRouter,
+    },
+    {
+        path: "/location",
+        router: locationsRouter,
     },
 ];
 
