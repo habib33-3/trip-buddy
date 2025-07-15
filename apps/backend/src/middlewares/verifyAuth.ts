@@ -6,6 +6,7 @@ import { verifyToken } from "@/utils/jwt";
 
 import ApiError from "@/shared/ApiError";
 import { ACCESS_TOKEN_COOKIE_NAME } from "@/shared/constants";
+import { logger } from "@/shared/logger";
 
 const verifyAuth = (req: Request, _res: Response, next: NextFunction): void => {
     // eslint-disable-next-line security/detect-object-injection
@@ -20,7 +21,8 @@ const verifyAuth = (req: Request, _res: Response, next: NextFunction): void => {
 
         req.user = decoded;
         next();
-    } catch {
+    } catch (err) {
+        logger.warn(`[Auth] Token verification failed: ${(err as Error).message}`);
         throw new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized token");
     }
 };

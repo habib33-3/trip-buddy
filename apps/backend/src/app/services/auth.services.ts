@@ -98,7 +98,7 @@ export const userLoginService = async (email: string, password: string) => {
 
     const { password: _password, ...userWithoutPassword } = user;
 
-    await redis.set(generateRefreshTokenKey(user.id), refreshToken);
+    await redis.setex(generateRefreshTokenKey(user.id), env.REFRESH_TOKEN_EXPIRATION, refreshToken);
 
     return {
         token: {
