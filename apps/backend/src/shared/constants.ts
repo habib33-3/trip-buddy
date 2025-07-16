@@ -15,3 +15,5 @@ export const tokenTypes = ["access_token", "refresh_token"] as const;
 export type TokenTypes = (typeof tokenTypes)[number];
 
 export const DEFAULT_REDIS_EXPIRATION = "3600";
+
+export const CACHE_TTL_SECONDS = 60 * 60 * 24;

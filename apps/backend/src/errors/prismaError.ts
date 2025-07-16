@@ -21,7 +21,17 @@ export const handlePrismaValidationError = (
     myResponseObj: ApiResponse<null>
 ) => {
     myResponseObj.statusCode = StatusCodes.UNPROCESSABLE_ENTITY;
-    myResponseObj.message = err.message.replaceAll("\n", " ");
+
+    const rawMessage = err.message.replaceAll("\n", " ").trim();
+
+    const missingFieldMatches = [...rawMessage.matchAll(/Missing a required value at `(\w+)`/g)];
+
+    if (missingFieldMatches.length > 0) {
+        const fields = missingFieldMatches.map((m) => m[1]).join(", ");
+        myResponseObj.message = `Missing required field(s): ${fields}`;
+    } else {
+        myResponseObj.message = rawMessage;
+    }
 };
 
 // Handle Prisma known request errors

@@ -28,6 +28,7 @@ export default {
         "^@/utils/(.*)$",
         "^@/types/(.*)$",
         "^@/shared/(.*)$",
+        "^@/errors/(.*)$",
 
         // Core application structure
         "^@/validations/(.*)$",
