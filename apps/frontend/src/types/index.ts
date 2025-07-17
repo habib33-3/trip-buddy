@@ -19,5 +19,9 @@ export type Location = {
   address: string;
   latitude: number;
   longitude: number;
+  country: string;
+  order: number;
+  formattedAddress: string;
   tripId: string;
+  trip: Trip;
 };

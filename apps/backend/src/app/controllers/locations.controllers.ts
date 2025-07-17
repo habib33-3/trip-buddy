@@ -7,7 +7,7 @@ import sendResponse from "@/shared/sendResponse";
 
 import type { AddLocationSchemaType } from "@/validations/locations.validations";
 
-import { addLocationService } from "@/services/locations.services";
+import { addLocationService, getLocationsService } from "@/services/locations.services";
 
 export const addLocationHandler = asyncHandler(
     async (req: Request<{}, {}, AddLocationSchemaType>, res) => {
@@ -23,3 +23,17 @@ export const addLocationHandler = asyncHandler(
         });
     }
 );
+
+export const getLocationsHandler = asyncHandler(async (req: Request<{ id: string }>, res) => {
+    const tripId = req.params.id;
+    const userId = req.user?.id as string;
+
+    const result = await getLocationsService(tripId, userId);
+
+    sendResponse(req, res, {
+        data: result,
+        message: "Locations fetched successfully",
+        statusCode: StatusCodes.OK,
+        success: true,
+    });
+});

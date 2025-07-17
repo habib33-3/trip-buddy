@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useParams } from "react-router";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -32,6 +32,8 @@ const useAddLocation = () => {
     throw new Error("tripId is required");
   }
 
+  const query = useQueryClient();
+
   const mutate = useMutation({
     mutationFn: async (data: AddLocationSchemaType) =>
       addLocationApi({
@@ -42,6 +44,9 @@ const useAddLocation = () => {
       toast.error(error.response?.data.message ?? "Something went wrong");
     },
     onSuccess: (data) => {
+      void query.invalidateQueries({
+        queryKey: ["locations", tripId],
+      });
       form.reset();
       setIsModalOpen(false);
       toast.success(data.message);

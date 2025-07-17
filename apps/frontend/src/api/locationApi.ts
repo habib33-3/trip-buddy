@@ -15,3 +15,11 @@ export const addLocationApi = async (data: {
 
   return res.data;
 };
+
+export const getLocationsApi = async (tripId: string) => {
+  const res = await axiosPrivate.get<ApiResponse<Location[]>>(
+    `/location/trip/${tripId}`
+  );
+
+  return res.data;
+};

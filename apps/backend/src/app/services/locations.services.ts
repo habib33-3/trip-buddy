@@ -6,6 +6,8 @@ import { getCoordinatesAndCountry } from "@/utils/map";
 import {
     generateLocationCacheKey,
     generateTripCacheKey,
+    getJsonFromRedis,
+    setJsonToRedis,
     updateRedisListCache,
 } from "@/utils/redis";
 
@@ -28,7 +30,7 @@ export const addLocationService = async (
         throw new ApiError(StatusCodes.NOT_FOUND, `Trip not found`);
     }
 
-    const { country, lat, lng } = await getCoordinatesAndCountry(payload.address);
+    const { country, formattedAddress, lat, lng } = await getCoordinatesAndCountry(payload.address);
 
     const location = await prisma.$transaction(async (tx) => {
         const maxOrderLocation = await tx.location.findFirst({
@@ -43,6 +45,7 @@ export const addLocationService = async (
             data: {
                 address: payload.address,
                 country,
+                formattedAddress,
                 latitude: lat,
                 longitude: lng,
                 order: newOrder,
@@ -56,4 +59,41 @@ export const addLocationService = async (
     await updateRedisListCache<Location>(key, location);
 
     return location;
+};
+
+export const getLocationsService = async (tripId: string, userId: string) => {
+    const key = generateLocationCacheKey(tripId);
+
+    const cachedLocations = await getJsonFromRedis<Location[]>(key);
+
+    if (cachedLocations) {
+        return cachedLocations;
+    }
+
+    const trip = await getTripById(key, tripId, userId);
+
+    if (!trip) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Trip not found");
+    }
+
+    const dbLocations = await prisma.location.findMany({
+        select: {
+            address: true,
+            formattedAddress: true,
+            id: true,
+            latitude: true,
+            longitude: true,
+            order: true,
+            trip: {
+                select: {
+                    title: true,
+                },
+            },
+        },
+        where: { tripId },
+    });
+
+    await setJsonToRedis(key, dbLocations);
+
+    return dbLocations;
 };
