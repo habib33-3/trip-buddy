@@ -36,11 +36,13 @@ const TripTabsContainer = () => {
       </TabsList>
       <TabsContent value="overview">Overview content goes here.</TabsContent>
       <TabsContent value="itinerary">Itinerary content goes here.</TabsContent>
-      <TabsContent value="maps">
-        <div className="h-[500px] w-full overflow-hidden rounded-lg">
-          <Map locations={locations} />
-        </div>
-      </TabsContent>
+      {activeTab === "maps" && (
+        <TabsContent value="maps">
+          <div className="h-[500px] w-full overflow-hidden rounded-lg">
+            <Map locations={locations} />
+          </div>
+        </TabsContent>
+      )}
     </Tabs>
   );
 };
