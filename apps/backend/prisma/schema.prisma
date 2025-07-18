@@ -41,7 +41,8 @@ model Trip {
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
-  Location Location[]
+  Location  Location[]
+  Itinerary Itinerary[]
 }
 
 model Location {
@@ -50,11 +51,28 @@ model Location {
   formattedAddress String?
   latitude         Float
   longitude        Float
-  order            Int?    @default(0)
   country          String
 
-  trip   Trip?  @relation(fields: [tripId], references: [id])
+  trip   Trip   @relation(fields: [tripId], references: [id])
   tripId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  itineraries Itinerary[]
+}
+
+model Itinerary {
+  id    String @id @default(uuid())
+  title String
+
+  order Int @default(0)
+
+  trip   Trip   @relation(fields: [tripId], references: [id])
+  tripId String
+
+  location   Location @relation(fields: [locationId], references: [id])
+  locationId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

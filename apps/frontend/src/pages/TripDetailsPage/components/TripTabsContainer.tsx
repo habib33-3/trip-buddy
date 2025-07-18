@@ -8,7 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 
 import ErrorPage from "@/pages/ErrorPage/ErrorPage";
 
-import Map from "./Map";
+import Map from "./tabs/Map";
+import Overview from "./tabs/Overview";
 
 type TripTab = "itinerary" | "maps" | "overview";
 
@@ -29,12 +30,22 @@ const TripTabsContainer = () => {
       onValueChange={(value) => setActiveTab(value as TripTab)}
       className="w-full"
     >
-      <TabsList>
-        <TabsTrigger value="overview">Overview</TabsTrigger>
-        <TabsTrigger value="itinerary">Itinerary</TabsTrigger>
-        <TabsTrigger value="maps">Maps</TabsTrigger>
-      </TabsList>
-      <TabsContent value="overview">Overview content goes here.</TabsContent>
+      <div className="flex items-center justify-center">
+        <TabsList>
+          <TabsTrigger
+            value="overview"
+            className=""
+          >
+            Overview
+          </TabsTrigger>
+          <TabsTrigger value="itinerary">Itinerary</TabsTrigger>
+          <TabsTrigger value="maps">Maps</TabsTrigger>
+        </TabsList>
+      </div>
+
+      <TabsContent value="overview">
+        <Overview />
+      </TabsContent>
       <TabsContent value="itinerary">Itinerary content goes here.</TabsContent>
       {activeTab === "maps" && (
         <TabsContent value="maps">

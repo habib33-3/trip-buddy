@@ -12,6 +12,7 @@ export type Trip = {
   description: string;
   startDate: Date;
   endDate: Date;
+  Location?: Location[];
 };
 
 export type Location = {

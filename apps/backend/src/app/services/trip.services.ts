@@ -29,7 +29,10 @@ export const getTripById = async (
 
     if (!trip) {
         logger.info(`Cache miss: ${key}`);
-        return prisma.trip.findUnique({ where: { id: tripId, userId } });
+        return prisma.trip.findUnique({
+            include: { Location: true },
+            where: { id: tripId, userId },
+        });
     }
 
     return trip;

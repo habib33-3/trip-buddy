@@ -33,14 +33,6 @@ export const addLocationService = async (
     const { country, formattedAddress, lat, lng } = await getCoordinatesAndCountry(payload.address);
 
     const location = await prisma.$transaction(async (tx) => {
-        const maxOrderLocation = await tx.location.findFirst({
-            orderBy: { order: "desc" },
-            select: { order: true },
-            where: { tripId: payload.tripId },
-        });
-
-        const newOrder = (maxOrderLocation?.order ?? 0) + 1;
-
         return tx.location.create({
             data: {
                 address: payload.address,
@@ -48,7 +40,6 @@ export const addLocationService = async (
                 formattedAddress,
                 latitude: lat,
                 longitude: lng,
-                order: newOrder,
                 tripId: payload.tripId,
             },
         });
@@ -83,7 +74,6 @@ export const getLocationsService = async (tripId: string, userId: string) => {
             id: true,
             latitude: true,
             longitude: true,
-            order: true,
             trip: {
                 select: {
                     title: true,
