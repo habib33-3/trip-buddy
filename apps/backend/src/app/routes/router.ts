@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import { authRouter } from "./auth.route";
-import { locationsRouter } from "./locations.routes";
+import { locationsRouter } from "./place.routes";
 import { tripRouter } from "./trip.route";
 
 const router = Router();

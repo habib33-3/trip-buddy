@@ -126,3 +126,4 @@ export const findByIdFromRedisList = async <T extends { id: string }>(
 export const generateRefreshTokenKey = (userId: string): string => `refreshToken:${userId}`;
 export const generateTripCacheKey = (userId: string): string => `trip:${userId}`;
 export const generateLocationCacheKey = (tripId: string): string => `location:${tripId}`;
+export const generatePlaceCacheKey = (): string => `place`;
