@@ -12,49 +12,50 @@ type Props = {
 };
 
 const Map = memo(({ locations }: Props) => {
-  if (locations.length === 0) {
-    return (
-      <div className="h-full min-h-[400px] w-full flex-1 border border-red-200">
-        <p className="text-center text-gray-500">No locations available</p>
-      </div>
-    );
-  }
+  const hasLocations = locations.length > 0;
 
-  const center =
-    locations.length > 0
-      ? [locations[0].latitude, locations[0].longitude]
-      : [0, 0];
+  const center = hasLocations
+    ? [locations[0].latitude, locations[0].longitude]
+    : [0, 0];
 
   return (
-    <div className="h-full min-h-[400px] w-full flex-1 border border-red-200">
-      <MapContainer
-        center={center as [number, number]}
-        zoom={6}
-        minZoom={2}
-        maxZoom={18}
-        scrollWheelZoom={false}
-        style={{ height: "100%", width: "100%" }}
-        preferCanvas
-        worldCopyJump
-        zoomControl
-        doubleClickZoom={false}
-        markerZoomAnimation={false}
-      >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        />
-        {locations.map((location) => (
-          <Marker
-            key={location.id}
-            position={
-              [location.latitude, location.longitude] as [number, number]
-            }
-          >
-            <Popup>{location.formattedAddress}</Popup>
-          </Marker>
-        ))}
-      </MapContainer>
+    <div className="h-full min-h-[400px] w-full flex-1 rounded-2xl border border-gray-200 bg-white shadow-sm">
+      {!hasLocations ? (
+        <div className="flex h-full items-center justify-center p-4">
+          <p className="text-center text-lg text-gray-500">
+            No locations available
+          </p>
+        </div>
+      ) : (
+        <MapContainer
+          center={center as [number, number]}
+          zoom={6}
+          minZoom={2}
+          maxZoom={18}
+          scrollWheelZoom={false}
+          style={{ height: "100%", width: "100%" }}
+          preferCanvas
+          worldCopyJump
+          zoomControl
+          doubleClickZoom={false}
+          markerZoomAnimation={false}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          />
+          {locations.map((location) => (
+            <Marker
+              key={location.id}
+              position={
+                [location.latitude, location.longitude] as [number, number]
+              }
+            >
+              <Popup>{location.formattedAddress}</Popup>
+            </Marker>
+          ))}
+        </MapContainer>
+      )}
     </div>
   );
 });

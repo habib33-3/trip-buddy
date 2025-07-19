@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 
 import ErrorPage from "@/pages/ErrorPage/ErrorPage";
 
+import ItineraryTab from "./tabs/ItineraryTab";
 import Map from "./tabs/Map";
 import Overview from "./tabs/Overview";
 
@@ -46,10 +47,12 @@ const TripTabsContainer = () => {
       <TabsContent value="overview">
         <Overview />
       </TabsContent>
-      <TabsContent value="itinerary">Itinerary content goes here.</TabsContent>
+      <TabsContent value="itinerary">
+        <ItineraryTab />
+      </TabsContent>
       {activeTab === "maps" && (
         <TabsContent value="maps">
-          <div className="h-[500px] w-full overflow-hidden rounded-lg">
+          <div className="h-[500px] w-full rounded-lg">
             <Map locations={locations} />
           </div>
         </TabsContent>

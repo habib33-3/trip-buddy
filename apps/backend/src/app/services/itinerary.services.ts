@@ -7,6 +7,7 @@ import {
     generateItineraryCacheKey,
     generateTripCacheKey,
     getJsonFromRedis,
+    invalidateRedisCache,
     updateRedisListCache,
 } from "@/utils/redis";
 
@@ -50,6 +51,7 @@ export const addItineraryService = async (payload: AddItinerarySchemaType, userI
         return tx.itinerary.create({
             data: {
                 country,
+                formattedAddress,
                 latitude: lat,
                 longitude: lng,
                 order,
@@ -62,6 +64,8 @@ export const addItineraryService = async (payload: AddItinerarySchemaType, userI
     const key = generateItineraryCacheKey(userId, payload.tripId);
 
     await updateRedisListCache(key, itinerary);
+
+    await invalidateRedisCache(tripKey);
 
     return itinerary;
 };

@@ -91,6 +91,25 @@ export const updateRedisListCache = async <T>(key: string, newItem: T): Promise<
 };
 
 /**
+ * Delete a Redis key to invalidate the cache.
+ *
+ * @param {string} key - The Redis key to delete.
+ * @returns {Promise<void>}
+ */
+export const invalidateRedisCache = async (key: string): Promise<void> => {
+    try {
+        await redis.del(key);
+        logger.info(`Redis cache invalidated for key: ${key}`);
+    } catch (error) {
+        logger.error(
+            `Redis invalidateRedisCache error for key: ${key}, ${
+                error instanceof Error ? error.message : String(error)
+            }`
+        );
+    }
+};
+
+/**
  * Update an item in a cached list in Redis by its ID.
  *
  * @template T - Type of the item (must include `id` field).

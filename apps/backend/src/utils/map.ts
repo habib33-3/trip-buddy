@@ -61,7 +61,10 @@ export const getCoordinatesAndCountry = async (address: string): Promise<Coordin
     }
 
     const userAgent = `${env.APP_NAME}/1.0 (${env.APP_EMAIL})`;
-    const headers = { "User-Agent": userAgent };
+    const headers = {
+        "Accept-Language": "en",
+        "User-Agent": userAgent,
+    };
 
     const searchUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
         address
@@ -87,12 +90,16 @@ export const getCoordinatesAndCountry = async (address: string): Promise<Coordin
         throw new ApiError(StatusCodes.NOT_FOUND, "Address not found");
     }
 
+    console.log(reverseData);
+
     const result: CoordinatesAndCountry = {
         country: reverseData.address?.country ?? "Unknown",
         formattedAddress: reverseData.display_name,
         lat: parseFloat(lat),
         lng: parseFloat(lon),
     };
+
+    console.log("Fetched coordinates and country:", result);
 
     await redis.set(cacheKey, JSON.stringify(result), "EX", CACHE_TTL_SECONDS);
 

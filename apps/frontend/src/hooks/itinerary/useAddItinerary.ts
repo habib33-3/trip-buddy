@@ -42,10 +42,11 @@ const useAddItinerary = () => {
       toast.error(error.response?.data.message ?? "Something went wrong");
     },
     onSuccess: (data) => {
-      void query.invalidateQueries({
-        queryKey: ["itineraries", tripId],
-      });
+      void query.invalidateQueries({ queryKey: ["itineraries", tripId] });
+      void query.invalidateQueries({ queryKey: ["trip", tripId] });
+
       form.reset();
+
       setIsModalOpen(false);
       toast.success(data.message);
     },
