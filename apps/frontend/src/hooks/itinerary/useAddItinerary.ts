@@ -8,24 +8,22 @@ import type { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { addLocationApi } from "@/api/locationApi";
+import { addItineraryApi } from "@/api/itineraryApi";
 
 import type { ApiResponse } from "@/types/response";
 
-import {
-  type AddLocationSchemaType,
-  addLocationSchema,
-} from "@/validations/locationsValidation";
+import type { AddItinerarySchemaType } from "@/validations/itineraryValidation";
+import { addItinerarySchema } from "@/validations/itineraryValidation";
 
-const useAddLocation = () => {
+const useAddItinerary = () => {
   const { tripId } = useParams<{ tripId: string }>();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const form = useForm<AddLocationSchemaType>({
+  const form = useForm<AddItinerarySchemaType>({
     defaultValues: {
       address: "",
     },
-    resolver: zodResolver(addLocationSchema),
+    resolver: zodResolver(addItinerarySchema),
   });
 
   if (!tripId) {
@@ -35,8 +33,8 @@ const useAddLocation = () => {
   const query = useQueryClient();
 
   const mutate = useMutation({
-    mutationFn: async (data: AddLocationSchemaType) =>
-      addLocationApi({
+    mutationFn: async (data: AddItinerarySchemaType) =>
+      addItineraryApi({
         address: data.address,
         tripId,
       }),
@@ -45,7 +43,7 @@ const useAddLocation = () => {
     },
     onSuccess: (data) => {
       void query.invalidateQueries({
-        queryKey: ["locations", tripId],
+        queryKey: ["itineraries", tripId],
       });
       form.reset();
       setIsModalOpen(false);
@@ -53,7 +51,7 @@ const useAddLocation = () => {
     },
   });
 
-  const handleAddLocation = (data: AddLocationSchemaType) => {
+  const handleAddLocation = (data: AddItinerarySchemaType) => {
     mutate.mutate(data);
   };
 
@@ -66,4 +64,4 @@ const useAddLocation = () => {
   };
 };
 
-export default useAddLocation;
+export default useAddItinerary;

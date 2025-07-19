@@ -2,9 +2,9 @@ import { useParams } from "react-router";
 
 import { useQuery } from "@tanstack/react-query";
 
-import { getLocationsApi } from "@/api/locationApi";
+import { getItinerariesApi } from "@/api/itineraryApi";
 
-const useGetLocations = () => {
+const useGetItineraries = () => {
   const { tripId } = useParams<{ tripId: string }>();
 
   if (!tripId) {
@@ -12,8 +12,8 @@ const useGetLocations = () => {
   }
 
   const { data, status } = useQuery({
-    queryFn: async () => getLocationsApi(tripId),
-    queryKey: ["locations", tripId],
+    queryFn: async () => getItinerariesApi(tripId),
+    queryKey: ["itineraries", tripId],
   });
 
   return {
@@ -22,4 +22,4 @@ const useGetLocations = () => {
   };
 };
 
-export default useGetLocations;
+export default useGetItineraries;

@@ -28,6 +28,7 @@ export type CoordinatesAndCountry = {
     lat: number;
     lng: number;
     country: string;
+
     formattedAddress: string;
 };
 

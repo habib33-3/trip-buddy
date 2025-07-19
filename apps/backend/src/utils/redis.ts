@@ -4,6 +4,14 @@ import { redis } from "@/lib/redis";
 
 import { logger } from "@/shared/logger";
 
+/**
+ * Set a JSON object to Redis with expiration.
+ *
+ * @template T - Type of the value to store.
+ * @param {string} key - The Redis key.
+ * @param {T} value - The value to store.
+ * @returns {Promise<void>}
+ */
 export const setJsonToRedis = async <T>(key: string, value: T): Promise<void> => {
     try {
         await redis
@@ -20,6 +28,13 @@ export const setJsonToRedis = async <T>(key: string, value: T): Promise<void> =>
     }
 };
 
+/**
+ * Get a JSON-parsed value from Redis.
+ *
+ * @template T - Expected return type.
+ * @param {string} key - The Redis key.
+ * @returns {Promise<T | null>} - Parsed value or null if not found.
+ */
 export const getJsonFromRedis = async <T>(key: string): Promise<T | null> => {
     try {
         const value = await redis.get(key);
@@ -35,6 +50,12 @@ export const getJsonFromRedis = async <T>(key: string): Promise<T | null> => {
     }
 };
 
+/**
+ * Refresh the expiration time of a Redis key.
+ *
+ * @param {string} key - The Redis key.
+ * @returns {Promise<void>}
+ */
 export const refreshRedisTTL = async (key: string): Promise<void> => {
     try {
         await redis.expire(key, env.REDIS_EXPIRATION);
@@ -47,6 +68,14 @@ export const refreshRedisTTL = async (key: string): Promise<void> => {
     }
 };
 
+/**
+ * Add a new item to the beginning of a cached list in Redis.
+ *
+ * @template T - Type of the item.
+ * @param {string} key - The Redis key.
+ * @param {T} newItem - The new item to add.
+ * @returns {Promise<void>}
+ */
 export const updateRedisListCache = async <T>(key: string, newItem: T): Promise<void> => {
     try {
         const cachedData = await getJsonFromRedis<T[]>(key);
@@ -61,6 +90,15 @@ export const updateRedisListCache = async <T>(key: string, newItem: T): Promise<
     }
 };
 
+/**
+ * Update an item in a cached list in Redis by its ID.
+ *
+ * @template T - Type of the item (must include `id` field).
+ * @param {string} key - The Redis key.
+ * @param {string} itemId - The ID of the item to update.
+ * @param {T} updatedItem - The updated item.
+ * @returns {Promise<void>}
+ */
 export const updateSingleItemInRedisList = async <T extends { id: string }>(
     key: string,
     itemId: string,
@@ -83,6 +121,14 @@ export const updateSingleItemInRedisList = async <T extends { id: string }>(
     }
 };
 
+/**
+ * Remove an item from a cached list in Redis by its ID.
+ *
+ * @template T - Type of the item (must include `id` field).
+ * @param {string} key - The Redis key.
+ * @param {string} itemId - The ID of the item to remove.
+ * @returns {Promise<void>}
+ */
 export const removeFromRedisListCache = async <T extends { id: string }>(
     key: string,
     itemId: string
@@ -104,6 +150,14 @@ export const removeFromRedisListCache = async <T extends { id: string }>(
     }
 };
 
+/**
+ * Find an item in a cached list in Redis by its ID.
+ *
+ * @template T - Type of the item (must include `id` field).
+ * @param {string} key - The Redis key.
+ * @param {string} id - The ID to search for.
+ * @returns {Promise<T | null>} - The found item or null.
+ */
 export const findByIdFromRedisList = async <T extends { id: string }>(
     key: string,
     id: string
@@ -125,5 +179,5 @@ export const findByIdFromRedisList = async <T extends { id: string }>(
 // Key Generators
 export const generateRefreshTokenKey = (userId: string): string => `refreshToken:${userId}`;
 export const generateTripCacheKey = (userId: string): string => `trip:${userId}`;
-export const generateLocationCacheKey = (tripId: string): string => `location:${tripId}`;
-export const generatePlaceCacheKey = (): string => `place`;
+export const generateItineraryCacheKey = (userId: string, tripId: string): string =>
+    `itinerary:${userId}:${tripId}`;

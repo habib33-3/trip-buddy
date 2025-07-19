@@ -5,13 +5,21 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet/dist/leaflet.css";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
-import type { Location } from "@/types/index";
+import type { Itinerary } from "@/types/index";
 
 type Props = {
-  locations: Location[];
+  locations: Itinerary[];
 };
 
 const Map = memo(({ locations }: Props) => {
+  if (locations.length === 0) {
+    return (
+      <div className="h-full min-h-[400px] w-full flex-1 border border-red-200">
+        <p className="text-center text-gray-500">No locations available</p>
+      </div>
+    );
+  }
+
   const center =
     locations.length > 0
       ? [locations[0].latitude, locations[0].longitude]
@@ -43,7 +51,7 @@ const Map = memo(({ locations }: Props) => {
               [location.latitude, location.longitude] as [number, number]
             }
           >
-            <Popup>{location.address}</Popup>
+            <Popup>{location.formattedAddress}</Popup>
           </Marker>
         ))}
       </MapContainer>

@@ -6,7 +6,7 @@ import Loader from "@/shared/Loader";
 
 import { formatDateRange } from "@/utils/date";
 
-import type { Location } from "@/types/index";
+import type { Itinerary } from "@/types/index";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 
@@ -47,7 +47,13 @@ const Overview = () => {
       </Card>
 
       <div className="h-[300px] overflow-hidden rounded-2xl border shadow-sm">
-        <Map locations={trip.Location as Location[]} />
+        {destinationCount === 0 ? (
+          <div className="flex h-full items-center justify-center">
+            <p className="text-gray-500">No locations available</p>
+          </div>
+        ) : (
+          <Map locations={trip.itineraries as Itinerary[]} />
+        )}
       </div>
     </div>
   );

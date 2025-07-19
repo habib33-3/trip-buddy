@@ -4,7 +4,7 @@ import Loader from "@/shared/Loader";
 
 import ErrorPage from "../ErrorPage/ErrorPage";
 import TripTabsContainer from "./components/TripTabsContainer";
-import AddLocationModal from "./components/modal/AddLocationModal";
+import AddLocationModal from "./components/modal/AddItineraryModal";
 import DeleteTripModal from "./components/modal/DeleteTripModal";
 import UpdateTripModal from "./components/modal/UpdateTripModal";
 

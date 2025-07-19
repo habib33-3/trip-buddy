@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import { authRouter } from "./auth.route";
-import { locationsRouter } from "./place.routes";
+import { itineraryRouter } from "./itinerary.routes";
 import { tripRouter } from "./trip.route";
 
 const router = Router();
@@ -16,8 +16,8 @@ const routes: { path: string; router: Router }[] = [
         router: tripRouter,
     },
     {
-        path: "/location",
-        router: locationsRouter,
+        path: "/itinerary",
+        router: itineraryRouter,
     },
 ];
 

@@ -30,7 +30,7 @@ export const getTripById = async (
     if (!trip) {
         logger.info(`Cache miss: ${key}`);
         return prisma.trip.findUnique({
-            include: { Location: true },
+            include: { itineraries: true },
             where: { id: tripId, userId },
         });
     }
@@ -47,6 +47,7 @@ export const createTripService = async (payload: CreateTripSchemaType, userId: s
             title: payload.title,
             userId,
         },
+        include: { itineraries: true },
     });
 
     const key = generateTripCacheKey(userId);

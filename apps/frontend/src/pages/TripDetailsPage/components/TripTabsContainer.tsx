@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import useGetLocations from "@/hooks/locations/useGetLocations";
+import useGetLocations from "@/hooks/itinerary/useGetItineraries";
 
 import Loader from "@/shared/Loader";
 
