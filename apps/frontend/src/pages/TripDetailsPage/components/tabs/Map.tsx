@@ -14,6 +14,8 @@ type Props = {
 const Map = memo(({ locations }: Props) => {
   const hasLocations = locations.length > 0;
 
+  console.log(locations);
+
   const center = hasLocations
     ? [locations[0].latitude, locations[0].longitude]
     : [0, 0];

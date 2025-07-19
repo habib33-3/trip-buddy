@@ -5,9 +5,16 @@ import { StatusCodes } from "http-status-codes";
 import asyncHandler from "@/shared/asyncHandler";
 import sendResponse from "@/shared/sendResponse";
 
-import type { AddItinerarySchemaType } from "@/validations/itinerary.validations";
+import type {
+    AddItinerarySchemaType,
+    ReorderItinerarySchemaType,
+} from "@/validations/itinerary.validations";
 
-import { addItineraryService, getAllItinerariesService } from "@/services/itinerary.services";
+import {
+    addItineraryService,
+    getAllItinerariesService,
+    reorderItineraryService,
+} from "@/services/itinerary.services";
 
 export const addItineraryHandler = asyncHandler(
     async (req: Request<{}, {}, AddItinerarySchemaType>, res) => {
@@ -35,6 +42,22 @@ export const getAllItinerariesHandler = asyncHandler(
         sendResponse(req, res, {
             data: Itineraries,
             message: "Itineraries fetched successfully",
+            statusCode: StatusCodes.OK,
+            success: true,
+        });
+    }
+);
+
+export const reorderItineraryHandler = asyncHandler(
+    async (req: Request<{}, {}, ReorderItinerarySchemaType>, res) => {
+        const userId = req.user?.id as string;
+        const payload = req.body;
+
+        const updatedItinerary = await reorderItineraryService(payload, userId);
+
+        sendResponse(req, res, {
+            data: updatedItinerary,
+            message: "Itinerary reordered successfully",
             statusCode: StatusCodes.OK,
             success: true,
         });

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import useGetLocations from "@/hooks/itinerary/useGetItineraries";
+import useGetItineraries from "@/hooks/itinerary/useGetItineraries";
 
 import Loader from "@/shared/Loader";
 
@@ -17,7 +17,7 @@ type TripTab = "itinerary" | "maps" | "overview";
 const TripTabsContainer = () => {
   const [activeTab, setActiveTab] = useState<TripTab>("overview");
 
-  const { locations, status } = useGetLocations();
+  const { locations, status } = useGetItineraries();
 
   if (status === "pending") return <Loader />;
   if (status === "error") return <ErrorPage />;

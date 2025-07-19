@@ -1,3 +1,6 @@
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
 import type { Itinerary } from "@/types/index";
 
 type Props = {
@@ -5,8 +8,17 @@ type Props = {
 };
 
 const ItineraryCard = ({ itinerary }: Props) => {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: itinerary.id });
+
   return (
-    <div className="items-center justify-between rounded-md border p-4 transition-shadow hover:shadow">
+    <div
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      style={{ transform: CSS.Transform.toString(transform), transition }}
+      className="items-center justify-between rounded-md border p-4 transition-shadow hover:shadow"
+    >
       <div className="">
         <h4 className="font-medium text-gray-800">
           {itinerary.formattedAddress}
