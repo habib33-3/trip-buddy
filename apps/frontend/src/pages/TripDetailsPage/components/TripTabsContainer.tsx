@@ -21,7 +21,6 @@ const TripTabsContainer = () => {
 
   if (status === "pending") return <Loader />;
   if (status === "error") return <ErrorPage />;
-
   if (!locations) return null;
 
   return (
@@ -31,32 +30,47 @@ const TripTabsContainer = () => {
       onValueChange={(value) => setActiveTab(value as TripTab)}
       className="w-full"
     >
-      <div className="flex items-center justify-center">
-        <TabsList>
+      <div className="flex justify-center border-b border-gray-300 bg-white p-3 shadow-sm">
+        <TabsList className="flex space-x-4 rounded-lg bg-gray-50">
           <TabsTrigger
             value="overview"
-            className=""
+            className="rounded-lg px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-md"
           >
             Overview
           </TabsTrigger>
-          <TabsTrigger value="itinerary">Itinerary</TabsTrigger>
-          <TabsTrigger value="maps">Maps</TabsTrigger>
+          <TabsTrigger
+            value="itinerary"
+            className="rounded-lg px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-md"
+          >
+            Itinerary
+          </TabsTrigger>
+          <TabsTrigger
+            value="maps"
+            className="rounded-lg px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-md"
+          >
+            Maps
+          </TabsTrigger>
         </TabsList>
       </div>
 
-      <TabsContent value="overview">
-        <Overview />
-      </TabsContent>
-      <TabsContent value="itinerary">
-        <ItineraryTab />
-      </TabsContent>
-      {activeTab === "maps" && (
-        <TabsContent value="maps">
-          <div className="h-[500px] w-full rounded-lg">
-            <Map locations={locations} />
-          </div>
+      <div className="mt-6">
+        <TabsContent value="overview">
+          <Overview />
         </TabsContent>
-      )}
+        <TabsContent value="itinerary">
+          <ItineraryTab />
+        </TabsContent>
+        {activeTab === "maps" && (
+          <TabsContent value="maps">
+            <div className="h-[500px] w-full rounded-lg shadow-inner">
+              <Map
+                locations={locations}
+                zoom={6}
+              />
+            </div>
+          </TabsContent>
+        )}
+      </div>
     </Tabs>
   );
 };

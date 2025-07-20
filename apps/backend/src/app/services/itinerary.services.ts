@@ -8,6 +8,7 @@ import {
     generateTripCacheKey,
     getJsonFromRedis,
     invalidateRedisCache,
+    setJsonToRedis,
     updateRedisListCache,
 } from "@/utils/redis";
 
@@ -96,7 +97,7 @@ export const reorderItineraryService = async (
         return Promise.all(
             payload.itineraryIds.map(async (id, index) =>
                 tx.itinerary.update({
-                    data: { order: index },
+                    data: { order: index + 1 },
                     where: { id },
                 })
             )
@@ -105,7 +106,7 @@ export const reorderItineraryService = async (
 
     const key = generateItineraryCacheKey(userId, payload.tripId);
 
-    await updateRedisListCache(key, updatedItineraries);
+    await setJsonToRedis(key, updatedItineraries);
 
     return updatedItineraries;
 };

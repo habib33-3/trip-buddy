@@ -25,14 +25,19 @@ export const getTripById = async (
     tripId: string,
     userId: string
 ): Promise<Trip | null> => {
-    const trip = await findByIdFromRedisList<Trip>(key, tripId);
+    const cachedTrip = await findByIdFromRedisList<Trip>(key, tripId);
 
-    if (!trip) {
-        logger.info(`Cache miss: ${key}`);
-        return prisma.trip.findUnique({
-            include: { itineraries: true },
-            where: { id: tripId, userId },
-        });
+    if (cachedTrip) {
+        return cachedTrip;
+    }
+
+    const trip = await prisma.trip.findUnique({
+        include: { itineraries: true },
+        where: { id: tripId, userId },
+    });
+
+    if (trip) {
+        await updateRedisListCache<Trip>(key, trip);
     }
 
     return trip;

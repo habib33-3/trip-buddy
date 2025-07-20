@@ -7,18 +7,18 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
 import type { Itinerary } from "@/types/index";
 
-type Props = {
+type MapProps = {
   locations: Itinerary[];
+  center?: [number, number];
+  zoom?: number;
 };
 
-const Map = memo(({ locations }: Props) => {
+const Map = memo(({ center, locations, zoom = 6 }: MapProps) => {
   const hasLocations = locations.length > 0;
 
-  console.log(locations);
-
-  const center = hasLocations
-    ? [locations[0].latitude, locations[0].longitude]
-    : [0, 0];
+  const mapCenter =
+    center ??
+    (hasLocations ? [locations[0].latitude, locations[0].longitude] : [0, 0]);
 
   return (
     <div className="h-full min-h-[400px] w-full flex-1 rounded-2xl border border-gray-200 bg-white shadow-sm">
@@ -30,8 +30,8 @@ const Map = memo(({ locations }: Props) => {
         </div>
       ) : (
         <MapContainer
-          center={center as [number, number]}
-          zoom={6}
+          center={mapCenter}
+          zoom={zoom}
           minZoom={2}
           maxZoom={18}
           scrollWheelZoom={false}
@@ -61,6 +61,7 @@ const Map = memo(({ locations }: Props) => {
     </div>
   );
 });
+
 Map.displayName = "Map";
 
 export default Map;

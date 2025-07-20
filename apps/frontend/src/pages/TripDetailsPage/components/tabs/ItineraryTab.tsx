@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useId } from "react";
 
 import type { DragEndEvent } from "@dnd-kit/core";
 import { DndContext, closestCenter } from "@dnd-kit/core";
@@ -13,23 +13,21 @@ import useReorderItinerary from "@/hooks/itinerary/useReorderItinerary";
 
 import Loader from "@/shared/Loader";
 
-import type { Itinerary } from "@/types/index";
-
 import ErrorPage from "@/pages/ErrorPage/ErrorPage";
 
 import ItineraryCard from "./components/ItineraryCard";
 
 const ItineraryTab = () => {
   const { locations, status } = useGetItineraries();
-
   const { handleReorderItineraries, isLoading } = useReorderItinerary();
-
-  const [itineraries, setItineraries] = useState(locations as Itinerary[]);
-
   const id = useId();
 
   if (status === "pending" || isLoading) {
-    return <Loader />;
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <Loader />
+      </div>
+    );
   }
 
   if (status === "error") {
@@ -37,28 +35,31 @@ const ItineraryTab = () => {
   }
 
   if (!locations || locations.length === 0) {
-    return <div>No itineraries found.</div>;
+    return (
+      <div className="flex h-full w-full items-center justify-center text-center text-lg font-medium text-gray-500">
+        No itineraries found.
+      </div>
+    );
   }
 
   const handleDragEnd = async (e: DragEndEvent) => {
     const { active, over } = e;
 
-    const oldIndex = itineraries.findIndex(
+    const oldIndex = locations.findIndex(
       (itinerary) => itinerary.id === active.id
     );
-
-    const newIndex = itineraries.findIndex(
+    const newIndex = locations.findIndex(
       (itinerary) => itinerary.id === over?.id
     );
 
-    const newLocations = arrayMove(itineraries, oldIndex, newIndex).map(
+    if (oldIndex === newIndex || newIndex === -1) return;
+
+    const newLocations = arrayMove(locations, oldIndex, newIndex).map(
       (itinerary, index) => ({
         ...itinerary,
         order: index,
       })
     );
-
-    setItineraries(newLocations);
 
     await handleReorderItineraries(
       newLocations.map((itinerary) => itinerary.id)
@@ -73,10 +74,10 @@ const ItineraryTab = () => {
     >
       <SortableContext
         strategy={verticalListSortingStrategy}
-        items={itineraries.map((location) => location.id)}
+        items={locations.map((location) => location.id)}
       >
-        <div className="flex flex-col gap-4 p-4">
-          {itineraries.map((itinerary) => (
+        <div className="flex flex-col gap-4 p-4 md:p-6">
+          {locations.map((itinerary) => (
             <ItineraryCard
               key={itinerary.id}
               itinerary={itinerary}
