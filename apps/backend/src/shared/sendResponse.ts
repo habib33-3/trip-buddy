@@ -12,7 +12,7 @@ const sendResponse = <T>(req: Request, res: Response, payload: ApiResponse<T>): 
         path: req.originalUrl,
         statusCode,
         success,
-        timestamp: new Date().toISOString(), // Useful for tracing
+        timestamp: new Date().toISOString(),
     });
 };
 

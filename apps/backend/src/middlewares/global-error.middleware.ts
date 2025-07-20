@@ -14,6 +14,7 @@ import sendResponse from "@/shared/sendResponse";
 import { handleGenericError } from "@/errors/genericError";
 import { handlePrismaKnownRequestError, handlePrismaValidationError } from "@/errors/prismaError";
 import { handleZodError } from "@/errors/zodError";
+
 import type { ApiResponse } from "@/types";
 
 const handleException = (err: unknown, myResponseObj: ApiResponse<null>) => {

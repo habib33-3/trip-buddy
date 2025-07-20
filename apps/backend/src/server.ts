@@ -13,84 +13,67 @@ async function startServer() {
             logger.info(`🚀 Server is running on port ${env.PORT}`);
         });
     } catch (error) {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        logger.error(`❌ Failed to start server: ${error}`);
-        await shutdown();
+        logger.error(`❌ Failed to start server: ${String(error)}`);
+        await shutdown(error);
     }
 }
 
-const shutdown = async () => {
+const shutdown = async (startupError?: unknown) => {
     logger.info("🧹 Graceful shutdown started...");
     try {
         await Promise.race([
             new Promise<void>((resolve, reject) => {
                 server.close((err) => (err ? reject(err) : resolve()));
             }),
-
             new Promise<void>((_, reject) =>
                 // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-                setTimeout(() => reject(new Error("Shutdown timeout")), 10000)
-            ), // 10s timeout
+                setTimeout(() => reject(new Error("Shutdown timeout")), 10_000)
+            ),
         ]);
         logger.info("✅ HTTP server closed.");
 
         await prisma.$disconnect();
-
         logger.info("✅ Prisma disconnected.");
 
         redis.disconnect();
         logger.info("✅ Redis disconnected.");
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions
-        logger.error(`💥 Shutdown error: ${error.stack ?? error}`);
+    } catch (error) {
+        const shutdownError =
+            error instanceof Error ? (error.stack ?? error.message) : String(error);
+        logger.error(`💥 Shutdown error: ${shutdownError}`);
     } finally {
-        process.exit(0);
+        process.exit(startupError ? 1 : 0);
     }
 };
 
 process.on("SIGINT", () => {
     logger.info("📡 SIGINT received.");
-
     shutdown().catch((error) => {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        logger.error(`Shutdown error: ${error}`);
+        logger.error(`Shutdown error: ${String(error)}`);
     });
 });
 
 process.on("SIGTERM", () => {
     logger.info("📡 SIGTERM received.");
-
     shutdown().catch((error) => {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        logger.error(`Shutdown error: ${error}`);
+        logger.error(`Shutdown error: ${String(error)}`);
     });
 });
 
 process.on("uncaughtException", (error) => {
-    logger.error(`🔥 Uncaught Exception: ${error}`);
-
-    shutdown().catch((shutdownError) => {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        logger.error(`Shutdown error: ${shutdownError}`);
+    logger.error(
+        `🔥 Uncaught Exception: ${error instanceof Error ? (error.stack ?? error.message) : String(error)}`
+    );
+    shutdown(error).catch((shutdownError) => {
+        logger.error(`Shutdown error: ${String(shutdownError)}`);
     });
 });
 
 process.on("unhandledRejection", (reason) => {
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    logger.error(`💡 Unhandled Promise Rejection: ${reason}`);
-
-    shutdown().catch((shutdownError) => {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        logger.error(`Shutdown error: ${shutdownError}`);
+    logger.error(`💡 Unhandled Promise Rejection: ${String(reason)}`);
+    shutdown(reason).catch((shutdownError) => {
+        logger.error(`Shutdown error: ${String(shutdownError)}`);
     });
 });
 
-// Start server and handle fatal errors during startup
-startServer().catch(async (error) => {
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    logger.error(`❌ Fatal error during startup: ${error}`);
-
-    await shutdown();
-});
+startServer().catch(async (error) => shutdown(error));

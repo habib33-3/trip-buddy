@@ -14,7 +14,7 @@ import {
   DialogTrigger,
 } from "@/ui/dialog";
 
-import UpdateTripForm from "./forms/UpdateTripForm";
+import UpdateTripForm from "../forms/UpdateTripForm";
 
 const UpdateTripModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

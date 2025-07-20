@@ -43,8 +43,6 @@ const typescriptRules = {
         "@typescript-eslint": tseslint.plugin,
     },
     rules: {
-        "@typescript-eslint/array-type": ["warn", { default: "generic" }],
-
         "@typescript-eslint/await-thenable": "error",
         "@typescript-eslint/ban-ts-comment": [
             "error",

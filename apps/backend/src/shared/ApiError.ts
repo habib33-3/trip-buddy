@@ -4,7 +4,11 @@ class ApiError extends Error {
     constructor(statusCode: number, message?: string, stack?: string) {
         super(message ?? "Something went wrong");
         this.statusCode = statusCode;
-        this.name = this.constructor.name;
+        this.name = new.target.name;
+
+        // ✅ Ensure correct prototype chain
+        Object.setPrototypeOf(this, new.target.prototype);
+
         if (stack) {
             this.stack = stack;
         } else {

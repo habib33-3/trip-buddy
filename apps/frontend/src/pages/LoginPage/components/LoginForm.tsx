@@ -1,3 +1,5 @@
+import { Link } from "react-router";
+
 import PasswordField from "@/components/form-fields/PasswordField";
 
 import useUserLogin from "@/hooks/auth/useUserLogin";
@@ -53,6 +55,15 @@ const LoginForm = () => {
           />
         </form>
       </Form>
+      <p className="text-center text-sm text-gray-600">
+        Don&apos;t have an account?{" "}
+        <Link
+          to="/register"
+          className="font-medium text-blue-600 hover:underline"
+        >
+          Register
+        </Link>
+      </p>
     </div>
   );
 };

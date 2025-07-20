@@ -12,4 +12,16 @@ export type Trip = {
   description: string;
   startDate: Date;
   endDate: Date;
+  itineraries?: Itinerary[];
+};
+
+export type Itinerary = {
+  id: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  country: string;
+  order: number;
+  formattedAddress: string;
+  tripId: string;
 };

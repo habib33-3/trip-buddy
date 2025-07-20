@@ -8,9 +8,9 @@ export const setCookie = (res: Response, cookieName: string, cookieValue: string
     res.cookie(cookieName, cookieValue, {
         httpOnly: true,
         maxAge: env.ACCESS_TOKEN_EXPIRATION,
-        path: "/", // explicitly set path
+        path: "/",
         sameSite: isProduction ? "none" : "lax",
-        secure: isProduction, // false on localhost
+        secure: isProduction,
     });
 };
 
@@ -19,7 +19,7 @@ export const deleteCookie = (res: Response, cookieName: string) => {
 
     res.clearCookie(cookieName, {
         httpOnly: true,
-        path: "/", // must match the original cookie path
+        path: "/",
         sameSite: isProduction ? "none" : "lax",
         secure: isProduction,
     });

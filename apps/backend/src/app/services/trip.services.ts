@@ -20,12 +20,24 @@ import type { CreateTripSchemaType, UpdateTripSchemaType } from "@/validations/t
 
 import type { Trip } from "@/generated/prisma";
 
-const getTripById = async (key: string, tripId: string, userId: string): Promise<Trip | null> => {
-    const trip = await findByIdFromRedisList<Trip>(key, tripId);
+export const getTripById = async (
+    key: string,
+    tripId: string,
+    userId: string
+): Promise<Trip | null> => {
+    const cachedTrip = await findByIdFromRedisList<Trip>(key, tripId);
 
-    if (!trip) {
-        logger.info(`Cache miss: ${key}`);
-        return prisma.trip.findUnique({ where: { id: tripId, userId } });
+    if (cachedTrip) {
+        return cachedTrip;
+    }
+
+    const trip = await prisma.trip.findUnique({
+        include: { itineraries: true },
+        where: { id: tripId, userId },
+    });
+
+    if (trip) {
+        await updateRedisListCache<Trip>(key, trip);
     }
 
     return trip;
@@ -40,6 +52,7 @@ export const createTripService = async (payload: CreateTripSchemaType, userId: s
             title: payload.title,
             userId,
         },
+        include: { itineraries: true },
     });
 
     const key = generateTripCacheKey(userId);
@@ -52,7 +65,7 @@ export const createTripService = async (payload: CreateTripSchemaType, userId: s
 export const getAllTripsService = async (userId: string) => {
     const key = generateTripCacheKey(userId);
 
-    const cachedTrips = await getJsonFromRedis<Array<Trip>>(key);
+    const cachedTrips = await getJsonFromRedis<Trip[]>(key);
 
     if (cachedTrips?.length) {
         logger.info(`Cache hit: ${key}`);
