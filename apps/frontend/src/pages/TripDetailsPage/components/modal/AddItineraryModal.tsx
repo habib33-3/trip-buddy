@@ -1,6 +1,6 @@
 import { LocationEditIcon } from "lucide-react";
 
-import useAddLocation from "@/hooks/itinerary/useAddItinerary";
+import useAddItinerary from "@/hooks/itinerary/useAddItinerary";
 
 import { Button } from "@/ui/button";
 import {
@@ -19,7 +19,7 @@ import SubmitButton from "@/buttons/SubmitButtons";
 
 const AddItineraryModal = () => {
   const { form, handleAddLocation, isLoading, isModalOpen, setIsModalOpen } =
-    useAddLocation();
+    useAddItinerary();
 
   return (
     <Dialog

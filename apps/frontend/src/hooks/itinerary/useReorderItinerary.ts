@@ -8,7 +8,13 @@ const useReorderItinerary = () => {
   const { tripId } = useParams<{ tripId: string }>();
 
   if (!tripId) {
-    throw new Error("tripId is required");
+    return {
+      error: "tripId is required",
+      handleReorderItineraries: () => {
+        console.error("tripId is required");
+      },
+      isLoading: false,
+    };
   }
 
   const query = useQueryClient();
@@ -26,7 +32,7 @@ const useReorderItinerary = () => {
     },
   });
 
-  const handleReorderItineraries = async (itineraryIds: string[]) => {
+  const handleReorderItineraries = (itineraryIds: string[]) => {
     mutate.mutate(itineraryIds);
   };
 

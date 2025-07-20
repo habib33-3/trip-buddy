@@ -16,10 +16,11 @@ type MapProps = {
 const Map = memo(({ center, locations, zoom = 6 }: MapProps) => {
   const hasLocations = locations.length > 0;
 
+  const first = locations.find(
+    (l) => Number.isFinite(l.latitude) && Number.isFinite(l.longitude)
+  );
   const mapCenter =
-    center ??
-    (hasLocations ? [locations[0].latitude, locations[0].longitude] : [0, 0]);
-
+    center ?? (first ? [first.latitude, first.longitude] : [0, 0]);
   return (
     <div className="h-full min-h-[400px] w-full flex-1 rounded-2xl border border-gray-200 bg-white shadow-sm">
       {!hasLocations ? (
@@ -46,16 +47,20 @@ const Map = memo(({ center, locations, zoom = 6 }: MapProps) => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           />
-          {locations.map((location) => (
-            <Marker
-              key={location.id}
-              position={
-                [location.latitude, location.longitude] as [number, number]
-              }
-            >
-              <Popup>{location.formattedAddress}</Popup>
-            </Marker>
-          ))}
+          {locations
+            .filter(
+              (l) => Number.isFinite(l.latitude) && Number.isFinite(l.longitude)
+            )
+            .map((location) => (
+              <Marker
+                key={location.id}
+                position={
+                  [location.latitude, location.longitude] as [number, number]
+                }
+              >
+                <Popup>{location.formattedAddress}</Popup>
+              </Marker>
+            ))}
         </MapContainer>
       )}
     </div>

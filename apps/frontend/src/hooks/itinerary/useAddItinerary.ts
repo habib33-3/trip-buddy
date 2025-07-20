@@ -17,6 +17,11 @@ import { addItinerarySchema } from "@/validations/itineraryValidation";
 
 const useAddItinerary = () => {
   const { tripId } = useParams<{ tripId: string }>();
+
+  if (!tripId) {
+    throw new Error("tripId is required");
+  }
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const form = useForm<AddItinerarySchemaType>({
@@ -25,10 +30,6 @@ const useAddItinerary = () => {
     },
     resolver: zodResolver(addItinerarySchema),
   });
-
-  if (!tripId) {
-    throw new Error("tripId is required");
-  }
 
   const query = useQueryClient();
 

@@ -25,7 +25,6 @@ const TripTabsContainer = () => {
 
   return (
     <Tabs
-      defaultValue={activeTab}
       value={activeTab}
       onValueChange={(value) => setActiveTab(value as TripTab)}
       className="w-full"
@@ -60,16 +59,14 @@ const TripTabsContainer = () => {
         <TabsContent value="itinerary">
           <ItineraryTab />
         </TabsContent>
-        {activeTab === "maps" && (
-          <TabsContent value="maps">
-            <div className="h-[500px] w-full rounded-lg shadow-inner">
-              <Map
-                locations={locations}
-                zoom={6}
-              />
-            </div>
-          </TabsContent>
-        )}
+        <TabsContent value="maps">
+          <div className="h-[500px] w-full rounded-lg shadow-inner">
+            <Map
+              locations={locations}
+              zoom={6}
+            />
+          </div>
+        </TabsContent>
       </div>
     </Tabs>
   );

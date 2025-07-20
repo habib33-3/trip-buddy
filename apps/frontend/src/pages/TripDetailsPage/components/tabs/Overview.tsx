@@ -1,3 +1,5 @@
+import { lazy } from "react";
+
 import { Calendar1Icon, MapPin } from "lucide-react";
 
 import useGetSingleTrip from "@/hooks/trip/useGetSingleTrip";
@@ -12,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 
 import ErrorPage from "@/pages/ErrorPage/ErrorPage";
 
-import Map from "../tabs/Map";
+const Map = lazy(async () => import("../tabs/Map"));
 
 const Overview = () => {
   const { destinationCount, status, trip } = useGetSingleTrip();

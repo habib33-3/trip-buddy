@@ -24,5 +24,4 @@ export type Itinerary = {
   order: number;
   formattedAddress: string;
   tripId: string;
-  trip: Trip;
 };

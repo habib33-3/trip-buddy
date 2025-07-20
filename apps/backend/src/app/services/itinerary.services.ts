@@ -26,24 +26,36 @@ import { getTripById } from "./trip.services";
 export const addItineraryService = async (payload: AddItinerarySchemaType, userId: string) => {
     const tripKey = generateTripCacheKey(userId);
 
-    const trip = await getTripById(tripKey, payload.tripId, userId);
-
-    if (!trip) {
-        throw new ApiError(StatusCodes.NOT_FOUND, "Trip not found");
-    }
-
-    if (trip.userId !== userId) {
+    let countryName: string, address: string, latitude: number, longitude: number;
+    try {
+        const result = await getCoordinatesAndCountry(payload.address);
+        countryName = result.country;
+        address = result.formattedAddress;
+        latitude = result.lat;
+        longitude = result.lng;
+    } catch {
         throw new ApiError(
-            StatusCodes.FORBIDDEN,
-            "You are not allowed to add an itinerary to this trip"
+            StatusCodes.BAD_REQUEST,
+            "Failed to get location information for the provided address"
         );
     }
 
-    const { country, formattedAddress, lat, lng } = await getCoordinatesAndCountry(payload.address);
-
-    const generateTitle = `${formattedAddress} - ${country}`;
+    const generateTitle = `${address} - ${countryName}`;
 
     const itinerary = await prisma.$transaction(async (tx) => {
+        const trip = await getTripById(tripKey, payload.tripId, userId);
+
+        if (!trip) {
+            throw new ApiError(StatusCodes.NOT_FOUND, "Trip not found");
+        }
+
+        if (trip.userId !== userId) {
+            throw new ApiError(
+                StatusCodes.FORBIDDEN,
+                "You are not allowed to add an itinerary to this trip"
+            );
+        }
+
         const itineraryCount = await tx.itinerary.count({
             where: {
                 tripId: payload.tripId,
@@ -54,10 +66,10 @@ export const addItineraryService = async (payload: AddItinerarySchemaType, userI
 
         return tx.itinerary.create({
             data: {
-                country,
-                formattedAddress,
-                latitude: lat,
-                longitude: lng,
+                country: countryName,
+                formattedAddress: address,
+                latitude,
+                longitude,
                 order,
                 title: generateTitle,
                 tripId: payload.tripId,
@@ -66,9 +78,7 @@ export const addItineraryService = async (payload: AddItinerarySchemaType, userI
     });
 
     const key = generateItineraryCacheKey(userId, payload.tripId);
-
     await updateRedisListCache(key, itinerary);
-
     await invalidateRedisCache(tripKey);
 
     return itinerary;
@@ -97,7 +107,7 @@ export const reorderItineraryService = async (
         return Promise.all(
             payload.itineraryIds.map(async (id, index) =>
                 tx.itinerary.update({
-                    data: { order: index + 1 },
+                    data: { order: index },
                     where: { id },
                 })
             )

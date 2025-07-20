@@ -31,8 +31,16 @@ const envSchema = z.object({
         .string()
         .trim()
         .min(1, { message: "ACCESS_TOKEN_SECRET cannot be empty" }),
-    APP_EMAIL: z.string().default("yYJdH@example.com"),
-    APP_NAME: z.string().default("Express API Template"),
+    APP_EMAIL: z
+        .string()
+        .trim()
+        .email("APP_EMAIL must be a valid e-mail address")
+        .default("no-reply@example.com"),
+    APP_NAME: z
+        .string()
+        .trim()
+        .min(1, { message: "APP_NAME cannot be empty" })
+        .default("Express API Template"),
 
     DATABASE_URL: z.string().trim().url({ message: "DATABASE_URL must be a valid URL" }),
     NODE_ENV: z.enum(ENV_ENUM).default("production"),

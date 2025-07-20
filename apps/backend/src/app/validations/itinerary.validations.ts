@@ -1,4 +1,4 @@
-import z from "zod";
+import { z } from "zod";
 
 export const addItinerarySchema = z.object({
     body: z
@@ -15,7 +15,7 @@ export const reorderItinerarySchema = z.object({
     body: z
         .object({
             itineraryIds: z.array(z.string()),
-            tripId: z.string(),
+            tripId: z.string().uuid(),
         })
         .strict(),
 });

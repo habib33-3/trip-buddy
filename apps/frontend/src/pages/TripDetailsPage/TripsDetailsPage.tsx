@@ -4,7 +4,7 @@ import Loader from "@/shared/Loader";
 
 import ErrorPage from "../ErrorPage/ErrorPage";
 import TripTabsContainer from "./components/TripTabsContainer";
-import AddLocationModal from "./components/modal/AddItineraryModal";
+import AddItineraryModal from "./components/modal/AddItineraryModal";
 import DeleteTripModal from "./components/modal/DeleteTripModal";
 import UpdateTripModal from "./components/modal/UpdateTripModal";
 
@@ -35,7 +35,7 @@ const TripsDetailsPage = () => {
         </header>
 
         <div className="mt-10 flex justify-end">
-          <AddLocationModal />
+          <AddItineraryModal />
         </div>
       </section>
 

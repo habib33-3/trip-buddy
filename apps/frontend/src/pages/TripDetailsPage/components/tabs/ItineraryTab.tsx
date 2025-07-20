@@ -45,11 +45,13 @@ const ItineraryTab = () => {
   const handleDragEnd = async (e: DragEndEvent) => {
     const { active, over } = e;
 
+    if (!over?.id) return;
+
     const oldIndex = locations.findIndex(
       (itinerary) => itinerary.id === active.id
     );
     const newIndex = locations.findIndex(
-      (itinerary) => itinerary.id === over?.id
+      (itinerary) => itinerary.id === over.id
     );
 
     if (oldIndex === newIndex || newIndex === -1) return;
@@ -61,9 +63,7 @@ const ItineraryTab = () => {
       })
     );
 
-    await handleReorderItineraries(
-      newLocations.map((itinerary) => itinerary.id)
-    );
+    handleReorderItineraries(newLocations.map((itinerary) => itinerary.id));
   };
 
   return (

@@ -12,8 +12,12 @@ const useGetItineraries = () => {
   }
 
   const { data, status } = useQuery({
+    enabled: Boolean(tripId),
     queryFn: async () => getItinerariesApi(tripId),
     queryKey: ["itineraries", tripId],
+    retry: 3,
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+    staleTime: 5 * 60 * 1000,
   });
 
   return {
