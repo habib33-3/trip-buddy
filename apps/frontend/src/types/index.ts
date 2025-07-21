@@ -26,7 +26,22 @@ export type Itinerary = {
   tripId: string;
 };
 
+export type CityPoint = {
+  lat: number;
+  lng: number;
+  name: string;
+  count: number;
+};
+
 export type Stats = {
-  countries: string[];
-  cities: { name: string; lat: number; lng: number }[];
+  cities: CityPoint[];
+  countries: number;
+  itineraryCount: number;
+  mostVisitedCountry: string;
+  tripsCount: number;
+  tripStatusCounts: {
+    completed: number;
+    inProgress: number;
+    planned: number;
+  };
 };

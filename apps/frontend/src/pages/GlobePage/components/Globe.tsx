@@ -4,7 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import ReactGlobe from "react-globe.gl";
 import type { GlobeMethods } from "react-globe.gl";
 
-import type { Stats } from "@/types/index";
+import { getCityColorByCount } from "@/lib/utils";
+
+import type { CityPoint, Stats } from "@/types/index";
+
+import Legend from "./Legend";
 
 type Props = {
   cities: Stats["cities"];
@@ -22,9 +26,8 @@ const Globe = ({ cities }: Props) => {
       });
     };
 
-    handleResize(); // initial
+    handleResize();
     window.addEventListener("resize", handleResize);
-
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -36,24 +39,32 @@ const Globe = ({ cities }: Props) => {
     }
   }, []);
 
+  const maxCount = Math.max(...cities.map((city) => city.count || 1));
+
   return (
-    <div className="overflow-hidden rounded-2xl bg-slate-800/90 shadow-2xl ring-1 ring-slate-700/50 backdrop-blur">
-      <ReactGlobe
-        ref={globeRef}
-        globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
-        bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
-        backgroundColor="rgba(0,0,0,0)"
-        pointColor={() => "#FF5733"}
-        pointLabel="name"
-        pointRadius={0.5}
-        pointAltitude={0.1}
-        pointsData={cities}
-        pointsMerge
-        showAtmosphere
-        showGraticules
-        width={dimensions.width}
-        height={dimensions.height}
-      />
+    <div className="relative w-full">
+      <div className="flex aspect-square max-w-full items-center justify-center overflow-hidden rounded-2xl bg-slate-800/90 shadow-2xl ring-1 ring-slate-700/50 backdrop-blur-md">
+        <ReactGlobe
+          ref={globeRef}
+          globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+          bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
+          backgroundColor="rgba(0,0,0,0)"
+          pointColor={(city) => getCityColorByCount((city as CityPoint).count)}
+          pointRadius={(city) =>
+            0.3 + ((city as CityPoint).count / maxCount) * 1.2
+          }
+          pointAltitude={(city) =>
+            0.02 + ((city as CityPoint).count / maxCount) * 0.3
+          }
+          pointsData={cities}
+          pointsMerge
+          showAtmosphere
+          showGraticules
+          width={dimensions.width}
+          height={dimensions.height}
+        />
+      </div>
+      <Legend />
     </div>
   );
 };

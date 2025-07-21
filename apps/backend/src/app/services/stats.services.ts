@@ -7,60 +7,92 @@ import { cacheKeyStats } from "@/utils/redis-key";
 
 import ApiError from "@/shared/ApiError";
 
+import type { Stat } from "@/types";
+
 import { findUserById } from "./user.service";
 
 export const getUserStatisticsService = async (userId: string) => {
     const user = await findUserById(userId);
-
     if (!user) {
         throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
     }
 
-    const key = cacheKeyStats(userId);
+    const cacheKey = cacheKeyStats(userId);
+    const cached = await cacheGet<Stat>(cacheKey);
+    if (cached) return cached;
 
-    const cachedStats = await cacheGet<{ cities: unknown[]; countries: unknown[] }>(key);
+    const [itineraries, tripsCount, itineraryCount, tripStatusCounts] = await Promise.all([
+        prisma.itinerary.findMany({
+            select: {
+                city: true,
+                country: true,
+                latitude: true,
+                longitude: true,
+                trip: { select: { userId: true } },
+            },
+            where: {
+                trip: { userId },
+            },
+        }),
+        prisma.trip.count({ where: { userId } }),
+        prisma.itinerary.count({ where: { trip: { userId } } }),
+        prisma.trip.groupBy({
+            _count: { _all: true },
+            by: ["status"],
+            where: { userId },
+        }),
+    ]);
 
-    if (cachedStats) {
-        return cachedStats;
+    const cityMap = new Map<string, { lat: number; lng: number; name: string; count: number }>();
+    const countryMap = new Map<string, number>();
+    const countrySet = new Set<string>();
+
+    for (const { city, country, latitude, longitude } of itineraries) {
+        if (country) countrySet.add(country);
+        if (country) {
+            const countryKey = country.toLowerCase();
+            countryMap.set(countryKey, (countryMap.get(countryKey) ?? 0) + 1);
+        }
+
+        if (city) {
+            const cityKey = city.toLowerCase();
+            const existing = cityMap.get(cityKey);
+
+            if (existing) {
+                existing.count += 1;
+            } else {
+                cityMap.set(cityKey, {
+                    count: 1,
+                    lat: latitude,
+                    lng: longitude,
+                    name: city,
+                });
+            }
+        }
     }
 
-    const countries = await prisma.itinerary.findMany({
-        distinct: ["country"],
-        select: {
-            country: true,
-        },
-        where: {
-            trip: {
-                userId,
-            },
-        },
-    });
+    const mostVisitedCountry =
+        [...countryMap.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+    const cities = [...cityMap.values()].sort((a, b) => b.count - a.count);
 
-    const rawCities = await prisma.itinerary.findMany({
-        distinct: ["city"],
-        select: {
-            city: true,
-            country: true,
-            latitude: true,
-            longitude: true,
+    const statusCountMap = Object.fromEntries(
+        tripStatusCounts.map((item) => [item.status, item._count._all])
+    );
+
+    const stats = {
+        cities,
+        countries: countrySet.size,
+        itineraryCount,
+        mostVisitedCountry,
+        tripsCount,
+        tripStatusCounts: {
+            completed: statusCountMap.COMPLETED || 0,
+            inProgress: statusCountMap.IN_PROGRESS || 0,
+            planned: statusCountMap.PLANNED || 0,
         },
-        where: {
-            city: {
-                not: null,
-            },
-            trip: {
-                userId,
-            },
-        },
-    });
+    };
 
-    const cities = rawCities.map((city) => ({
-        lat: city.latitude,
-        lng: city.longitude,
-        name: city.city,
-    }));
+    await cacheSet(cacheKey, stats);
 
-    await cacheSet(key, { cities, countries });
-
-    return { cities, countries };
+    return stats;
 };
