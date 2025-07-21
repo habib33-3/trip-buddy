@@ -7,7 +7,8 @@ import { redis } from "@/lib/redis";
 
 import { compareHashData, hashData } from "@/utils/hash";
 import { generateAuthTokens, verifyToken } from "@/utils/jwt";
-import { generateRefreshTokenKey } from "@/utils/redis";
+import { cacheSet } from "@/utils/redis";
+import { cacheKeyRefreshToken } from "@/utils/redis-key";
 
 import ApiError from "@/shared/ApiError";
 
@@ -41,14 +42,14 @@ export const registerUserService = async (data: RegisterUserType) => {
         throw new ApiError(StatusCodes.CONFLICT, "User already exists");
     }
 
-    const initial = generateInitials(data.name);
+    const initials = generateInitials(data.name);
 
     const hashedPassword = await hashData(data.password);
 
     const user = await prisma.user.create({
         data: {
             ...data,
-            initials: initial,
+            initials,
             password: hashedPassword,
         },
         select: {
@@ -62,12 +63,13 @@ export const registerUserService = async (data: RegisterUserType) => {
         },
     });
 
+    const refreshKey = cacheKeyRefreshToken(user.id);
     const { accessToken, refreshToken } = generateAuthTokens({
         email: user.email,
         id: user.id,
     });
 
-    await redis.setex(generateRefreshTokenKey(user.id), env.REFRESH_TOKEN_EXPIRATION, refreshToken);
+    await cacheSet(refreshKey, refreshToken);
 
     return {
         token: {
@@ -98,7 +100,7 @@ export const userLoginService = async (email: string, password: string) => {
 
     const { password: _password, ...userWithoutPassword } = user;
 
-    await redis.setex(generateRefreshTokenKey(user.id), env.REFRESH_TOKEN_EXPIRATION, refreshToken);
+    await redis.setex(cacheKeyRefreshToken(user.id), env.REFRESH_TOKEN_EXPIRATION, refreshToken);
 
     return {
         token: {
@@ -118,7 +120,7 @@ export const refreshTokenService = async (refreshToken: string) => {
         throw new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized");
     }
 
-    const key = generateRefreshTokenKey(decoded.id);
+    const key = cacheKeyRefreshToken(decoded.id);
     const cachedRefreshToken = await redis.get(key);
 
     if (!cachedRefreshToken || refreshToken !== cachedRefreshToken) {
@@ -138,6 +140,7 @@ export const refreshTokenService = async (refreshToken: string) => {
 export const userLogoutService = async (refreshToken: string) => {
     const decoded = verifyToken(refreshToken, "refresh_token");
 
-    const key = generateRefreshTokenKey(decoded.id);
+    const key = cacheKeyRefreshToken(decoded.id);
+
     await redis.del(key);
 };

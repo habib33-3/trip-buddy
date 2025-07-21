@@ -2,10 +2,9 @@ import { StatusCodes } from "http-status-codes";
 
 import { env } from "@/config/env.config";
 
-import { redis } from "@/lib/redis";
+import { cacheGet, cacheSet } from "@/utils/redis";
 
 import ApiError from "@/shared/ApiError";
-import { CACHE_TTL_SECONDS } from "@/shared/constants";
 
 type NominatimSearchResponse = {
     lat: string;
@@ -45,7 +44,7 @@ const fetchWithRetry = async (
     retries = 3,
     // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     backoff = 300
-): Promise<Response> => {
+) => {
     try {
         const res = await fetch(url, options);
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
@@ -61,9 +60,9 @@ export const getCoordinatesAndCountry = async (address: string): Promise<Coordin
     try {
         const cacheKey = `geo:${address.toLowerCase()}`;
 
-        const cached = await redis.get(cacheKey);
+        const cached = await cacheGet<CoordinatesAndCountry>(cacheKey);
         if (cached) {
-            return JSON.parse(cached) as CoordinatesAndCountry;
+            return cached;
         }
 
         const userAgent = `${env.APP_NAME}/1.0 (${env.APP_EMAIL})`;
@@ -104,7 +103,7 @@ export const getCoordinatesAndCountry = async (address: string): Promise<Coordin
             lng: parseFloat(lon),
         };
 
-        await redis.set(cacheKey, JSON.stringify(result), "EX", CACHE_TTL_SECONDS);
+        await cacheSet(cacheKey, result);
 
         return result;
     } catch (error) {

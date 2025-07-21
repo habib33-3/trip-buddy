@@ -3,15 +3,16 @@ import { StatusCodes } from "http-status-codes";
 import { prisma } from "@/lib/prisma";
 
 import {
-    findByIdFromRedisList,
-    generateTripCacheKey,
-    getJsonFromRedis,
-    refreshRedisTTL,
-    removeFromRedisListCache,
-    setJsonToRedis,
-    updateRedisListCache,
-    updateSingleItemInRedisList,
+    cacheGet,
+    cacheInvalidate,
+    cacheListFindById,
+    cacheListPrepend,
+    cacheListRemoveItem,
+    cacheListUpdateItem,
+    cacheRefreshTTL,
+    cacheSet,
 } from "@/utils/redis";
+import { cacheKeyTrip } from "@/utils/redis-key";
 
 import ApiError from "@/shared/ApiError";
 import { logger } from "@/shared/logger";
@@ -25,25 +26,28 @@ export const getTripById = async (
     tripId: string,
     userId: string
 ): Promise<Trip | null> => {
-    const cachedTrip = await findByIdFromRedisList<Trip>(key, tripId);
+    const cachedTrip = await cacheListFindById<Trip>(key, tripId);
+    if (cachedTrip) return cachedTrip;
 
-    if (cachedTrip) {
-        return cachedTrip;
-    }
-
-    const trip = await prisma.trip.findUnique({
+    const trip = await prisma.trip.findFirst({
         include: { itineraries: true },
         where: { id: tripId, userId },
     });
 
     if (trip) {
-        await updateRedisListCache<Trip>(key, trip);
+        await cacheListPrepend<Trip>(key, trip);
     }
 
     return trip;
 };
 
-export const createTripService = async (payload: CreateTripSchemaType, userId: string) => {
+/**
+ * Create a new trip and cache it.
+ */
+export const createTripService = async (
+    payload: CreateTripSchemaType,
+    userId: string
+): Promise<Trip> => {
     const trip = await prisma.trip.create({
         data: {
             description: payload.description,
@@ -55,21 +59,23 @@ export const createTripService = async (payload: CreateTripSchemaType, userId: s
         include: { itineraries: true },
     });
 
-    const key = generateTripCacheKey(userId);
-
-    await updateRedisListCache<Trip>(key, trip);
+    const key = cacheKeyTrip(userId);
+    await cacheListPrepend<Trip>(key, trip);
+    await cacheInvalidate(key);
 
     return trip;
 };
 
-export const getAllTripsService = async (userId: string) => {
-    const key = generateTripCacheKey(userId);
-
-    const cachedTrips = await getJsonFromRedis<Trip[]>(key);
+/**
+ * Get all trips for a user with Redis caching.
+ */
+export const getAllTripsService = async (userId: string): Promise<Trip[]> => {
+    const key = cacheKeyTrip(userId);
+    const cachedTrips = await cacheGet<Trip[]>(key);
 
     if (cachedTrips?.length) {
         logger.info(`Cache hit: ${key}`);
-        await refreshRedisTTL(key);
+        await cacheRefreshTTL(key);
         return cachedTrips;
     }
 
@@ -77,27 +83,35 @@ export const getAllTripsService = async (userId: string) => {
     const trips = await prisma.trip.findMany({ where: { userId } });
 
     if (trips.length > 0) {
-        await setJsonToRedis(key, trips);
+        await cacheSet<Trip[]>(key, trips);
     }
 
     return trips;
 };
 
-export const getSingleTripService = async (tripId: string, userId: string) => {
-    const key = generateTripCacheKey(userId);
-
+/**
+ * Get a single trip by ID for a user.
+ */
+export const getSingleTripService = async (
+    tripId: string,
+    userId: string
+): Promise<Trip | null> => {
+    const key = cacheKeyTrip(userId);
     return getTripById(key, tripId, userId);
 };
 
+/**
+ * Update a trip and sync it in Redis.
+ */
 export const updateTripService = async (
     tripId: string,
     payload: UpdateTripSchemaType,
     userId: string
-) => {
-    const key = generateTripCacheKey(userId);
-    const trip = await getTripById(key, tripId, userId);
+): Promise<Trip> => {
+    const key = cacheKeyTrip(userId);
+    const existingTrip = await getTripById(key, tripId, userId);
 
-    if (!trip) {
+    if (!existingTrip) {
         throw new ApiError(StatusCodes.NOT_FOUND, `Trip not found`);
     }
 
@@ -106,17 +120,25 @@ export const updateTripService = async (
         where: { id: tripId, userId },
     });
 
-    await updateSingleItemInRedisList<Trip>(key, tripId, updatedTrip);
+    await cacheListUpdateItem<Trip>(key, tripId, updatedTrip);
+
+    // Optional: Refresh TTL on the trip list cache
+    await cacheRefreshTTL(key);
 
     return updatedTrip;
 };
 
-export const deleteTripService = async (tripId: string, userId: string) => {
-    const key = generateTripCacheKey(userId);
+/**
+ * Delete a trip and remove it from Redis.
+ */
+export const deleteTripService = async (
+    tripId: string,
+    userId: string
+): Promise<{ success: true }> => {
+    const key = cacheKeyTrip(userId);
+    const existingTrip = await getTripById(key, tripId, userId);
 
-    const trip = await getTripById(key, tripId, userId);
-
-    if (!trip) {
+    if (!existingTrip) {
         throw new ApiError(StatusCodes.NOT_FOUND, `Trip not found`);
     }
 
@@ -124,6 +146,10 @@ export const deleteTripService = async (tripId: string, userId: string) => {
         where: { id: tripId, userId },
     });
 
-    await removeFromRedisListCache(key, tripId);
+    await cacheListRemoveItem<Trip>(key, tripId);
+
+    // Optional: Refresh TTL or invalidate entire cache if needed
+    await cacheRefreshTTL(key);
+
     return { success: true };
 };

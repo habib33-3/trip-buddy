@@ -3,14 +3,8 @@ import { StatusCodes } from "http-status-codes";
 import { prisma } from "@/lib/prisma";
 
 import { getCoordinatesAndCountry } from "@/utils/map";
-import {
-    generateItineraryCacheKey,
-    generateTripCacheKey,
-    getJsonFromRedis,
-    invalidateRedisCache,
-    setJsonToRedis,
-    updateRedisListCache,
-} from "@/utils/redis";
+import { cacheGet, cacheInvalidate, cacheSet } from "@/utils/redis";
+import { cacheKeyItinerary, cacheKeyTrip } from "@/utils/redis-key";
 
 import ApiError from "@/shared/ApiError";
 
@@ -24,7 +18,7 @@ import type { Itinerary } from "@/generated/prisma";
 import { getTripById } from "./trip.services";
 
 export const addItineraryService = async (payload: AddItinerarySchemaType, userId: string) => {
-    const tripKey = generateTripCacheKey(userId);
+    const tripKey = cacheKeyTrip(userId);
 
     const { city, country, formattedAddress, lat, lng } = await getCoordinatesAndCountry(
         payload.address
@@ -68,26 +62,33 @@ export const addItineraryService = async (payload: AddItinerarySchemaType, userI
         });
     });
 
-    const key = generateItineraryCacheKey(userId, payload.tripId);
-    await updateRedisListCache(key, itinerary);
-    await invalidateRedisCache(tripKey);
+    const itineraryKey = cacheKeyItinerary(userId, payload.tripId);
+
+    // You might want to update the list by prepending or re-fetching the entire list.
+    // Here we just invalidate the itinerary cache to force fresh fetch next time
+    await cacheInvalidate(itineraryKey);
+    await cacheInvalidate(tripKey);
 
     return itinerary;
 };
 
 export const getAllItinerariesService = async (tripId: string, userId: string) => {
-    const key = generateItineraryCacheKey(userId, tripId);
+    const itineraryKey = cacheKeyItinerary(userId, tripId);
 
-    const cachedItineraries = await getJsonFromRedis<Itinerary[]>(key);
+    const cachedItineraries = await cacheGet<Itinerary[]>(itineraryKey);
 
     if (cachedItineraries) {
         return cachedItineraries.sort((a, b) => a.order - b.order);
     }
 
-    return prisma.itinerary.findMany({
+    const itineraries = await prisma.itinerary.findMany({
         orderBy: { order: "asc" },
         where: { tripId },
     });
+
+    await cacheSet(itineraryKey, itineraries);
+
+    return itineraries;
 };
 
 export const reorderItineraryService = async (
@@ -105,9 +106,9 @@ export const reorderItineraryService = async (
         );
     });
 
-    const key = generateItineraryCacheKey(userId, payload.tripId);
+    const itineraryKey = cacheKeyItinerary(userId, payload.tripId);
 
-    await setJsonToRedis(key, updatedItineraries);
+    await cacheSet(itineraryKey, updatedItineraries);
 
     return updatedItineraries;
 };

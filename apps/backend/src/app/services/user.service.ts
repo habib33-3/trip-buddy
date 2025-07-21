@@ -1,16 +1,18 @@
 import { prisma } from "@/lib/prisma";
 
-import { generateUserCacheKey, getJsonFromRedis, setJsonToRedis } from "@/utils/redis";
+import { cacheGet, cacheSet } from "@/utils/redis";
+import { cacheKeyUser } from "@/utils/redis-key";
+
+import type { User } from "@/generated/prisma";
 
 export const findUserByEmail = async (email: string) => {
     return prisma.user.findUnique({ where: { email } });
 };
 
 export const findUserById = async (id: string) => {
-    const key = generateUserCacheKey(id);
+    const key = cacheKeyUser(id);
 
-    const cachedUser = await getJsonFromRedis(key);
-
+    const cachedUser = await cacheGet<User>(key);
     if (cachedUser) {
         return cachedUser;
     }
@@ -18,7 +20,7 @@ export const findUserById = async (id: string) => {
     const user = await prisma.user.findUnique({ where: { id } });
 
     if (user) {
-        await setJsonToRedis(key, user);
+        await cacheSet(key, user);
     }
 
     return user;

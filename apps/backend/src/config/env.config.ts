@@ -7,6 +7,7 @@ import {
     DEFAULT_PORT,
     DEFAULT_RATE_LIMIT_WINDOW_MS,
     DEFAULT_REDIS_EXPIRATION,
+    DEFAULT_REDIS_KEY_PREFIX,
     ENV_ENUM,
 } from "@/shared/constants";
 import { logger } from "@/shared/logger";
@@ -27,6 +28,7 @@ const envSchema = z.object({
             }
             return result;
         }),
+
     ACCESS_TOKEN_SECRET: z
         .string()
         .trim()
@@ -41,10 +43,9 @@ const envSchema = z.object({
         .trim()
         .min(1, { message: "APP_NAME cannot be empty" })
         .default("Express API Template"),
-
     DATABASE_URL: z.string().trim().url({ message: "DATABASE_URL must be a valid URL" }),
-    NODE_ENV: z.enum(ENV_ENUM).default("production"),
 
+    NODE_ENV: z.enum(ENV_ENUM).default("production"),
     // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     PORT: z.coerce.number().min(1).max(65535).default(DEFAULT_PORT),
 
@@ -56,6 +57,8 @@ const envSchema = z.object({
         .regex(/^\d+$/, "Expiration must be a number")
         .transform(Number)
         .default(DEFAULT_REDIS_EXPIRATION),
+
+    REDIS_KEY_PREFIX: z.string().trim().default(DEFAULT_REDIS_KEY_PREFIX),
 
     REDIS_URL: z.string().trim().url({ message: "REDIS_URL must be a valid URL" }),
 
