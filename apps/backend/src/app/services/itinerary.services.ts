@@ -26,21 +26,11 @@ import { getTripById } from "./trip.services";
 export const addItineraryService = async (payload: AddItinerarySchemaType, userId: string) => {
     const tripKey = generateTripCacheKey(userId);
 
-    let countryName: string, address: string, latitude: number, longitude: number;
-    try {
-        const result = await getCoordinatesAndCountry(payload.address);
-        countryName = result.country;
-        address = result.formattedAddress;
-        latitude = result.lat;
-        longitude = result.lng;
-    } catch {
-        throw new ApiError(
-            StatusCodes.BAD_REQUEST,
-            "Failed to get location information for the provided address"
-        );
-    }
+    const { city, country, formattedAddress, lat, lng } = await getCoordinatesAndCountry(
+        payload.address
+    );
 
-    const generateTitle = `${address} - ${countryName}`;
+    const generateTitle = `${formattedAddress} - ${country}`;
 
     const itinerary = await prisma.$transaction(async (tx) => {
         const trip = await getTripById(tripKey, payload.tripId, userId);
@@ -66,10 +56,11 @@ export const addItineraryService = async (payload: AddItinerarySchemaType, userI
 
         return tx.itinerary.create({
             data: {
-                country: countryName,
-                formattedAddress: address,
-                latitude,
-                longitude,
+                city,
+                country,
+                formattedAddress,
+                latitude: lat,
+                longitude: lng,
                 order,
                 title: generateTitle,
                 tripId: payload.tripId,

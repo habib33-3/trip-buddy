@@ -17,6 +17,12 @@ type NominatimReverseResponse = {
     display_name: string;
     address?: {
         country?: string;
+        city?: string;
+        town?: string;
+        village?: string;
+        state?: string;
+        country_code?: string;
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         [key: string]: any;
     };
@@ -27,7 +33,7 @@ export type CoordinatesAndCountry = {
     lat: number;
     lng: number;
     country: string;
-
+    city?: string;
     formattedAddress: string;
 };
 
@@ -91,6 +97,7 @@ export const getCoordinatesAndCountry = async (address: string): Promise<Coordin
         }
 
         const result: CoordinatesAndCountry = {
+            city: reverseData.address?.city,
             country: reverseData.address?.country ?? "Unknown",
             formattedAddress: reverseData.display_name,
             lat: parseFloat(lat),

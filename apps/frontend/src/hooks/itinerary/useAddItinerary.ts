@@ -8,6 +8,8 @@ import type { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
+import { useAuthStore } from "@/stores/useAuthStore";
+
 import { addItineraryApi } from "@/api/itineraryApi";
 
 import type { ApiResponse } from "@/types/response";
@@ -21,6 +23,8 @@ const useAddItinerary = () => {
   if (!tripId) {
     throw new Error("tripId is required");
   }
+
+  const { user } = useAuthStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -45,6 +49,7 @@ const useAddItinerary = () => {
     onSuccess: (data) => {
       void query.invalidateQueries({ queryKey: ["itineraries", tripId] });
       void query.invalidateQueries({ queryKey: ["trip", tripId] });
+      void query.invalidateQueries({ queryKey: ["stats", user?.id] });
 
       form.reset();
 

@@ -25,3 +25,8 @@ export type Itinerary = {
   formattedAddress: string;
   tripId: string;
 };
+
+export type Stats = {
+  countries: string[];
+  cities: { name: string; lat: number; lng: number }[];
+};

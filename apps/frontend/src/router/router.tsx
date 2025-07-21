@@ -3,6 +3,7 @@ import { createBrowserRouter } from "react-router";
 import TripDashboardLayout from "@/layouts/TripDashboardLayout";
 
 import ErrorPage from "@/pages/ErrorPage/ErrorPage";
+import GlobePage from "@/pages/GlobePage/GlobePage";
 import LoginPage from "@/pages/LoginPage/LoginPage";
 import NotFoundPage from "@/pages/NotFoundPage/NotFoundPage";
 import RegisterPage from "@/pages/RegisterPage/RegisterPage";
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
         ],
         element: <TripDashboardLayout />,
         path: "trips",
+      },
+      {
+        element: <GlobePage />,
+        path: "globe",
       },
       {
         element: <NotFoundPage />,
