@@ -11,9 +11,8 @@ import {
 import useGetItineraries from "@/hooks/itinerary/useGetItineraries";
 import useReorderItinerary from "@/hooks/itinerary/useReorderItinerary";
 
+import ErrorComponent from "@/shared/ErrorComponent";
 import Loader from "@/shared/Loader";
-
-import ErrorPage from "@/pages/ErrorPage/ErrorPage";
 
 import ItineraryCard from "./components/ItineraryCard";
 
@@ -31,7 +30,9 @@ const ItineraryTab = () => {
   }
 
   if (status === "error") {
-    return <ErrorPage />;
+    return (
+      <ErrorComponent message="Something went wrong while fetching itineraries" />
+    );
   }
 
   if (!locations || locations.length === 0) {

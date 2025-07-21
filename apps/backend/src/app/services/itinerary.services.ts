@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 import { getCoordinatesAndCountry } from "@/utils/map";
 import { cacheGet, cacheInvalidate, cacheSet } from "@/utils/redis";
-import { cacheKeyItinerary, cacheKeyTrip } from "@/utils/redis-key";
+import { cacheKeyItinerary, cacheKeyStats, cacheKeyTrip } from "@/utils/redis-key";
 
 import ApiError from "@/shared/ApiError";
 
@@ -64,10 +64,12 @@ export const addItineraryService = async (payload: AddItinerarySchemaType, userI
 
     const itineraryKey = cacheKeyItinerary(userId, payload.tripId);
 
-    // You might want to update the list by prepending or re-fetching the entire list.
-    // Here we just invalidate the itinerary cache to force fresh fetch next time
     await cacheInvalidate(itineraryKey);
     await cacheInvalidate(tripKey);
+
+    const statsKey = cacheKeyStats(userId);
+
+    await cacheInvalidate(statsKey);
 
     return itinerary;
 };

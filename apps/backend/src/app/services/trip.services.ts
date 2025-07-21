@@ -12,7 +12,7 @@ import {
     cacheRefreshTTL,
     cacheSet,
 } from "@/utils/redis";
-import { cacheKeyTrip } from "@/utils/redis-key";
+import { cacheKeyStats, cacheKeyTrip } from "@/utils/redis-key";
 
 import ApiError from "@/shared/ApiError";
 import { logger } from "@/shared/logger";
@@ -62,6 +62,10 @@ export const createTripService = async (
     const key = cacheKeyTrip(userId);
     await cacheListPrepend<Trip>(key, trip);
     await cacheInvalidate(key);
+
+    const statsKey = cacheKeyStats(userId);
+
+    await cacheInvalidate(statsKey);
 
     return trip;
 };
@@ -148,8 +152,11 @@ export const deleteTripService = async (
 
     await cacheListRemoveItem<Trip>(key, tripId);
 
-    // Optional: Refresh TTL or invalidate entire cache if needed
-    await cacheRefreshTTL(key);
+    const statsKey = cacheKeyStats(userId);
+
+    await cacheInvalidate(key);
+
+    await cacheInvalidate(statsKey);
 
     return { success: true };
 };

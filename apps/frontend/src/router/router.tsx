@@ -31,14 +31,15 @@ const router = createBrowserRouter([
             element: <TripsDetailsPage />,
             path: ":tripId",
           },
+          {
+            element: <GlobePage />,
+            path: "globe",
+          },
         ],
         element: <TripDashboardLayout />,
         path: "trips",
       },
-      {
-        element: <GlobePage />,
-        path: "globe",
-      },
+
       {
         element: <NotFoundPage />,
         path: "*",
