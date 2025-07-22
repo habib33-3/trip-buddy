@@ -25,3 +25,23 @@ export type Itinerary = {
   formattedAddress: string;
   tripId: string;
 };
+
+export type CityPoint = {
+  lat: number;
+  lng: number;
+  name: string;
+  count: number;
+};
+
+export type Stats = {
+  cities: CityPoint[];
+  countries: number;
+  itineraryCount: number;
+  mostVisitedCountry: string;
+  tripsCount: number;
+  tripStatusCounts: {
+    completed: number;
+    inProgress: number;
+    planned: number;
+  };
+};

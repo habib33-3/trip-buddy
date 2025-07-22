@@ -1,8 +1,8 @@
 import useGetSingleTrip from "@/hooks/trip/useGetSingleTrip";
 
+import ErrorComponent from "@/shared/ErrorComponent";
 import Loader from "@/shared/Loader";
 
-import ErrorPage from "../ErrorPage/ErrorPage";
 import TripTabsContainer from "./components/TripTabsContainer";
 import AddItineraryModal from "./components/modal/AddItineraryModal";
 import DeleteTripModal from "./components/modal/DeleteTripModal";
@@ -12,7 +12,10 @@ const TripsDetailsPage = () => {
   const { status, trip } = useGetSingleTrip();
 
   if (status === "pending") return <Loader />;
-  if (status === "error") return <ErrorPage />;
+  if (status === "error")
+    return (
+      <ErrorComponent message="Something went wrong while fetching trip" />
+    );
   if (!trip) return null;
 
   return (

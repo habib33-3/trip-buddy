@@ -14,24 +14,26 @@ const DashboardNavbar = () => {
 
   return (
     <header
-      className="sticky top-0 z-50 w-full border-b bg-white"
+      className="sticky top-0 z-50 w-full border-b bg-background shadow-sm"
       role="banner"
       aria-label="Main navigation"
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:py-3">
+        {/* Logo */}
         <Link
           to="/"
-          className="text-xl font-bold"
+          className="text-2xl font-semibold tracking-tight text-foreground"
         >
           MySite
         </Link>
 
+        {/* Desktop Nav */}
         <nav className="hidden items-center gap-6 md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.path}
               to={link.path}
-              className="text-gray-700 transition-colors hover:text-black"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
               {link.name}
             </Link>
