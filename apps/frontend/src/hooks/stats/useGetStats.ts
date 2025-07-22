@@ -8,8 +8,8 @@ const useGetStats = () => {
   const { user } = useAuthStore();
 
   const { data, status } = useQuery({
+    enabled: Boolean(user?.id),
     queryFn: getStatsApi,
-
     queryKey: ["stats", user?.id],
   });
 

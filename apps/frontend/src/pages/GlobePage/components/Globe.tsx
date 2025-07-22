@@ -32,12 +32,18 @@ const Globe = ({ cities }: Props) => {
   }, []);
 
   useEffect(() => {
-    if (globeRef.current) {
-      globeRef.current.pointOfView({ altitude: 2, lat: 0, lng: 0 }, 0);
-      globeRef.current.controls().autoRotate = true;
-      globeRef.current.controls().autoRotateSpeed = 0.9;
-    }
-  }, []);
+    const initializeGlobe = () => {
+      if (globeRef.current) {
+        globeRef.current.pointOfView({ altitude: 2, lat: 0, lng: 0 }, 0);
+        globeRef.current.controls().autoRotate = true;
+        globeRef.current.controls().autoRotateSpeed = 0.9;
+      }
+    };
+
+    // Add a small delay to ensure globe is fully initialized
+    const timeoutId = setTimeout(initializeGlobe, 100);
+    return () => clearTimeout(timeoutId);
+  }, [cities.length]); // Re-run when cities data changes
 
   const maxCount = Math.max(...cities.map((city) => city.count || 1));
 

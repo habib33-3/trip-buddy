@@ -11,7 +11,7 @@ const TripStats = ({ stats }: Props) => {
   const { completed, inProgress, planned } = stats.tripStatusCounts;
 
   return (
-    <div className="flex min-h-3/4 flex-col justify-center gap-6">
+    <div className="flex h-3/4 flex-col justify-center gap-6">
       <div className="rounded-xl bg-slate-700/80 px-8 py-5 shadow-md ring-1 ring-slate-600 transition-colors duration-300 hover:ring-indigo-500">
         <p className="text-sm text-slate-300">Total Trips</p>
         <p className="text-3xl font-extrabold tracking-wide text-white">

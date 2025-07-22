@@ -61,7 +61,6 @@ export const createTripService = async (
 
     const key = cacheKeyTrip(userId);
     await cacheListPrepend<Trip>(key, trip);
-    await cacheInvalidate(key);
 
     const statsKey = cacheKeyStats(userId);
 
