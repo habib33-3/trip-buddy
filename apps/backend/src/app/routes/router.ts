@@ -26,7 +26,7 @@ const routes: { path: string; router: Router }[] = [
         router: statsRouter,
     },
     {
-        path: "/places",
+        path: "/place",
         router: placeRouter,
     },
 ];

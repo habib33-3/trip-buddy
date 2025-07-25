@@ -4,6 +4,7 @@ import TripDashboardLayout from "@/layouts/TripDashboardLayout";
 
 import ErrorPage from "@/pages/ErrorPage/ErrorPage";
 import GlobePage from "@/pages/GlobePage/GlobePage";
+import HomePage from "@/pages/HomePage/HomePage";
 import LoginPage from "@/pages/LoginPage/LoginPage";
 import NotFoundPage from "@/pages/NotFoundPage/NotFoundPage";
 import RegisterPage from "@/pages/RegisterPage/RegisterPage";
@@ -21,6 +22,12 @@ const router = createBrowserRouter([
         element: <LoginPage />,
         path: "login",
       },
+
+      {
+        element: <HomePage />,
+        path: "",
+      },
+
       {
         children: [
           {

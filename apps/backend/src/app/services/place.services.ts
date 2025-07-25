@@ -14,7 +14,7 @@ export const addPlaceService = async (payload: AddPlaceSchemaType) => {
     );
 
     const place = await prisma.place.create({
-        data: { ...payload, city, country, formattedAddress, lat, lng },
+        data: { city, country, formattedAddress, lat, lng },
     });
 
     const key = cacheKeyPlace();
@@ -43,6 +43,7 @@ export const getPlacesService = async (searchQuery?: string) => {
         where: {
             formattedAddress: {
                 contains: normalizedSearchQuery,
+                mode: "insensitive",
             },
         },
     });

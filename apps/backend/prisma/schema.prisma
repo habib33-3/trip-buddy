@@ -35,7 +35,7 @@ model User {
   password String
   role     UserRole @default(USER)
   image    String?
-  initials String?
+  initials String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -66,11 +66,11 @@ model Trip {
 
 model Place {
   id               String  @id @default(uuid())
-  formattedAddress String?
+  formattedAddress String
   lat              Float
   lng              Float
   country          String
-  city             String?
+  city             String
 
   itineraries Itinerary[]
 
