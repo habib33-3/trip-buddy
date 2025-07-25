@@ -10,6 +10,14 @@ datasource db {
 
 enum TripStatus {
   PLANNED
+  CONFIRMED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum ItineraryStatus {
+  UPCOMING
   IN_PROGRESS
   COMPLETED
   CANCELLED
@@ -36,10 +44,13 @@ model User {
 }
 
 model Trip {
-  id          String     @id @default(uuid())
+  id          String @id @default(uuid())
   title       String
   description String
-  status      TripStatus @default(PLANNED)
+
+  status TripStatus @default(PLANNED)
+
+  coverImg String?
 
   startDate DateTime
   endDate   DateTime
@@ -53,23 +64,35 @@ model Trip {
   updatedAt DateTime @updatedAt
 }
 
-model Itinerary {
+model Place {
   id               String  @id @default(uuid())
-  title            String
-  order            Int     @default(0)
   formattedAddress String?
-  latitude         Float
-  longitude        Float
+  lat              Float
+  lng              Float
   country          String
   city             String?
 
-  tripId  String
+  itineraries Itinerary[]
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 
-  trip Trip @relation(fields: [tripId], references: [id])
+model Itinerary {
+  id    String  @id @default(uuid())
+  title String
+  notes String?
+
+  status ItineraryStatus @default(UPCOMING)
+
+  trip   Trip   @relation(fields: [tripId], references: [id])
+  tripId String
+
+  place   Place  @relation(fields: [placeId], references: [id])
+  placeId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([tripId])
+  @@index([tripId], name: "trip_id_idx")
 }
