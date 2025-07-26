@@ -3,7 +3,7 @@ import z from "zod";
 export const addPlaceSchema = z.object({
     body: z
         .object({
-            address: z.string(),
+            address: z.string().min(3),
         })
         .strict(),
 });

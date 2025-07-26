@@ -19,11 +19,11 @@ const AddItineraryForm = () => {
   const handleSubmit = (data: AddItinerarySchemaType) => {
     if (!place) return;
 
-    handleAddLocation({ ...data, placeId: place?.id });
+    handleAddLocation({ ...data, placeId: place.id });
   };
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+    <div className="h-full rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
       <h3 className="mb-2 text-sm font-medium text-muted-foreground">
         {place?.formattedAddress ?? "No place selected"}
       </h3>

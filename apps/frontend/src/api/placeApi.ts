@@ -5,6 +5,8 @@ import type { ApiResponse } from "@/types/response";
 import type { Place } from "../types";
 
 export const addPlaceApi = async (address: string) => {
+  console.log({ address });
+
   const res = await axiosPrivate.post<ApiResponse<Place>>(`/place`, {
     address,
   });

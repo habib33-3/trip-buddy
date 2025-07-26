@@ -12,8 +12,6 @@ import { Form, FormField, FormItem, FormMessage } from "@/ui/form";
 import { Input } from "@/ui/input";
 import { Label } from "@/ui/label";
 
-import SubmitButton from "@/buttons/SubmitButtons";
-
 const AddPlaceForm = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { places, status } = useGetPlaces(searchQuery);
@@ -26,41 +24,49 @@ const AddPlaceForm = () => {
   };
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+    <div className="h-full rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(addPlace)}
-          className="flex flex-col gap-4 sm:flex-row sm:items-end"
+          className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_auto]"
         >
           <FormField
             control={form.control}
             name="address"
             render={({ field }) => (
-              <FormItem className="flex w-full flex-col">
+              <FormItem className="flex flex-col">
                 <Label htmlFor="address">Address</Label>
                 <Input
                   id="address"
                   {...field}
+                  value={field.value}
                   placeholder="e.g. 221B Baker Street, London"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+
+                    form.setValue("address", e.target.value);
+                  }}
                   disabled={isLoading}
                 />
                 <FormMessage />
               </FormItem>
             )}
           />
-          <SubmitButton
-            className="w-full px-6 py-2 sm:w-auto"
-            loading={isLoading}
-            title="Add Place"
-          />
+          <div className="self-end">
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full"
+            >
+              Add
+            </Button>
+          </div>
         </form>
       </Form>
 
-      <div className="mt-4">
-        <h3 className="font-medium">Search Results</h3>
-        <div className="mt-2 max-h-60 space-y-2 overflow-y-auto pr-2">
+      <div className="mt-6 min-h-[100px]">
+        <h3 className="text-sm font-semibold text-gray-700">Search Results</h3>
+        <div className="mt-2 max-h-60 space-y-1 overflow-y-auto pr-2">
           {status === "pending" ? (
             <p className="text-sm text-muted-foreground">Loading...</p>
           ) : searchQuery.length < 3 ? (
@@ -74,7 +80,7 @@ const AddPlaceForm = () => {
                 type="button"
                 variant="ghost"
                 onClick={() => handlePlaceClick(place)}
-                className="w-full justify-start text-left text-sm"
+                className="w-full justify-start text-left text-sm hover:bg-gray-100"
               >
                 {place.formattedAddress}
               </Button>
