@@ -24,10 +24,7 @@ export const getUserStatisticsService = async (userId: string) => {
     const [itineraries, tripsCount, itineraryCount, tripStatusCounts] = await Promise.all([
         prisma.itinerary.findMany({
             select: {
-                city: true,
-                country: true,
-                latitude: true,
-                longitude: true,
+                place: { select: { city: true, country: true, lat: true, lng: true } },
                 trip: { select: { userId: true } },
             },
             where: {
@@ -47,10 +44,12 @@ export const getUserStatisticsService = async (userId: string) => {
     const countryMap = new Map<string, number>();
     const countrySet = new Set<string>();
 
-    for (const { city, country, latitude, longitude } of itineraries) {
-        if (country) countrySet.add(country);
+    for (const itinerary of itineraries) {
+        const { city, country, lat, lng } = itinerary.place;
+
         if (country) {
             const countryKey = country.toLowerCase();
+            countrySet.add(countryKey);
             countryMap.set(countryKey, (countryMap.get(countryKey) ?? 0) + 1);
         }
 
@@ -63,8 +62,8 @@ export const getUserStatisticsService = async (userId: string) => {
             } else {
                 cityMap.set(cityKey, {
                     count: 1,
-                    lat: latitude,
-                    lng: longitude,
+                    lat,
+                    lng,
                     name: city,
                 });
             }
@@ -79,7 +78,7 @@ export const getUserStatisticsService = async (userId: string) => {
         tripStatusCounts.map((item) => [item.status, item._count._all])
     );
 
-    const stats = {
+    const stats: Stat = {
         cities,
         countries: countrySet.size,
         itineraryCount,
@@ -93,6 +92,5 @@ export const getUserStatisticsService = async (userId: string) => {
     };
 
     await cacheSet(cacheKey, stats);
-
     return stats;
 };

@@ -37,7 +37,7 @@ const TripsDetailsPage = () => {
           </div>
         </header>
 
-        <div className="mt-10 flex justify-end">
+        <div className="mt-10 flex w-full flex-1 justify-end">
           <AddItineraryModal />
         </div>
       </section>

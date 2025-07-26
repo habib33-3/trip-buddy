@@ -3,21 +3,22 @@ import { z } from "zod";
 export const addItinerarySchema = z.object({
     body: z
         .object({
-            address: z.string(),
-            tripId: z.string(),
-        })
-        .strict(),
-});
-
-export type AddItinerarySchemaType = z.infer<typeof addItinerarySchema>["body"];
-
-export const reorderItinerarySchema = z.object({
-    body: z
-        .object({
-            itineraryIds: z.array(z.string()),
+            notes: z
+                .string()
+                .optional()
+                .refine((val) => val === undefined || val.trim().length >= 3, {
+                    message: "Notes must be at least 3 characters long",
+                }),
+            placeId: z.string().uuid(),
+            title: z
+                .string()
+                .optional()
+                .refine((val) => val === undefined || val.trim().length >= 3, {
+                    message: "Title must be at least 3 characters long",
+                }),
             tripId: z.string().uuid(),
         })
         .strict(),
 });
 
-export type ReorderItinerarySchemaType = z.infer<typeof reorderItinerarySchema>["body"];
+export type AddItinerarySchemaType = z.infer<typeof addItinerarySchema>["body"];

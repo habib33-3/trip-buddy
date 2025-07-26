@@ -3,7 +3,7 @@ import z from "zod";
 export const createTripSchema = z.object({
     body: z
         .object({
-            description: z.string().min(1, "Description is required"),
+            description: z.string().min(3, "Description must be at least 3 characters long"),
             endDate: z
                 .string()
                 .refine((val) => !isNaN(Date.parse(val)), "Invalid end date")
@@ -30,7 +30,12 @@ export type CreateTripSchemaType = z.infer<typeof createTripSchema>["body"];
 export const updateTripSchema = z.object({
     body: z
         .object({
-            description: z.string().min(1, "Description is required").optional(),
+            description: z
+                .string()
+                .optional()
+                .refine((val) => {
+                    return val === undefined || val.trim().length >= 3;
+                }),
             endDate: z
                 .string()
                 .refine((val) => !isNaN(Date.parse(val)), "Invalid end date")
@@ -41,7 +46,12 @@ export const updateTripSchema = z.object({
                 .refine((val) => !isNaN(Date.parse(val)), "Invalid start date")
                 .transform((val) => new Date(val))
                 .optional(),
-            title: z.string().min(1, "Title is required").optional(),
+            title: z
+                .string()
+                .optional()
+                .refine((val) => {
+                    return val === undefined || val.trim().length >= 3;
+                }),
         })
         .refine(
             (data) => {
