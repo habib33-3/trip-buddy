@@ -70,6 +70,7 @@ export const getAllItinerariesService = async (tripId: string, userId: string) =
     if (cachedItineraries) return cachedItineraries;
 
     const itineraries = await prisma.itinerary.findMany({
+        include: { place: true },
         orderBy: { createdAt: "asc" },
         where: { tripId },
     });

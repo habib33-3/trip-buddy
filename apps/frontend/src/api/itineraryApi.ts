@@ -26,15 +26,3 @@ export const getItinerariesApi = async (tripId: string) => {
 
   return res.data;
 };
-
-export const reorderItinerariesApi = async (data: string[], tripId: string) => {
-  const res = await axiosPrivate.put<ApiResponse<Itinerary[]>>(
-    `/itinerary/reorder`,
-    {
-      itineraryIds: data,
-      tripId,
-    }
-  );
-
-  return res.data;
-};
