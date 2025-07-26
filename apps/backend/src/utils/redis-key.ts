@@ -13,6 +13,8 @@ export const cacheKeyItinerary = (userId: string, tripId: string): string =>
 
 export const cacheKeyStats = (userId: string): string => withPrefix("stats", userId);
 
-export const cacheKeyPlace = (searchQuery = "") => withPrefix("place", searchQuery);
+export const cacheKeyPlace = (searchQuery = ""): string =>
+    withPrefix("place", "search", searchQuery);
 
-export const cacheKeySinglePlace = (placeId: string) => withPrefix("place", placeId);
+export const cacheKeySinglePlace = (placeId: string): string =>
+    withPrefix("place", "single", placeId);

@@ -35,7 +35,7 @@ export const getPlacesService = async (searchQuery?: string) => {
 
     const cachedPlaces = await cacheGet<Place[]>(key);
 
-    if (cachedPlaces?.length) {
+    if (cachedPlaces !== null && cachedPlaces !== undefined) {
         return cachedPlaces;
     }
 

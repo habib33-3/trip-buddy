@@ -7,7 +7,7 @@ export const addItinerarySchema = z.object({
     .refine((value) => {
       if (!value) return true;
       return value.length > 3;
-    }, "Notes must be at least 3 characters long"),
+    }, "Title must be at least 3 characters long"),
   title: z
     .string()
     .optional()

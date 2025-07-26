@@ -5,10 +5,12 @@ import type { ApiResponse } from "@/types/response";
 import type { Place } from "../types";
 
 export const addPlaceApi = async (address: string) => {
-  console.log({ address });
+  if (!address.trim()) {
+    throw new Error("Address is required");
+  }
 
   const res = await axiosPrivate.post<ApiResponse<Place>>(`/place`, {
-    address,
+    address: address.trim(),
   });
 
   return res.data;
