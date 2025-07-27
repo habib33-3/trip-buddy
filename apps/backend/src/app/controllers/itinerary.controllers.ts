@@ -16,6 +16,7 @@ import {
     changeItineraryStatusService,
     deleteItineraryService,
     getAllItinerariesService,
+    getItineraryByIdService,
     updateItineraryService,
 } from "@/services/itinerary.services";
 
@@ -50,6 +51,20 @@ export const getAllItinerariesHandler = asyncHandler(
         });
     }
 );
+
+export const getSingleItineraryHandler = asyncHandler(async (req: Request<{ id: string }>, res) => {
+    const itineraryId = req.params.id;
+    const userId = req.user?.id as string;
+
+    const result = await getItineraryByIdService(itineraryId, userId);
+
+    sendResponse(req, res, {
+        data: result,
+        message: "Itinerary fetched successfully",
+        statusCode: StatusCodes.OK,
+        success: true,
+    });
+});
 
 export const updateItineraryHandler = asyncHandler(
     async (req: Request<{ id: string }, {}, UpdateItinerarySchemaType>, res) => {

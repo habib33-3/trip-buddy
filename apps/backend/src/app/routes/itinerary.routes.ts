@@ -14,6 +14,7 @@ import {
     changeItineraryStatusHandler,
     deleteItineraryHandler,
     getAllItinerariesHandler,
+    getSingleItineraryHandler,
     updateItineraryHandler,
 } from "@/controllers/itinerary.controllers";
 
@@ -22,6 +23,8 @@ const router = Router();
 router.post("/", verifyAuth, validationMiddleware(addItinerarySchema), addItineraryHandler);
 
 router.get("/trip/:tripId", verifyAuth, getAllItinerariesHandler);
+
+router.get("/:id", verifyAuth, getSingleItineraryHandler);
 
 router.put(
     "/:id/change-status",

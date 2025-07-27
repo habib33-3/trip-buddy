@@ -5,10 +5,10 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet/dist/leaflet.css";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
-import type { Itinerary } from "@/types/index";
+import type { Place } from "@/types/index";
 
 type MapProps = {
-  locations: Itinerary[];
+  locations: Place[];
   center?: [number, number];
   zoom?: number;
 };
@@ -17,10 +17,9 @@ const Map = memo(({ center, locations, zoom = 6 }: MapProps) => {
   const hasLocations = locations.length > 0;
 
   const first = locations.find(
-    (l) => Number.isFinite(l.latitude) && Number.isFinite(l.longitude)
+    (l) => Number.isFinite(l.lat) && Number.isFinite(l.lng)
   );
-  const mapCenter =
-    center ?? (first ? [first.latitude, first.longitude] : [0, 0]);
+  const mapCenter = center ?? (first ? [first.lat, first.lng] : [0, 0]);
   return (
     <div className="h-full min-h-[400px] w-full flex-1 rounded-2xl border border-gray-200 bg-white shadow-sm">
       {!hasLocations ? (
@@ -48,15 +47,11 @@ const Map = memo(({ center, locations, zoom = 6 }: MapProps) => {
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           />
           {locations
-            .filter(
-              (l) => Number.isFinite(l.latitude) && Number.isFinite(l.longitude)
-            )
+            .filter((l) => Number.isFinite(l.lat) && Number.isFinite(l.lng))
             .map((location) => (
               <Marker
                 key={location.id}
-                position={
-                  [location.latitude, location.longitude] as [number, number]
-                }
+                position={[location.lat, location.lng] as [number, number]}
               >
                 <Popup>{location.formattedAddress}</Popup>
               </Marker>

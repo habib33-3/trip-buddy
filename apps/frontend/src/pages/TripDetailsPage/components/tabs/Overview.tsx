@@ -13,7 +13,7 @@ import type { Itinerary } from "@/types/index";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 
-const Map = lazy(async () => import("../tabs/Map"));
+const Map = lazy(async () => import("../../../../components/shared/Map"));
 
 const Overview = () => {
   const { destinationCount, status, trip } = useGetSingleTrip();
@@ -65,7 +65,7 @@ const Overview = () => {
               No locations available
             </div>
           ) : (
-            <Map locations={trip.itineraries as Itinerary[]} />
+            <Map locations={trip.itineraries} />
           )}
         </CardContent>
       </Card>

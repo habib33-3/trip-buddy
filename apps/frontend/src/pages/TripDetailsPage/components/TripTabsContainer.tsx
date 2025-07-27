@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 import ErrorPage from "@/pages/ErrorPage/ErrorPage";
 
 import ItineraryTab from "./tabs/ItineraryTab";
-import Map from "./tabs/Map";
+import MapTab from "./tabs/MapTab";
 import Overview from "./tabs/Overview";
 
 type TripTab = "itinerary" | "maps" | "overview";
@@ -60,12 +60,7 @@ const TripTabsContainer = () => {
           <ItineraryTab />
         </TabsContent>
         <TabsContent value="maps">
-          <div className="h-[500px] w-full rounded-lg shadow-inner">
-            <Map
-              locations={locations}
-              zoom={6}
-            />
-          </div>
+          <MapTab />
         </TabsContent>
       </div>
     </Tabs>
