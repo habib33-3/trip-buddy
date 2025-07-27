@@ -2,21 +2,28 @@ import { StatusCodes } from "http-status-codes";
 
 import { prisma } from "@/lib/prisma";
 
-import { cacheGet, cacheInvalidate, cacheSet } from "@/utils/redis";
+import {
+    cacheGet,
+    cacheInvalidate,
+    cacheListRemoveItem,
+    cacheSet,
+    invalidateStatsCache,
+} from "@/utils/redis";
 import { cacheKeyItinerary, cacheKeyStats, cacheKeyTrip } from "@/utils/redis-key";
 
 import ApiError from "@/shared/ApiError";
 
-import type { AddItinerarySchemaType } from "@/validations/itinerary.validations";
+import type {
+    AddItinerarySchemaType,
+    ChangeItineraryStatusSchemaType,
+    UpdateItinerarySchemaType,
+} from "@/validations/itinerary.validations";
 
 import type { Itinerary } from "@/generated/prisma";
 
 import { getSinglePlaceService } from "./place.services";
 import { getTripById } from "./trip.services";
 
-/**
- * Add an itinerary for a given trip
- */
 export const addItineraryService = async (payload: AddItinerarySchemaType, userId: string) => {
     const tripKey = cacheKeyTrip(userId);
     const itineraryKey = cacheKeyItinerary(userId, payload.tripId);
@@ -50,7 +57,6 @@ export const addItineraryService = async (payload: AddItinerarySchemaType, userI
         },
     });
 
-    // Invalidate relevant cache keys
     await Promise.all([
         cacheInvalidate(itineraryKey),
         cacheInvalidate(tripKey),
@@ -60,9 +66,6 @@ export const addItineraryService = async (payload: AddItinerarySchemaType, userI
     return itinerary;
 };
 
-/**
- * Get all itineraries for a given trip
- */
 export const getAllItinerariesService = async (tripId: string, userId: string) => {
     const itineraryKey = cacheKeyItinerary(userId, tripId);
 
@@ -77,4 +80,91 @@ export const getAllItinerariesService = async (tripId: string, userId: string) =
 
     await cacheSet(itineraryKey, itineraries);
     return itineraries;
+};
+
+export const getItineraryByIdService = async (itineraryId: string, userId: string) => {
+    const itineraryKey = cacheKeyItinerary(userId, itineraryId);
+
+    const cachedItinerary = await cacheGet<Itinerary>(itineraryKey);
+
+    if (cachedItinerary) return cachedItinerary;
+
+    const itinerary = await prisma.itinerary.findFirst({
+        include: { place: true },
+        where: {
+            id: itineraryId,
+            trip: {
+                userId,
+            },
+        },
+    });
+
+    await cacheSet(itineraryKey, itinerary);
+    return itinerary;
+};
+
+export const updateItineraryService = async (
+    itineraryId: string,
+    payload: UpdateItinerarySchemaType,
+    userId: string
+) => {
+    const itinerary = await getItineraryByIdService(itineraryId, userId);
+
+    if (!itinerary) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Itinerary not found for this user");
+    }
+
+    const updatedItinerary = await prisma.itinerary.update({
+        data: { ...payload },
+        where: { id: itineraryId },
+    });
+
+    await cacheSet(cacheKeyItinerary(userId, itineraryId), updatedItinerary);
+
+    await invalidateStatsCache(userId);
+
+    return updatedItinerary;
+};
+
+export const deleteItineraryService = async (itineraryId: string, userId: string) => {
+    const itineraryKey = cacheKeyItinerary(userId, itineraryId);
+
+    const itinerary = await getItineraryByIdService(itineraryId, userId);
+
+    if (!itinerary) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Itinerary not found");
+    }
+
+    await prisma.itinerary.delete({
+        where: { id: itineraryId },
+    });
+
+    await cacheInvalidate(itineraryKey);
+    await cacheListRemoveItem<Itinerary>(cacheKeyTrip(userId), itineraryId);
+    await invalidateStatsCache(userId);
+
+    return { message: "Itinerary deleted successfully" };
+};
+
+export const changeItineraryStatusService = async (
+    itineraryId: string,
+    payload: ChangeItineraryStatusSchemaType,
+    userId: string
+) => {
+    const itinerary = await getItineraryByIdService(itineraryId, userId);
+
+    if (!itinerary) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Itinerary not found");
+    }
+
+    const updatedItinerary = await prisma.itinerary.update({
+        data: { status: payload.status },
+        where: { id: itineraryId },
+    });
+
+    await cacheSet(cacheKeyItinerary(userId, itineraryId), updatedItinerary);
+
+    await invalidateStatsCache(userId);
+
+    return updatedItinerary;
 };

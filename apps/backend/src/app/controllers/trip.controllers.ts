@@ -6,12 +6,14 @@ import asyncHandler from "@/shared/asyncHandler";
 import sendResponse from "@/shared/sendResponse";
 
 import type {
+    ChangeTripStatusSchemaType,
     CreateTripSchemaType,
     SearchTripParamSchemaType,
     UpdateTripSchemaType,
 } from "@/validations/trip.validations";
 
 import {
+    changeTripStatusService,
     createTripService,
     deleteTripService,
     getAllTripsService,
@@ -93,3 +95,28 @@ export const deleteTripHandler = asyncHandler(async (req: Request<{ id: string }
         success: true,
     });
 });
+
+export const changeTripStatusHandler = asyncHandler(
+    async (
+        req: Request<
+            {
+                id: string;
+            },
+            {},
+            ChangeTripStatusSchemaType
+        >,
+        res
+    ) => {
+        const tripId = req.params.id;
+        const userId = req.user?.id as string;
+
+        const result = await changeTripStatusService(tripId, req.body, userId);
+
+        sendResponse(req, res, {
+            data: result,
+            message: "Trip status changed successfully",
+            statusCode: StatusCodes.OK,
+            success: true,
+        });
+    }
+);

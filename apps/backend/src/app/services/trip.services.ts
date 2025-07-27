@@ -11,12 +11,14 @@ import {
     cacheListUpdateItem,
     cacheRefreshTTL,
     cacheSet,
+    invalidateStatsCache,
 } from "@/utils/redis";
-import { cacheKeyStats, cacheKeyTrip } from "@/utils/redis-key";
+import { cacheKeyTrip } from "@/utils/redis-key";
 
 import ApiError from "@/shared/ApiError";
 
 import type {
+    ChangeTripStatusSchemaType,
     CreateTripSchemaType,
     SearchTripParamSchemaType,
     UpdateTripSchemaType,
@@ -62,9 +64,7 @@ export const createTripService = async (
     const key = cacheKeyTrip(userId);
     await cacheListPrepend<Trip>(key, trip);
 
-    const statsKey = cacheKeyStats(userId);
-
-    await cacheInvalidate(statsKey);
+    await invalidateStatsCache(userId);
 
     return trip;
 };
@@ -135,6 +135,8 @@ export const updateTripService = async (
 
     await cacheInvalidate(key);
 
+    await invalidateStatsCache(userId);
+
     return updatedTrip;
 };
 
@@ -155,11 +157,35 @@ export const deleteTripService = async (
 
     await cacheListRemoveItem<Trip>(key, tripId);
 
-    const statsKey = cacheKeyStats(userId);
+    await cacheInvalidate(key);
+
+    await invalidateStatsCache(userId);
+
+    return { success: true };
+};
+
+export const changeTripStatusService = async (
+    tripId: string,
+    payload: ChangeTripStatusSchemaType,
+    userId: string
+) => {
+    const key = cacheKeyTrip(userId);
+    const existingTrip = await getTripById(key, tripId, userId);
+
+    if (!existingTrip) {
+        throw new ApiError(StatusCodes.NOT_FOUND, `Trip not found`);
+    }
+
+    const updatedTrip = await prisma.trip.update({
+        data: { status: payload.status },
+        where: { id: tripId, userId },
+    });
+
+    await cacheListUpdateItem<Trip>(key, tripId, updatedTrip);
 
     await cacheInvalidate(key);
 
-    await cacheInvalidate(statsKey);
+    await invalidateStatsCache(userId);
 
-    return { success: true };
+    return updatedTrip;
 };

@@ -4,6 +4,8 @@ import { redis } from "@/lib/redis";
 
 import { logger } from "@/shared/logger";
 
+import { cacheKeyStats } from "./redis-key";
+
 /**
  * Store a JSON-serializable value in Redis with TTL.
  */
@@ -149,4 +151,10 @@ export const cacheListFindById = async <T extends { id: string }>(
         );
         return null;
     }
+};
+
+export const invalidateStatsCache = async (userId: string) => {
+    const statsKey = cacheKeyStats(userId);
+
+    await cacheInvalidate(statsKey);
 };
