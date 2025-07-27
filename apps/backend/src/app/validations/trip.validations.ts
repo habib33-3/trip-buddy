@@ -1,5 +1,7 @@
 import z from "zod";
 
+import { TripStatus } from "@/generated/prisma";
+
 export const createTripSchema = z.object({
     body: z
         .object({
@@ -68,3 +70,22 @@ export const updateTripSchema = z.object({
 });
 
 export type UpdateTripSchemaType = z.infer<typeof updateTripSchema>["body"];
+
+const tripStatusValues = Object.values(TripStatus) as [string, ...string[]];
+
+export const searchTripParamSchema = z.object({
+    query: z.object({
+        searchQuery: z
+            .string()
+            .optional()
+            .refine((val) => val === undefined || val.trim().length >= 3, {
+                message: "Query must be at least 3 characters long",
+            }),
+        status: z
+            .array(z.enum(tripStatusValues))
+            .optional()
+            .default([TripStatus.ACTIVE, TripStatus.PLANNED]),
+    }),
+});
+
+export type SearchTripParamSchemaType = z.infer<typeof searchTripParamSchema>["query"];

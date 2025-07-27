@@ -2,11 +2,9 @@ export type User = {
   id: string;
   name?: string | null;
   email: string;
-
   role: "ADMIN" | "USER";
   image?: string | null;
   initials: string | null;
-
   trips: Trip[];
 };
 
@@ -14,7 +12,7 @@ export type Trip = {
   id: string;
   title: string;
   description: string;
-  status: "ACTIVE" | "CANCELLED" | "COMPLETED" | "CONFIRMED" | "PLANNED";
+  status: TripStatus;
   coverImg?: string | null;
   startDate: Date;
   endDate: Date;
@@ -39,13 +37,11 @@ export type Itinerary = {
   id: string;
   title: string;
   notes?: string | null;
-  status: "CANCELLED" | "COMPLETED" | "IN_PROGRESS" | "UPCOMING";
+  status: ItineraryStatus;
   tripId: string;
   placeId: string;
   createdAt: Date;
   updatedAt: Date;
-
-  // Optional: if included with relations
   trip?: Trip;
   place?: Place;
 };
@@ -69,3 +65,16 @@ export type Stats = {
     planned: number;
   };
 };
+
+export type TripStatus =
+  | "ACTIVE"
+  | "CANCELLED"
+  | "COMPLETED"
+  | "CONFIRMED"
+  | "PLANNED";
+
+export type ItineraryStatus =
+  | "CANCELLED"
+  | "COMPLETED"
+  | "IN_PROGRESS"
+  | "UPCOMING";

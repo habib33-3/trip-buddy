@@ -14,6 +14,7 @@ export const cacheSet = async <T>(key: string, value: T): Promise<void> => {
             .set(key, JSON.stringify(value))
             .expire(key, env.REDIS_EXPIRATION)
             .exec();
+        logger.info(`Cache set: ${key}`);
     } catch (error) {
         logger.error(
             `Redis cacheSet error [${key}]: ${error instanceof Error ? error.message : String(error)}`
@@ -27,7 +28,12 @@ export const cacheSet = async <T>(key: string, value: T): Promise<void> => {
 export const cacheGet = async <T>(key: string): Promise<T | null> => {
     try {
         const raw = await redis.get(key);
-        return raw ? (JSON.parse(raw) as T) : null;
+        if (raw) {
+            logger.info(`Cache hit: ${key}`);
+            return JSON.parse(raw) as T;
+        }
+        logger.info(`Cache miss: ${key}`);
+        return null;
     } catch (error) {
         logger.error(
             `Redis cacheGet error [${key}]: ${error instanceof Error ? error.message : String(error)}`
@@ -41,7 +47,8 @@ export const cacheGet = async <T>(key: string): Promise<T | null> => {
  */
 export const cacheRefreshTTL = async (key: string): Promise<void> => {
     try {
-        await redis.expire(key, env.REDIS_EXPIRATION);
+        const result = await redis.expire(key, env.REDIS_EXPIRATION);
+        logger.info(`Cache TTL refreshed [${key}]: ${result ? "success" : "failed"}`);
     } catch (error) {
         logger.error(
             `Redis cacheRefreshTTL error [${key}]: ${error instanceof Error ? error.message : String(error)}`
@@ -71,6 +78,7 @@ export const cacheListPrepend = async <T>(key: string, newItem: T): Promise<void
         const list = await cacheGet<T[]>(key);
         const updated = Array.isArray(list) ? [newItem, ...list] : [newItem];
         await cacheSet<T[]>(key, updated);
+        logger.info(`Item prepended to cache list: ${key}`);
     } catch (error) {
         logger.error(
             `Redis cacheListPrepend error [${key}]: ${error instanceof Error ? error.message : String(error)}`
@@ -91,6 +99,7 @@ export const cacheListUpdateItem = async <T extends { id: string }>(
         if (!Array.isArray(list)) return;
         const updatedList = list.map((item) => (item.id === id ? updatedItem : item));
         await cacheSet<T[]>(key, updatedList);
+        logger.info(`Item updated in cache list: ${key}, id: ${id}`);
     } catch (error) {
         logger.error(
             `Redis cacheListUpdateItem error [${key}]: ${error instanceof Error ? error.message : String(error)}`
@@ -110,6 +119,7 @@ export const cacheListRemoveItem = async <T extends { id: string }>(
         if (!Array.isArray(list)) return;
         const filtered = list.filter((item) => item.id !== id);
         await cacheSet<T[]>(key, filtered);
+        logger.info(`Item removed from cache list: ${key}, id: ${id}`);
     } catch (error) {
         logger.error(
             `Redis cacheListRemoveItem error [${key}]: ${error instanceof Error ? error.message : String(error)}`
@@ -126,7 +136,13 @@ export const cacheListFindById = async <T extends { id: string }>(
 ): Promise<T | null> => {
     try {
         const list = await cacheGet<T[]>(key);
-        return Array.isArray(list) ? (list.find((item) => item.id === id) ?? null) : null;
+        if (!Array.isArray(list)) {
+            logger.info(`Cache miss (list not found or invalid): ${key}`);
+            return null;
+        }
+        const found = list.find((item) => item.id === id) ?? null;
+        logger.info(`Cache ${found ? "hit" : "miss"} for item id: ${id} in list: ${key}`);
+        return found;
     } catch (error) {
         logger.error(
             `Redis cacheListFindById error [${key}]: ${error instanceof Error ? error.message : String(error)}`

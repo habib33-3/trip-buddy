@@ -1,7 +1,5 @@
 import { useState } from "react";
 
-import { Link } from "react-router";
-
 import useGetAllTrips from "@/hooks/trip/useGetAllTrips";
 
 import ErrorComponent from "@/shared/ErrorComponent";
@@ -10,7 +8,7 @@ import TripCard from "@/shared/TripCard";
 
 import { Button } from "@/ui/button";
 
-const RecentTrip = () => {
+const TripsHistory = () => {
   const { isError, isLoading, trips } = useGetAllTrips();
 
   const [showCancelled, setShowCancelled] = useState(false);
@@ -31,7 +29,7 @@ const RecentTrip = () => {
   });
 
   return (
-    <section className="px-4 py-8 sm:px-6 lg:px-8">
+    <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
         <div className="flex gap-2">
           <Button
@@ -47,17 +45,10 @@ const RecentTrip = () => {
             {showCompleted ? "Hide" : "Show"} Completed
           </Button>
         </div>
-
-        <Button
-          asChild
-          variant="outline"
-        >
-          <Link to="/trips/history">View all</Link>
-        </Button>
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {filteredTrips?.slice(0, 4).map((trip) => (
+        {filteredTrips?.map((trip) => (
           <TripCard
             key={trip.id}
             trip={trip}
@@ -72,4 +63,4 @@ const RecentTrip = () => {
   );
 };
 
-export default RecentTrip;
+export default TripsHistory;
