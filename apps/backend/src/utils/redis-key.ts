@@ -21,3 +21,6 @@ export const cacheKeyPlace = (searchQuery = ""): string =>
 
 export const cacheKeySinglePlace = (placeId: string): string =>
     withPrefix("place", "single", placeId);
+
+export const cacheKeyPlacesByTrip = (userId: string, tripId: string) =>
+    `places:trip:${userId}:${tripId}`;

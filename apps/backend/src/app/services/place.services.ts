@@ -1,12 +1,18 @@
+import { StatusCodes } from "http-status-codes";
+
 import { prisma } from "@/lib/prisma";
 
 import { getCoordinatesAndCountry } from "@/utils/map";
 import { cacheGet, cacheListPrepend, cacheSet } from "@/utils/redis";
-import { cacheKeyPlace, cacheKeySinglePlace } from "@/utils/redis-key";
+import { cacheKeyPlace, cacheKeyPlacesByTrip, cacheKeySinglePlace } from "@/utils/redis-key";
+
+import ApiError from "@/shared/ApiError";
 
 import type { AddPlaceSchemaType } from "@/validations/places.validations";
 
 import type { Place } from "@/generated/prisma";
+
+import { getTripById } from "./trip.services";
 
 export const addPlaceService = async (payload: AddPlaceSchemaType) => {
     const { city, country, formattedAddress, lat, lng } = await getCoordinatesAndCountry(
@@ -69,4 +75,35 @@ export const getSinglePlaceService = async (placeId: string) => {
     }
 
     return singlePlace;
+};
+
+export const getPlacesByTripService = async (tripId: string, userId: string) => {
+    const key = cacheKeyPlacesByTrip(userId, tripId);
+
+    const cachedPlaces = await cacheGet<Place[]>(key);
+
+    if (cachedPlaces !== null) {
+        return cachedPlaces;
+    }
+
+    const trip = await getTripById(tripId, userId);
+
+    if (!trip) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Trip not found");
+    }
+
+    const places = await prisma.place.findMany({
+        distinct: ["id"],
+        where: {
+            itineraries: {
+                some: {
+                    tripId,
+                },
+            },
+        },
+    });
+
+    await cacheSet(key, places);
+
+    return places;
 };

@@ -5,21 +5,34 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet/dist/leaflet.css";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
-import type { Place } from "@/types/index";
+import useGetPlacesByTrip from "@/hooks/place/useGetPlacesByTrip";
+
+import ErrorComponent from "./ErrorComponent";
+import Loader from "./Loader";
 
 type MapProps = {
-  locations: Place[];
   center?: [number, number];
   zoom?: number;
 };
 
-const Map = memo(({ center, locations, zoom = 6 }: MapProps) => {
+const Map = memo(({ center, zoom = 3 }: MapProps) => {
+  const { locations, status } = useGetPlacesByTrip();
+
+  if (status === "pending") return <Loader />;
+
+  if (status === "error" || !locations)
+    return (
+      <ErrorComponent message="Something went wrong while fetching locations" />
+    );
+
   const hasLocations = locations.length > 0;
 
   const first = locations.find(
     (l) => Number.isFinite(l.lat) && Number.isFinite(l.lng)
   );
+
   const mapCenter = center ?? (first ? [first.lat, first.lng] : [0, 0]);
+
   return (
     <div className="h-full min-h-[400px] w-full flex-1 rounded-2xl border border-gray-200 bg-white shadow-sm">
       {!hasLocations ? (

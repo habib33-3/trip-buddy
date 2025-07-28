@@ -9,11 +9,9 @@ import Loader from "@/shared/Loader";
 
 import { formatDateRange } from "@/utils/date";
 
-import type { Itinerary } from "@/types/index";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 
-const Map = lazy(async () => import("../../../../components/shared/Map"));
+const Map = lazy(async () => import("@/shared/Map"));
 
 const Overview = () => {
   const { destinationCount, status, trip } = useGetSingleTrip();
@@ -57,7 +55,6 @@ const Overview = () => {
         </CardContent>
       </Card>
 
-      {/* Map View */}
       <Card className="relative h-[300px] overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md transition-shadow hover:shadow-lg">
         <CardContent className="h-full p-0">
           {destinationCount === 0 ? (
@@ -65,7 +62,7 @@ const Overview = () => {
               No locations available
             </div>
           ) : (
-            <Map locations={trip.itineraries} />
+            <Map />
           )}
         </CardContent>
       </Card>

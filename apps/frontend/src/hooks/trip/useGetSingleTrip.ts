@@ -16,7 +16,7 @@ const useGetSingleTrip = () => {
     queryKey: ["trip", tripId],
   });
 
-  const destinationCount = data?.data?.itineraries?.length ?? 0;
+  const destinationCount = data?.data?.itineraries.length ?? 0;
 
   return {
     destinationCount,

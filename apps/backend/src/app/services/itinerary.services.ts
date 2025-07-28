@@ -34,7 +34,7 @@ export const addItineraryService = async (payload: AddItinerarySchemaType, userI
         throw new ApiError(StatusCodes.NOT_FOUND, "Place not found");
     }
 
-    const trip = await getTripById(tripKey, payload.tripId, userId);
+    const trip = await getTripById(payload.tripId, userId);
     if (!trip) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Trip not found");
     }

@@ -30,10 +30,7 @@ const MapTab = () => {
 
   return (
     <div className="h-[500px] w-full rounded-lg shadow-inner">
-      <Map
-        locations={places}
-        zoom={6}
-      />
+      <Map zoom={6} />
     </div>
   );
 };

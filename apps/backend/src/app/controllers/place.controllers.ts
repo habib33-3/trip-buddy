@@ -63,3 +63,16 @@ export const getSinglePlaceHandler = asyncHandler(async (req: Request<{ id: stri
         success: true,
     });
 });
+
+export const getPlacesByTripHandler = asyncHandler(async (req: Request<{ id: string }>, res) => {
+    const tripId = req.params.id;
+
+    const result = await getPlacesService(tripId);
+
+    sendResponse(req, res, {
+        data: result,
+        message: "Places fetched successfully",
+        statusCode: StatusCodes.OK,
+        success: true,
+    });
+});

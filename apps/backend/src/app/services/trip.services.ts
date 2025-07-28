@@ -26,11 +26,9 @@ import type {
 
 import type { Trip, TripStatus } from "@/generated/prisma";
 
-export const getTripById = async (
-    key: string,
-    tripId: string,
-    userId: string
-): Promise<Trip | null> => {
+export const getTripById = async (tripId: string, userId: string): Promise<Trip | null> => {
+    const key = cacheKeyTrip(userId);
+
     const cachedTrip = await cacheListFindById<Trip>(key, tripId);
     if (cachedTrip) return cachedTrip;
 
@@ -110,8 +108,7 @@ export const getSingleTripService = async (
     tripId: string,
     userId: string
 ): Promise<Trip | null> => {
-    const key = cacheKeyTrip(userId);
-    return getTripById(key, tripId, userId);
+    return getTripById(tripId, userId);
 };
 
 export const updateTripService = async (
@@ -120,7 +117,7 @@ export const updateTripService = async (
     userId: string
 ): Promise<Trip> => {
     const key = cacheKeyTrip(userId);
-    const existingTrip = await getTripById(key, tripId, userId);
+    const existingTrip = await getTripById(tripId, userId);
 
     if (!existingTrip) {
         throw new ApiError(StatusCodes.NOT_FOUND, `Trip not found`);
@@ -145,7 +142,7 @@ export const deleteTripService = async (
     userId: string
 ): Promise<{ success: true }> => {
     const key = cacheKeyTrip(userId);
-    const existingTrip = await getTripById(key, tripId, userId);
+    const existingTrip = await getTripById(tripId, userId);
 
     if (!existingTrip) {
         throw new ApiError(StatusCodes.NOT_FOUND, `Trip not found`);
@@ -170,7 +167,7 @@ export const changeTripStatusService = async (
     userId: string
 ) => {
     const key = cacheKeyTrip(userId);
-    const existingTrip = await getTripById(key, tripId, userId);
+    const existingTrip = await getTripById(tripId, userId);
 
     if (!existingTrip) {
         throw new ApiError(StatusCodes.NOT_FOUND, `Trip not found`);
