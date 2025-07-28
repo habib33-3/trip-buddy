@@ -46,7 +46,10 @@ export const addItineraryService = async (payload: AddItinerarySchemaType, userI
         );
     }
 
-    const title = payload.title ?? `${place.formattedAddress} - ${place.country}`;
+    const title =
+        typeof payload.title === "string" && payload.title.trim().length > 0
+            ? payload.title
+            : `${place.formattedAddress} - ${place.country}`;
 
     const itinerary = await prisma.itinerary.create({
         data: {

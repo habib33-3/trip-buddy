@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { StatusCodes } from "http-status-codes";
 
 import { env } from "@/config/env.config";
@@ -5,6 +6,8 @@ import { env } from "@/config/env.config";
 import { cacheGet, cacheSet } from "@/utils/redis";
 
 import ApiError from "@/shared/ApiError";
+
+import { cacheGeoKey } from "./redis-key";
 
 type NominatimSearchResponse = {
     lat: string;
@@ -21,7 +24,6 @@ type NominatimReverseResponse = {
         village?: string;
         state?: string;
         country_code?: string;
-
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         [key: string]: any;
     };
@@ -38,13 +40,7 @@ export type CoordinatesAndCountry = {
 
 const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms));
 
-const fetchWithRetry = async (
-    url: string,
-    options: RequestInit,
-    retries = 3,
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-    backoff = 300
-) => {
+const fetchWithRetry = async (url: string, options: RequestInit, retries = 3, backoff = 300) => {
     try {
         const res = await fetch(url, options);
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
@@ -56,14 +52,16 @@ const fetchWithRetry = async (
     }
 };
 
+export const normalizeCoordinates = (coordinates: { lat: number; lng: number }) => ({
+    lat: Math.round(coordinates.lat * 1e6) / 1e6,
+    lng: Math.round(coordinates.lng * 1e6) / 1e6,
+});
+
 export const getCoordinatesAndCountry = async (address: string): Promise<CoordinatesAndCountry> => {
     try {
-        const cacheKey = `geo:${address.toLowerCase()}`;
-
+        const cacheKey = cacheGeoKey(address);
         const cached = await cacheGet<CoordinatesAndCountry>(cacheKey);
-        if (cached) {
-            return cached;
-        }
+        if (cached) return cached;
 
         const userAgent = `${env.APP_NAME}/1.0 (${env.APP_EMAIL})`;
         const headers = {
@@ -83,28 +81,33 @@ export const getCoordinatesAndCountry = async (address: string): Promise<Coordin
             throw new ApiError(StatusCodes.NOT_FOUND, "Address not found");
         }
 
-        const { lat, lon } = searchData[0];
+        const latNum = parseFloat(searchData[0].lat);
+        const lngNum = parseFloat(searchData[0].lon);
 
-        const reverseUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`;
+        const reverseUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latNum}&lon=${lngNum}&zoom=10&addressdetails=1`;
 
         const reverseRes = await fetchWithRetry(reverseUrl, { headers });
-
         const reverseData = (await reverseRes.json()) as NominatimReverseResponse;
 
         if (reverseData.error) {
             throw new ApiError(StatusCodes.NOT_FOUND, "Address not found");
         }
 
+        const { lat, lng } = normalizeCoordinates({ lat: latNum, lng: lngNum });
+
         const result: CoordinatesAndCountry = {
-            city: reverseData.address?.city,
+            city:
+                reverseData.address?.city ??
+                reverseData.address?.town ??
+                reverseData.address?.village ??
+                reverseData.address?.state,
             country: reverseData.address?.country ?? "Unknown",
             formattedAddress: reverseData.display_name,
-            lat: parseFloat(lat),
-            lng: parseFloat(lon),
+            lat,
+            lng,
         };
 
         await cacheSet(cacheKey, result);
-
         return result;
     } catch (error) {
         throw error instanceof ApiError

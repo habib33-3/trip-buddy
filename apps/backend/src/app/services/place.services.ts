@@ -4,7 +4,12 @@ import { prisma } from "@/lib/prisma";
 
 import { getCoordinatesAndCountry } from "@/utils/map";
 import { cacheGet, cacheListPrepend, cacheSet } from "@/utils/redis";
-import { cacheKeyPlace, cacheKeyPlacesByTrip, cacheKeySinglePlace } from "@/utils/redis-key";
+import {
+    cacheKeyPlace,
+    cacheKeyPlacesByTrip,
+    cacheKeySinglePlace,
+    cachePlaceCoordinatesKey,
+} from "@/utils/redis-key";
 
 import ApiError from "@/shared/ApiError";
 
@@ -18,6 +23,15 @@ export const addPlaceService = async (payload: AddPlaceSchemaType) => {
     const { city, country, formattedAddress, lat, lng } = await getCoordinatesAndCountry(
         payload.address
     );
+
+    const existingPlace = await getPlaceByCoordinateService({
+        lat,
+        lng,
+    });
+
+    if (existingPlace) {
+        return existingPlace;
+    }
 
     const place = await prisma.place.create({
         data: { city: city ?? "", country, formattedAddress, lat, lng },
@@ -106,4 +120,27 @@ export const getPlacesByTripService = async (tripId: string, userId: string) => 
     await cacheSet(key, places);
 
     return places;
+};
+
+export const getPlaceByCoordinateService = async (coordinate: { lat: number; lng: number }) => {
+    const key = cachePlaceCoordinatesKey(coordinate);
+
+    const cachedPlace = await cacheGet<Place>(key);
+
+    if (cachedPlace) {
+        return cachedPlace;
+    }
+
+    const place = await prisma.place.findFirst({
+        where: {
+            lat: coordinate.lat,
+            lng: coordinate.lng,
+        },
+    });
+
+    if (place) {
+        await cacheSet(key, place);
+    }
+
+    return place;
 };

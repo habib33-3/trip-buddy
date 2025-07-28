@@ -9,6 +9,7 @@ import type { AddPlaceSchemaType } from "@/validations/places.validations";
 
 import {
     addPlaceService,
+    getPlacesByTripService,
     getPlacesService,
     getSinglePlaceService,
 } from "@/services/place.services";
@@ -66,8 +67,9 @@ export const getSinglePlaceHandler = asyncHandler(async (req: Request<{ id: stri
 
 export const getPlacesByTripHandler = asyncHandler(async (req: Request<{ id: string }>, res) => {
     const tripId = req.params.id;
+    const userId = req.user?.id as string;
 
-    const result = await getPlacesService(tripId);
+    const result = await getPlacesByTripService(tripId, userId);
 
     sendResponse(req, res, {
         data: result,

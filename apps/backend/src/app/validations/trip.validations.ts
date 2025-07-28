@@ -7,9 +7,12 @@ export const searchTripParamSchema = z.object({
         searchQuery: z
             .string()
             .optional()
-            .refine((val) => val === undefined || val.trim().length >= 3, {
-                message: "Query must be at least 3 characters long",
-            }),
+            .refine(
+                (val) => val === undefined || val.trim().length === 0 || val.trim().length >= 3,
+                {
+                    message: "Query must be at least 3 characters long",
+                }
+            ),
         status: z
             .array(z.nativeEnum(TripStatus))
             .optional()
@@ -53,7 +56,7 @@ export const updateTripSchema = z.object({
                 .string()
                 .optional()
                 .refine((val) => {
-                    return val === undefined || val.trim().length >= 3;
+                    return val === undefined || val.trim().length === 0 || val.trim().length >= 3;
                 }),
             endDate: z
                 .string()
@@ -69,7 +72,7 @@ export const updateTripSchema = z.object({
                 .string()
                 .optional()
                 .refine((val) => {
-                    return val === undefined || val.trim().length >= 3;
+                    return val === undefined || val.trim().length === 0 || val.trim().length >= 3;
                 }),
         })
         .refine(

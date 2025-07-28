@@ -23,4 +23,9 @@ export const cacheKeySinglePlace = (placeId: string): string =>
     withPrefix("place", "single", placeId);
 
 export const cacheKeyPlacesByTrip = (userId: string, tripId: string) =>
-    `places:trip:${userId}:${tripId}`;
+    withPrefix(`places`, `trip`, userId, tripId);
+
+export const cacheGeoKey = (address: string) => withPrefix("geo", address.toLowerCase());
+
+export const cachePlaceCoordinatesKey = (coordinate: { lat: number; lng: number }) =>
+    withPrefix("placeCoordinates", JSON.stringify(coordinate));
