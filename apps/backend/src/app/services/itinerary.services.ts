@@ -122,16 +122,16 @@ export const updateItineraryService = async (
         where: { id: itineraryId },
     });
 
-    await cacheSet(cacheKeyItinerary(userId, itineraryId), updatedItinerary);
-
-    await invalidateStatsCache(userId);
+    await Promise.all([
+        cacheInvalidate(cacheKeyItinerary(userId, itineraryId)),
+        cacheInvalidate(cacheKeyItinerary(userId, itinerary.tripId)),
+        invalidateStatsCache(userId),
+    ]);
 
     return updatedItinerary;
 };
 
 export const deleteItineraryService = async (itineraryId: string, userId: string) => {
-    const itineraryKey = cacheKeyItinerary(userId, itineraryId);
-
     const itinerary = await getItineraryByIdService(itineraryId, userId);
 
     if (!itinerary) {
@@ -142,9 +142,12 @@ export const deleteItineraryService = async (itineraryId: string, userId: string
         where: { id: itineraryId },
     });
 
-    await cacheInvalidate(itineraryKey);
-    await cacheListRemoveItem<Itinerary>(cacheKeyTrip(userId), itineraryId);
-    await invalidateStatsCache(userId);
+    await Promise.all([
+        cacheInvalidate(cacheKeyItinerary(userId, itineraryId)),
+        cacheInvalidate(cacheKeyItinerary(userId, itinerary.tripId)),
+        cacheListRemoveItem<Itinerary>(cacheKeyTrip(userId), itineraryId),
+        invalidateStatsCache(userId),
+    ]);
 
     return { message: "Itinerary deleted successfully" };
 };
@@ -165,9 +168,11 @@ export const changeItineraryStatusService = async (
         where: { id: itineraryId },
     });
 
-    await cacheSet(cacheKeyItinerary(userId, itineraryId), updatedItinerary);
-
-    await invalidateStatsCache(userId);
+    await Promise.all([
+        cacheInvalidate(cacheKeyItinerary(userId, itineraryId)),
+        cacheInvalidate(cacheKeyItinerary(userId, itinerary.tripId)),
+        invalidateStatsCache(userId),
+    ]);
 
     return updatedItinerary;
 };

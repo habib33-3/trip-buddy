@@ -6,6 +6,8 @@ import { formatDateRange } from "@/utils/date";
 
 import type { Trip } from "@/types/index";
 
+import { tripStatusColorMap } from "@/constants/index";
+
 import { Button } from "@/ui/button";
 import {
   Card,
@@ -15,13 +17,6 @@ import {
   CardTitle,
 } from "@/ui/card";
 
-const statusColorMap: Record<string, string> = {
-  ACTIVE: "bg-green-100 text-green-700",
-  CANCELLED: "bg-red-100 text-red-700",
-  COMPLETED: "bg-gray-200 text-gray-800",
-  PLANNED: "bg-blue-100 text-blue-700",
-};
-
 type Props = {
   trip: Trip;
 };
@@ -30,7 +25,7 @@ const TripCard = ({ trip }: Props) => {
   return (
     <Card className="group relative flex h-72 flex-col justify-between rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition-all duration-300 hover:shadow-md">
       <div
-        className={`absolute top-4 right-4 rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${statusColorMap[trip.status] || "bg-muted text-muted-foreground"}`}
+        className={`absolute top-4 right-4 rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${tripStatusColorMap[trip.status] || "bg-muted text-muted-foreground"}`}
       >
         {trip.status}
       </div>

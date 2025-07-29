@@ -3,6 +3,11 @@ import useGetSingleTrip from "@/hooks/trip/useGetSingleTrip";
 import ErrorComponent from "@/shared/ErrorComponent";
 import Loader from "@/shared/Loader";
 
+import { tripStatusColorMap } from "@/constants/index";
+
+import { Badge } from "@/ui/badge";
+
+import ChangeStatusSelect from "./components/ChangeStatusSelect";
 import TripTabsContainer from "./components/TripTabsContainer";
 import AddItineraryModal from "./components/modal/AddItineraryModal";
 import DeleteTripModal from "./components/modal/DeleteTripModal";
@@ -19,30 +24,41 @@ const TripsDetailsPage = () => {
   if (!trip) return null;
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-      <section className="rounded-2xl border border-gray-200 bg-white p-8 shadow-md">
-        <header className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-          <div>
+    <main className="mx-auto max-w-5xl space-y-12 px-4 py-12 sm:px-6 lg:px-8">
+      <section className="space-y-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-md sm:p-8">
+        <header className="flex flex-col-reverse gap-6 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex-1 space-y-3">
+            <Badge
+              variant="secondary"
+              className={`rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${
+                tripStatusColorMap[trip.status] ||
+                "bg-muted text-muted-foreground"
+              }`}
+            >
+              {trip.status}
+            </Badge>
+
             <h1 className="text-4xl font-extrabold text-gray-900">
               {trip.title}
             </h1>
             {trip.description ? (
-              <p className="mt-2 max-w-xl text-gray-600">{trip.description}</p>
+              <p className="max-w-xl text-gray-600">{trip.description}</p>
             ) : null}
           </div>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap justify-end gap-2 sm:justify-start sm:gap-3">
             <UpdateTripModal />
             <DeleteTripModal />
+            <ChangeStatusSelect trip={trip} />
           </div>
         </header>
 
-        <div className="mt-10 flex w-full flex-1 justify-end">
+        <div className="flex justify-end">
           <AddItineraryModal />
         </div>
       </section>
 
-      <section className="mt-12 rounded-2xl border border-gray-200 bg-white p-8 shadow-md">
+      <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md sm:p-8">
         <TripTabsContainer />
       </section>
     </main>

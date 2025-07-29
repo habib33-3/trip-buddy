@@ -1,3 +1,5 @@
+import { useParams } from "react-router";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { toast } from "sonner";
@@ -7,11 +9,18 @@ import { changeTripStatusApi } from "@/api/tripApi";
 import type { TripStatus } from "@/types/index";
 import type { ApiResponse } from "@/types/response";
 
-const useChangeTripStatus = (id: string) => {
+const useChangeTripStatus = () => {
+  const { tripId } = useParams<{ tripId: string }>();
+
+  if (!tripId) {
+    throw new Error("tripId is required");
+  }
+
   const query = useQueryClient();
 
   const mutate = useMutation({
-    mutationFn: async (status: TripStatus) => changeTripStatusApi(id, status),
+    mutationFn: async (status: TripStatus) =>
+      changeTripStatusApi(tripId, status),
     onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
       toast.error(error.response?.data.message ?? "Something went wrong");
     },

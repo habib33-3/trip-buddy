@@ -1,3 +1,5 @@
+import type { itineraryStatus, tripStatus } from "../constants";
+
 export type User = {
   id: string;
   name?: string | null;
@@ -66,15 +68,6 @@ export type Stats = {
   };
 };
 
-export type TripStatus =
-  | "ACTIVE"
-  | "CANCELLED"
-  | "COMPLETED"
-  | "CONFIRMED"
-  | "PLANNED";
+export type TripStatus = (typeof tripStatus)[number];
 
-export type ItineraryStatus =
-  | "CANCELLED"
-  | "COMPLETED"
-  | "IN_PROGRESS"
-  | "UPCOMING";
+export type ItineraryStatus = (typeof itineraryStatus)[number];
