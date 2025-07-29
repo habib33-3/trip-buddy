@@ -7,6 +7,7 @@ import { cacheGet, cacheSet } from "@/utils/redis";
 
 import ApiError from "@/shared/ApiError";
 
+import { fetchWithRetry } from "./fetch";
 import { cacheGeoKey } from "./redis-key";
 
 type NominatimSearchResponse = {
@@ -38,20 +39,6 @@ export type CoordinatesAndCountry = {
     formattedAddress: string;
 };
 
-const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms));
-
-const fetchWithRetry = async (url: string, options: RequestInit, retries = 3, backoff = 300) => {
-    try {
-        const res = await fetch(url, options);
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        return res;
-    } catch (err) {
-        if (retries === 0) throw err;
-        await delay(backoff);
-        return fetchWithRetry(url, options, retries - 1, backoff * 2);
-    }
-};
-
 export const normalizeCoordinates = (coordinates: { lat: number; lng: number }) => ({
     lat: Math.round(coordinates.lat * 1e6) / 1e6,
     lng: Math.round(coordinates.lng * 1e6) / 1e6,
@@ -73,24 +60,24 @@ export const getCoordinatesAndCountry = async (address: string): Promise<Coordin
             address
         )}&limit=1`;
 
-        const searchRes = await fetchWithRetry(searchUrl, { headers });
-
-        const searchData = (await searchRes.json()) as NominatimSearchResponse;
+        const searchData = await fetchWithRetry<NominatimSearchResponse>(searchUrl, { headers });
 
         if (searchData.length === 0) {
-            throw new ApiError(StatusCodes.NOT_FOUND, "Address not found");
+            throw new ApiError(StatusCodes.NOT_FOUND, `Address not found: ${address}`);
         }
 
-        const latNum = parseFloat(searchData[0].lat);
-        const lngNum = parseFloat(searchData[0].lon);
+        const latNum = Number(parseFloat(searchData[0].lat).toFixed(6));
+        const lngNum = Number(parseFloat(searchData[0].lon).toFixed(6));
 
         const reverseUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latNum}&lon=${lngNum}&zoom=10&addressdetails=1`;
 
-        const reverseRes = await fetchWithRetry(reverseUrl, { headers });
-        const reverseData = (await reverseRes.json()) as NominatimReverseResponse;
+        const reverseData = await fetchWithRetry<NominatimReverseResponse>(reverseUrl, { headers });
 
         if (reverseData.error) {
-            throw new ApiError(StatusCodes.NOT_FOUND, "Address not found");
+            throw new ApiError(
+                StatusCodes.NOT_FOUND,
+                `Reverse lookup failed for ${latNum},${lngNum}`
+            );
         }
 
         const { lat, lng } = normalizeCoordinates({ lat: latNum, lng: lngNum });

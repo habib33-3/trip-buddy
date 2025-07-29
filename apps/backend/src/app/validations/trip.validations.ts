@@ -14,9 +14,12 @@ export const searchTripParamSchema = z.object({
                 }
             ),
         status: z
-            .array(z.nativeEnum(TripStatus))
+            .union([z.nativeEnum(TripStatus), z.array(z.nativeEnum(TripStatus))])
             .optional()
-            .default([TripStatus.ACTIVE, TripStatus.PLANNED]),
+            .transform((val) => {
+                if (!val) return [TripStatus.ACTIVE, TripStatus.PLANNED];
+                return Array.isArray(val) ? val : [val];
+            }),
     }),
 });
 

@@ -24,7 +24,7 @@ import type {
     UpdateTripSchemaType,
 } from "@/validations/trip.validations";
 
-import type { Trip, TripStatus } from "@/generated/prisma";
+import type { Trip } from "@/generated/prisma";
 
 export const getTripById = async (tripId: string, userId: string): Promise<Trip | null> => {
     const key = cacheKeyTrip(userId);
@@ -72,6 +72,7 @@ export const getAllTripsService = async (
     searchTripParams: SearchTripParamSchemaType
 ): Promise<Trip[]> => {
     const key = cacheKeyTrip(userId, searchTripParams);
+
     const cachedTrips = await cacheGet<Trip[]>(key);
 
     if (cachedTrips?.length) {
@@ -79,26 +80,35 @@ export const getAllTripsService = async (
         return cachedTrips;
     }
 
+    const { searchQuery = "", status } = searchTripParams;
+
     const trips = await prisma.trip.findMany({
         where: {
-            description: {
-                contains: searchTripParams.searchQuery ?? "",
-                mode: "insensitive",
-            },
-            status: {
-                in: searchTripParams.status as TripStatus[],
-            },
-
-            title: {
-                contains: searchTripParams.searchQuery ?? "",
-                mode: "insensitive",
-            },
+            OR: [
+                {
+                    title: {
+                        contains: searchQuery,
+                        mode: "insensitive",
+                    },
+                },
+                {
+                    description: {
+                        contains: searchQuery,
+                        mode: "insensitive",
+                    },
+                },
+                {
+                    status: {
+                        in: status,
+                    },
+                },
+            ],
             userId,
         },
     });
 
     if (trips.length > 0) {
-        await cacheSet<Trip[]>(key, trips);
+        await cacheSet(key, trips);
     }
 
     return trips;

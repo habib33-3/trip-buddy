@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import useAddPlace from "@/hooks/place/useAddPlace";
 import useGetPlaces from "@/hooks/place/useGetPlaces";
+import useDebounce from "@/hooks/useDebounce";
 
 import { usePlaceStore } from "@/stores/usePlaceStore";
 
@@ -14,7 +15,8 @@ import { Label } from "@/ui/label";
 
 const AddPlaceForm = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const { places, status } = useGetPlaces(searchQuery);
+  const debouncedSearchQuery = useDebounce(searchQuery);
+  const { places, status } = useGetPlaces(debouncedSearchQuery);
   const { addPlace, form, isLoading } = useAddPlace();
   const { setPlace } = usePlaceStore();
 

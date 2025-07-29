@@ -42,13 +42,10 @@ const globalErrorMiddleware = (err: unknown, req: Request, res: Response, _next:
         success: false,
     };
 
-    // Handle specific errors
     handleException(err, response);
 
-    // Send the response to the client
     sendResponse(req, res, response);
 
-    // Log the error for debugging
     logger.error(response.message ?? "Something went wrong");
 };
 

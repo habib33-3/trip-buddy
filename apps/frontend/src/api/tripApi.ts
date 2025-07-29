@@ -15,9 +15,20 @@ export const createTripApi = async (payload: CreateTripSchemaType) => {
   return res.data;
 };
 
-export const getAllTripsApi = async () => {
-  const res = await axiosPrivate.get<ApiResponse<Trip[]>>("/trip");
+export const getAllTripsApi = async ({
+  searchTerm,
+  status,
+}: {
+  searchTerm: string;
+  status: TripStatus[];
+}) => {
+  const params = new URLSearchParams();
+  params.set("searchQuery", searchTerm);
+  status.forEach((s) => params.append("status", s));
 
+  const res = await axiosPrivate.get<ApiResponse<Trip[]>>(
+    `/trip?${params.toString()}`
+  );
   return res.data;
 };
 
