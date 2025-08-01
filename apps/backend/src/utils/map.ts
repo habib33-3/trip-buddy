@@ -3,12 +3,12 @@ import { StatusCodes } from "http-status-codes";
 
 import { env } from "@/config/env.config";
 
-import { cacheGet, cacheSet } from "@/utils/redis";
+import { cacheGet, cacheSet } from "@/utils/cache";
 
 import ApiError from "@/shared/ApiError";
 
+import { cacheGeoKey } from "./cache-key";
 import { fetchWithRetry } from "./fetch";
-import { cacheGeoKey } from "./redis-key";
 
 type NominatimSearchResponse = {
     lat: string;

@@ -6,10 +6,11 @@ import {
     cacheGet,
     cacheInvalidate,
     cacheListRemoveItem,
+    cacheRefreshTTL,
     cacheSet,
     invalidateStatsCache,
-} from "@/utils/redis";
-import { cacheKeyItinerary, cacheKeyStats, cacheKeyTrip } from "@/utils/redis-key";
+} from "@/utils/cache";
+import { cacheKeyItinerary, cacheKeyStats, cacheKeyTrip } from "@/utils/cache-key";
 
 import ApiError from "@/shared/ApiError";
 
@@ -73,7 +74,10 @@ export const getAllItinerariesService = async (tripId: string, userId: string) =
     const itineraryKey = cacheKeyItinerary(userId, tripId);
 
     const cachedItineraries = await cacheGet<Itinerary[]>(itineraryKey);
-    if (cachedItineraries) return cachedItineraries;
+    if (cachedItineraries) {
+        await cacheRefreshTTL(itineraryKey);
+        return cachedItineraries;
+    }
 
     const itineraries = await prisma.itinerary.findMany({
         include: { place: true },
@@ -90,7 +94,10 @@ export const getItineraryByIdService = async (itineraryId: string, userId: strin
 
     const cachedItinerary = await cacheGet<Itinerary>(itineraryKey);
 
-    if (cachedItinerary) return cachedItinerary;
+    if (cachedItinerary) {
+        await cacheRefreshTTL(itineraryKey);
+        return cachedItinerary;
+    }
 
     const itinerary = await prisma.itinerary.findFirst({
         include: { place: true },

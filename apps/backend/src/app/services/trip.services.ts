@@ -12,8 +12,8 @@ import {
     cacheRefreshTTL,
     cacheSet,
     invalidateStatsCache,
-} from "@/utils/redis";
-import { cacheKeyTrip } from "@/utils/redis-key";
+} from "@/utils/cache";
+import { cacheKeyTrip } from "@/utils/cache-key";
 
 import ApiError from "@/shared/ApiError";
 
@@ -30,7 +30,10 @@ export const getTripById = async (tripId: string, userId: string): Promise<Trip 
     const key = cacheKeyTrip(userId);
 
     const cachedTrip = await cacheListFindById<Trip>(key, tripId);
-    if (cachedTrip) return cachedTrip;
+    if (cachedTrip) {
+        await cacheRefreshTTL(key);
+        return cachedTrip;
+    }
 
     const trip = await prisma.trip.findFirst({
         include: { itineraries: true },
@@ -139,8 +142,6 @@ export const updateTripService = async (
     });
 
     await cacheListUpdateItem<Trip>(key, tripId, updatedTrip);
-
-    await cacheInvalidate(key);
 
     await invalidateStatsCache(userId);
 

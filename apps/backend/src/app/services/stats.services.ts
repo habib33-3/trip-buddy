@@ -2,8 +2,8 @@ import { StatusCodes } from "http-status-codes";
 
 import { prisma } from "@/lib/prisma";
 
-import { cacheGet, cacheSet } from "@/utils/redis";
-import { cacheKeyStats } from "@/utils/redis-key";
+import { cacheGet, cacheRefreshTTL, cacheSet } from "@/utils/cache";
+import { cacheKeyStats } from "@/utils/cache-key";
 
 import ApiError from "@/shared/ApiError";
 
@@ -19,7 +19,10 @@ export const getUserStatisticsService = async (userId: string) => {
 
     const cacheKey = cacheKeyStats(userId);
     const cached = await cacheGet<Stat>(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+        await cacheRefreshTTL(cacheKey);
+        return cached;
+    }
 
     const [itineraries, tripsCount, itineraryCount, tripStatusCounts] = await Promise.all([
         prisma.itinerary.findMany({

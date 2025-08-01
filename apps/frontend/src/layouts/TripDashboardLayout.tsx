@@ -8,7 +8,7 @@ const TripDashboardLayout = () => {
   const { user } = useAuthStore();
 
   if (!user) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
   return (

@@ -4,7 +4,7 @@ import { redis } from "@/lib/redis";
 
 import { logger } from "@/shared/logger";
 
-import { cacheKeyStats } from "./redis-key";
+import { cacheKeyStats } from "./cache-key";
 
 /**
  * Store a JSON-serializable value in Redis with TTL.
@@ -49,7 +49,7 @@ export const cacheGet = async <T>(key: string): Promise<T | null> => {
  */
 export const cacheRefreshTTL = async (key: string): Promise<void> => {
     try {
-        const result = await redis.expire(key, env.REDIS_EXPIRATION);
+        const result = await redis.expire(key, env.REDIS_EXPIRATION / 3);
         logger.info(`Cache TTL refreshed [${key}]: ${result ? "success" : "failed"}`);
     } catch (error) {
         logger.error(

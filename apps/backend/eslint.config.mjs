@@ -83,6 +83,9 @@ const typescriptRules = {
         "@typescript-eslint/no-unsafe-call": "warn",
         "@typescript-eslint/no-unsafe-member-access": "warn",
         "@typescript-eslint/no-unsafe-return": "warn",
+        "@typescript-eslint/no-explicit-any": "error",
+
+        "no-undef": "error",
         "@typescript-eslint/no-unused-vars": [
             "warn",
             {

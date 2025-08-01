@@ -2,14 +2,14 @@ import { StatusCodes } from "http-status-codes";
 
 import { prisma } from "@/lib/prisma";
 
-import { getCoordinatesAndCountry } from "@/utils/map";
-import { cacheGet, cacheListPrepend, cacheSet } from "@/utils/redis";
+import { cacheGet, cacheListPrepend, cacheRefreshTTL, cacheSet } from "@/utils/cache";
 import {
     cacheKeyPlace,
     cacheKeyPlacesByTrip,
     cacheKeySinglePlace,
     cachePlaceCoordinatesKey,
-} from "@/utils/redis-key";
+} from "@/utils/cache-key";
+import { getCoordinatesAndCountry } from "@/utils/map";
 
 import ApiError from "@/shared/ApiError";
 
@@ -18,6 +18,30 @@ import type { AddPlaceSchemaType } from "@/validations/places.validations";
 import type { Place } from "@/generated/prisma";
 
 import { getTripById } from "./trip.services";
+
+const getPlaceByCoordinateService = async (coordinate: { lat: number; lng: number }) => {
+    const key = cachePlaceCoordinatesKey(coordinate);
+
+    const cachedPlace = await cacheGet<Place>(key);
+
+    if (cachedPlace) {
+        await cacheRefreshTTL(key);
+        return cachedPlace;
+    }
+
+    const place = await prisma.place.findFirst({
+        where: {
+            lat: coordinate.lat,
+            lng: coordinate.lng,
+        },
+    });
+
+    if (place) {
+        await cacheSet(key, place);
+    }
+
+    return place;
+};
 
 export const addPlaceService = async (payload: AddPlaceSchemaType) => {
     const { city, country, formattedAddress, lat, lng } = await getCoordinatesAndCountry(
@@ -56,6 +80,7 @@ export const getPlacesService = async (searchQuery?: string) => {
     const cachedPlaces = await cacheGet<Place[]>(key);
 
     if (cachedPlaces !== null) {
+        await cacheRefreshTTL(key);
         return cachedPlaces;
     }
 
@@ -79,6 +104,7 @@ export const getSinglePlaceService = async (placeId: string) => {
     const place = await cacheGet<Place>(key);
 
     if (place) {
+        await cacheRefreshTTL(key);
         return place;
     }
 
@@ -97,6 +123,7 @@ export const getPlacesByTripService = async (tripId: string, userId: string) => 
     const cachedPlaces = await cacheGet<Place[]>(key);
 
     if (cachedPlaces !== null) {
+        await cacheRefreshTTL(key);
         return cachedPlaces;
     }
 
@@ -120,27 +147,4 @@ export const getPlacesByTripService = async (tripId: string, userId: string) => 
     await cacheSet(key, places);
 
     return places;
-};
-
-export const getPlaceByCoordinateService = async (coordinate: { lat: number; lng: number }) => {
-    const key = cachePlaceCoordinatesKey(coordinate);
-
-    const cachedPlace = await cacheGet<Place>(key);
-
-    if (cachedPlace) {
-        return cachedPlace;
-    }
-
-    const place = await prisma.place.findFirst({
-        where: {
-            lat: coordinate.lat,
-            lng: coordinate.lng,
-        },
-    });
-
-    if (place) {
-        await cacheSet(key, place);
-    }
-
-    return place;
 };

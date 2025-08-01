@@ -12,8 +12,18 @@ export const cacheKeyRefreshToken = (userId: string): string => withPrefix("refr
 export const cacheKeyStats = (userId: string): string => withPrefix("stats", userId);
 
 // 🧳 Trip-related
-export const cacheKeyTrip = (userId: string, searchParams?: SearchTripParamSchemaType): string =>
-    withPrefix("trip", userId, JSON.stringify(searchParams));
+export const cacheKeyTrip = (userId: string, searchParams?: SearchTripParamSchemaType): string => {
+    const searchQuery = searchParams?.searchQuery?.trim() ?? "";
+
+    // status will always be present due to Zod transform, but let's be extra safe
+    const statusArray = Array.isArray(searchParams?.status)
+        ? [...searchParams.status]
+        : ["ACTIVE", "PLANNED"];
+
+    const status = statusArray.sort().join(",");
+
+    return withPrefix("trip", userId, `query=${searchQuery}&status=${status}`);
+};
 
 export const cacheKeyPlacesByTrip = (userId: string, tripId: string): string =>
     withPrefix("places", "trip", userId, tripId);
