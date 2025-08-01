@@ -6,7 +6,9 @@ import { useAuthStore } from "@/stores/useAuthStore";
 
 import { getAllTripsApi } from "@/api/tripApi";
 
-const useGetAllTrips = () => {
+import type { TripStatus } from "@/types/index";
+
+const useGetAllTrips = (statusArray: TripStatus[] = []) => {
   const { user } = useAuthStore();
 
   const [searchParams] = useSearchParams();
@@ -18,9 +20,9 @@ const useGetAllTrips = () => {
     queryFn: async () =>
       getAllTripsApi({
         searchTerm,
-        status: ["PLANNED", "ACTIVE"],
+        status: statusArray,
       }),
-    queryKey: ["trips", user?.id, searchTerm],
+    queryKey: ["trips", user?.id, searchTerm, statusArray],
     refetchOnWindowFocus: false,
   });
 

@@ -100,12 +100,10 @@ export const getAllTripsService = async (
                         mode: "insensitive",
                     },
                 },
-                {
-                    status: {
-                        in: status,
-                    },
-                },
             ],
+            status: {
+                in: status,
+            },
             userId,
         },
     });

@@ -15,7 +15,6 @@ export const cacheKeyStats = (userId: string): string => withPrefix("stats", use
 export const cacheKeyTrip = (userId: string, searchParams?: SearchTripParamSchemaType): string => {
     const searchQuery = searchParams?.searchQuery?.trim() ?? "";
 
-    // status will always be present due to Zod transform, but let's be extra safe
     const statusArray = Array.isArray(searchParams?.status)
         ? [...searchParams.status]
         : ["ACTIVE", "PLANNED"];

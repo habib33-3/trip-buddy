@@ -7,7 +7,7 @@ export type User = {
   role: "ADMIN" | "USER";
   image?: string | null;
   initials: string | null;
-  trips: Trip[];
+  trips?: Trip[];
 };
 
 export type Trip = {
@@ -21,7 +21,7 @@ export type Trip = {
   userId: string;
   createdAt: Date;
   updatedAt: Date;
-  itineraries: Itinerary[];
+  itineraries?: Itinerary[];
 };
 
 export type Place = {
