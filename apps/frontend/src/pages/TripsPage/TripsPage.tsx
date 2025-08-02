@@ -1,4 +1,8 @@
+import { Link } from "react-router";
+
 import { useAuthStore } from "@/stores/useAuthStore";
+
+import { Button } from "@/ui/button";
 
 import CreateTripModal from "./components/CreateTripModal";
 import RecentTrip from "./components/RecentTrip";
@@ -31,7 +35,18 @@ const TripsPage = () => {
       </div>
 
       <div className="mt-12 rounded-xl bg-white px-6 py-8 shadow-sm">
-        <h2 className="text-2xl font-semibold text-gray-800">Upcoming Trips</h2>
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
+          <h2 className="text-2xl font-semibold text-gray-800">
+            Upcoming Trips
+          </h2>
+          <Button
+            asChild
+            variant="outline"
+          >
+            <Link to="/trips/history">View all</Link>
+          </Button>
+        </div>
+
         <RecentTrip />
       </div>
     </section>

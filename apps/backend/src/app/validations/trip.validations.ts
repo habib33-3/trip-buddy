@@ -6,13 +6,11 @@ export const searchTripParamSchema = z.object({
     query: z.object({
         searchQuery: z
             .string()
-            .optional()
-            .refine(
-                (val) => val === undefined || val.trim().length === 0 || val.trim().length >= 3,
-                {
-                    message: "Query must be at least 3 characters long",
-                }
-            ),
+            .trim()
+            .default("")
+            .refine((val) => val.length === 0 || val.length >= 3, {
+                message: "Search query must be empty or at least 3 characters long",
+            }),
         status: z
             .union([z.nativeEnum(TripStatus), z.array(z.nativeEnum(TripStatus))])
             .optional()

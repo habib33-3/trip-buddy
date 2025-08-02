@@ -25,6 +25,9 @@ export const cacheKeyTrip = (userId: string, searchParams?: SearchTripParamSchem
     return withPrefix("trip", userId, `query=${encodeURIComponent(searchQuery)}&status=${status}`);
 };
 
+export const cacheKeyRecentTrips = (userId: string): string =>
+    withPrefix("recent", "trips", userId);
+
 export const cacheKeyPlacesByTrip = (userId: string, tripId: string): string =>
     withPrefix("places", "trip", userId, tripId);
 
