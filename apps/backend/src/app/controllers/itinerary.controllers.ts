@@ -43,8 +43,6 @@ export const getAllItinerariesHandler = asyncHandler(
 
         const Itineraries = await getAllItinerariesService(tripId, userId);
 
-        console.log(Itineraries);
-
         sendResponse(req, res, {
             data: Itineraries,
             message: "Itineraries fetched successfully",

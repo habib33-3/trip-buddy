@@ -11,28 +11,37 @@ type Props = {
 };
 
 const ItineraryCard = ({ itinerary }: Props) => {
-  return (
-    <div className="flex items-center justify-between gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:shadow-md">
-      <div className="flex items-center justify-between">
-        <ChangeItineraryStatus itinerary={itinerary} />
-        <Badge
-          variant="secondary"
-          className={`rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${
-            itineraryStatusColorMap[itinerary.status] ||
-            "bg-muted text-muted-foreground"
-          }`}
-        >
-          {itinerary.status}
-        </Badge>
-      </div>
+  const { notes, place, status, title } = itinerary;
 
-      <div className="flex flex-col">
-        <h4 className="text-base font-semibold text-gray-800">
-          {itinerary.title}
-        </h4>
-        {itinerary.notes ? (
-          <p className="text-sm text-gray-600">{itinerary.notes}</p>
-        ) : null}
+  const formattedAddress = place?.formattedAddress ?? "No place selected";
+
+  return (
+    <div className="relative flex items-start gap-4 pl-6">
+      <div className="absolute top-2 left-0 h-3 w-3 rounded-full bg-blue-500 shadow-md ring-2 ring-white" />
+
+      <div className="absolute top-5 left-[5.5px] h-full w-px bg-gray-300" />
+
+      <div className="flex-1 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:shadow-md">
+        <div className="flex items-start justify-between">
+          <h4 className="text-base font-semibold text-gray-800">{title}</h4>
+          <Badge
+            variant="secondary"
+            className={`rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${
+              // eslint-disable-next-line security/detect-object-injection
+              itineraryStatusColorMap[status]
+            }`}
+          >
+            {status}
+          </Badge>
+        </div>
+
+        {notes ? <p className="mt-1 text-sm text-gray-600">{notes}</p> : null}
+        <p className="mt-1 text-sm text-gray-500 italic">{formattedAddress}</p>
+
+        {/* Status Action Button */}
+        <div className="mt-3">
+          <ChangeItineraryStatus itinerary={itinerary} />
+        </div>
       </div>
     </div>
   );

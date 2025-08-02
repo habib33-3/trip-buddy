@@ -1,4 +1,6 @@
-import { LocationEditIcon } from "lucide-react";
+import { useState } from "react";
+
+import { PlusIcon } from "lucide-react";
 
 import { Button } from "@/ui/button";
 import {
@@ -15,12 +17,17 @@ import AddItineraryForm from "../forms/AddItineraryForm";
 import AddPlaceForm from "../forms/AddPlaceForm";
 
 const AddItineraryModal = () => {
+  const [openModal, setModalOpen] = useState(false);
+
   return (
-    <Dialog>
+    <Dialog
+      open={openModal}
+      onOpenChange={setModalOpen}
+    >
       <DialogTrigger asChild>
         <Button className="flex items-center gap-2 rounded-xl px-4 py-2 shadow-md">
-          <LocationEditIcon className="h-4 w-4" />
-          Add Location
+          <PlusIcon className="size-5" />
+          Add Itinerary
         </Button>
       </DialogTrigger>
 
@@ -43,7 +50,7 @@ const AddItineraryModal = () => {
             className="hidden lg:block"
           />
           <div className="w-full lg:w-1/2">
-            <AddItineraryForm />
+            <AddItineraryForm closeModal={() => setModalOpen(false)} />
           </div>
         </div>
       </DialogContent>

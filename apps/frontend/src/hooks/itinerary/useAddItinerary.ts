@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import { useParams } from "react-router";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,7 +17,7 @@ import {
   addItinerarySchema,
 } from "@/validations/itineraryValidation";
 
-const useAddItinerary = () => {
+const useAddItinerary = (closeModal: () => void) => {
   const { tripId } = useParams<{ tripId: string }>();
 
   if (!tripId) {
@@ -35,8 +33,6 @@ const useAddItinerary = () => {
   });
 
   const { user } = useAuthStore();
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const query = useQueryClient();
 
@@ -57,8 +53,11 @@ const useAddItinerary = () => {
       void query.invalidateQueries({ queryKey: ["trip", tripId] });
       void query.invalidateQueries({ queryKey: ["stats", user?.id] });
 
-      setIsModalOpen(false);
+      form.reset();
+
       toast.success(data.message);
+
+      closeModal();
     },
   });
 
@@ -72,9 +71,8 @@ const useAddItinerary = () => {
     form,
     handleAddLocation,
     isLoading: mutate.isPending || form.formState.isSubmitting,
-    isModalOpen,
+
     mutate,
-    setIsModalOpen,
   };
 };
 

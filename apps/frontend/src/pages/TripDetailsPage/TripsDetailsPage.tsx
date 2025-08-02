@@ -31,8 +31,7 @@ const TripsDetailsPage = () => {
             <Badge
               variant="secondary"
               className={`rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${
-                tripStatusColorMap[trip.status] ||
-                "bg-muted text-muted-foreground"
+                tripStatusColorMap[trip.status]
               }`}
             >
               {trip.status}

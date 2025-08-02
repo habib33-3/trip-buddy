@@ -11,15 +11,23 @@ import { Textarea } from "@/ui/textarea";
 
 import SubmitButton from "@/buttons/SubmitButtons";
 
-const AddItineraryForm = () => {
+type Props = {
+  closeModal: () => void;
+};
+
+const AddItineraryForm = ({ closeModal }: Props) => {
   const { place } = usePlaceStore();
 
-  const { form, handleAddLocation, isLoading } = useAddItinerary();
+  const { form, handleAddLocation, isLoading } = useAddItinerary(closeModal);
 
   const handleSubmit = (data: AddItinerarySchemaType) => {
     if (!place) return;
 
-    handleAddLocation({ ...data, placeId: place.id });
+    try {
+      handleAddLocation({ ...data, placeId: place.id });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

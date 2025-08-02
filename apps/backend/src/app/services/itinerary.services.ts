@@ -46,15 +46,12 @@ export const addItineraryService = async (payload: AddItinerarySchemaType, userI
             "You are not allowed to add an itinerary to this trip"
         );
     }
-
     const title =
-        typeof payload.title === "string" && payload.title.trim().length > 0
-            ? payload.title
-            : `${place.formattedAddress} - ${place.country}`;
+        payload.title && payload.title.length > 0 ? payload.title : `Visit to ${place.city}`;
 
     const itinerary = await prisma.itinerary.create({
         data: {
-            notes: payload.notes ?? "",
+            notes: payload.notes,
             placeId: place.id,
             title,
             tripId: payload.tripId,
