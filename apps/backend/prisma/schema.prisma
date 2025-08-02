@@ -10,7 +10,6 @@ datasource db {
 
 enum TripStatus {
   PLANNED
-  CONFIRMED
   ACTIVE
   COMPLETED
   CANCELLED
@@ -18,7 +17,6 @@ enum TripStatus {
 
 enum ItineraryStatus {
   UPCOMING
-  IN_PROGRESS
   COMPLETED
   CANCELLED
 }
@@ -48,14 +46,13 @@ model Trip {
   title       String
   description String
 
-  status TripStatus @default(PLANNED)
-
+  status   TripStatus @default(PLANNED)
   coverImg String?
 
   startDate DateTime
   endDate   DateTime
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
   itineraries Itinerary[]
@@ -65,7 +62,7 @@ model Trip {
 }
 
 model Place {
-  id               String  @id @default(uuid())
+  id               String @id @default(uuid())
   formattedAddress String
   lat              Float
   lng              Float
@@ -76,6 +73,8 @@ model Place {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([lat, lng])
 }
 
 model Itinerary {
@@ -85,7 +84,7 @@ model Itinerary {
 
   status ItineraryStatus @default(UPCOMING)
 
-  trip   Trip   @relation(fields: [tripId], references: [id])
+  trip   Trip   @relation(fields: [tripId], references: [id], onDelete: Cascade)
   tripId String
 
   place   Place  @relation(fields: [placeId], references: [id])

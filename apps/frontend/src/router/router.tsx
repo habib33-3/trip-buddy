@@ -7,6 +7,7 @@ import GlobePage from "@/pages/GlobePage/GlobePage";
 import HomePage from "@/pages/HomePage/HomePage";
 import NotFoundPage from "@/pages/NotFoundPage/NotFoundPage";
 import TripsDetailsPage from "@/pages/TripDetailsPage/TripsDetailsPage";
+import TripsHistory from "@/pages/TripsHistory/TripsHistory";
 import TripsPage from "@/pages/TripsPage/TripsPage";
 
 const router = createBrowserRouter([
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
           {
             element: <GlobePage />,
             path: "globe",
+          },
+          {
+            element: <TripsHistory />,
+            path: "history",
           },
         ],
         element: <TripDashboardLayout />,

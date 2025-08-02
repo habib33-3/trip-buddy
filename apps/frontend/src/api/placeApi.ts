@@ -33,3 +33,11 @@ export const getSinglePlaceApi = async (id: string) => {
 
   return res.data;
 };
+
+export const getPlacesByTripApi = async (tripId: string) => {
+  const res = await axiosPrivate.get<ApiResponse<Place[]>>(
+    `/place/trip/${tripId}`
+  );
+
+  return res.data;
+};

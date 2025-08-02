@@ -2,8 +2,8 @@ import { StatusCodes } from "http-status-codes";
 
 import { prisma } from "@/lib/prisma";
 
-import { cacheGet, cacheSet } from "@/utils/redis";
-import { cacheKeyStats } from "@/utils/redis-key";
+import { cacheGet, cacheRefreshTTL, cacheSet } from "@/utils/cache";
+import { cacheKeyStats } from "@/utils/cache-key";
 
 import ApiError from "@/shared/ApiError";
 
@@ -11,16 +11,7 @@ import type { Stat } from "@/types";
 
 import { findUserById } from "./user.service";
 
-export const getUserStatisticsService = async (userId: string) => {
-    const user = await findUserById(userId);
-    if (!user) {
-        throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
-    }
-
-    const cacheKey = cacheKeyStats(userId);
-    const cached = await cacheGet<Stat>(cacheKey);
-    if (cached) return cached;
-
+const generateStatReport = async (userId: string): Promise<Stat> => {
     const [itineraries, tripsCount, itineraryCount, tripStatusCounts] = await Promise.all([
         prisma.itinerary.findMany({
             select: {
@@ -78,7 +69,7 @@ export const getUserStatisticsService = async (userId: string) => {
         tripStatusCounts.map((item) => [item.status, item._count._all])
     );
 
-    const stats: Stat = {
+    return {
         cities,
         countries: countrySet.size,
         itineraryCount,
@@ -90,7 +81,23 @@ export const getUserStatisticsService = async (userId: string) => {
             planned: statusCountMap.PLANNED || 0,
         },
     };
+};
 
-    await cacheSet(cacheKey, stats);
-    return stats;
+export const getUserStatisticsService = async (userId: string) => {
+    const user = await findUserById(userId);
+    if (!user) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
+    }
+
+    const cacheKey = cacheKeyStats(userId);
+    const cached = await cacheGet<Stat>(cacheKey);
+    if (cached) {
+        await cacheRefreshTTL(cacheKey);
+        return cached;
+    }
+
+    const report = await generateStatReport(userId);
+
+    await cacheSet(cacheKey, report);
+    return report;
 };

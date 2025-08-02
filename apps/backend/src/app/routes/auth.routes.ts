@@ -20,6 +20,6 @@ router.post("/login", validationMiddleware(loginUserSchema), userLoginHandler);
 
 router.post("/logout", verifyAuth, userLogoutHandler);
 
-router.post("/refresh-token", verifyAuth, userRefreshTokenHandler);
+router.post("/refresh-token", userRefreshTokenHandler);
 
 export const authRouter = router;

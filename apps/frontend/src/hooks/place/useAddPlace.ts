@@ -4,6 +4,8 @@ import type { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
+import { usePlaceStore } from "@/stores/usePlaceStore";
+
 import { addPlaceApi } from "@/api/placeApi";
 
 import type { ApiResponse } from "@/types/response";
@@ -13,6 +15,8 @@ import { addPlaceSchema } from "@/validations/placeValidation";
 
 const useAddPlace = () => {
   const queryClient = useQueryClient();
+
+  const { setPlace } = usePlaceStore();
 
   const form = useForm<AddPlaceSchemaType>({
     defaultValues: {
@@ -26,7 +30,10 @@ const useAddPlace = () => {
     onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
       toast.error(error.response?.data.message ?? "Something went wrong");
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      if (data.data) {
+        setPlace(data.data);
+      }
       form.reset();
       void queryClient.invalidateQueries({ queryKey: ["places"] });
     },

@@ -1,10 +1,14 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { StatusCodes } from "http-status-codes";
 
 import { env } from "@/config/env.config";
 
-import { cacheGet, cacheSet } from "@/utils/redis";
+import { cacheGet, cacheSet } from "@/utils/cache";
 
 import ApiError from "@/shared/ApiError";
+
+import { cacheGeoKey } from "./cache-key";
+import { fetchWithRetry } from "./fetch";
 
 type NominatimSearchResponse = {
     lat: string;
@@ -21,7 +25,6 @@ type NominatimReverseResponse = {
         village?: string;
         state?: string;
         country_code?: string;
-
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         [key: string]: any;
     };
@@ -36,34 +39,16 @@ export type CoordinatesAndCountry = {
     formattedAddress: string;
 };
 
-const delay = async (ms: number) => new Promise((res) => setTimeout(res, ms));
-
-const fetchWithRetry = async (
-    url: string,
-    options: RequestInit,
-    retries = 3,
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-    backoff = 300
-) => {
-    try {
-        const res = await fetch(url, options);
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        return res;
-    } catch (err) {
-        if (retries === 0) throw err;
-        await delay(backoff);
-        return fetchWithRetry(url, options, retries - 1, backoff * 2);
-    }
-};
+export const normalizeCoordinates = (coordinates: { lat: number; lng: number }) => ({
+    lat: Math.round(coordinates.lat * 1e6) / 1e6,
+    lng: Math.round(coordinates.lng * 1e6) / 1e6,
+});
 
 export const getCoordinatesAndCountry = async (address: string): Promise<CoordinatesAndCountry> => {
     try {
-        const cacheKey = `geo:${address.toLowerCase()}`;
-
+        const cacheKey = cacheGeoKey(address);
         const cached = await cacheGet<CoordinatesAndCountry>(cacheKey);
-        if (cached) {
-            return cached;
-        }
+        if (cached) return cached;
 
         const userAgent = `${env.APP_NAME}/1.0 (${env.APP_EMAIL})`;
         const headers = {
@@ -75,36 +60,41 @@ export const getCoordinatesAndCountry = async (address: string): Promise<Coordin
             address
         )}&limit=1`;
 
-        const searchRes = await fetchWithRetry(searchUrl, { headers });
-
-        const searchData = (await searchRes.json()) as NominatimSearchResponse;
+        const searchData = await fetchWithRetry<NominatimSearchResponse>(searchUrl, { headers });
 
         if (searchData.length === 0) {
-            throw new ApiError(StatusCodes.NOT_FOUND, "Address not found");
+            throw new ApiError(StatusCodes.NOT_FOUND, `Address not found: ${address}`);
         }
 
-        const { lat, lon } = searchData[0];
+        const latNum = parseFloat(searchData[0].lat);
+        const lngNum = parseFloat(searchData[0].lon);
 
-        const reverseUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`;
+        const reverseUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latNum}&lon=${lngNum}&zoom=10&addressdetails=1`;
 
-        const reverseRes = await fetchWithRetry(reverseUrl, { headers });
-
-        const reverseData = (await reverseRes.json()) as NominatimReverseResponse;
+        const reverseData = await fetchWithRetry<NominatimReverseResponse>(reverseUrl, { headers });
 
         if (reverseData.error) {
-            throw new ApiError(StatusCodes.NOT_FOUND, "Address not found");
+            throw new ApiError(
+                StatusCodes.NOT_FOUND,
+                `Reverse lookup failed for ${latNum},${lngNum}`
+            );
         }
 
+        const { lat, lng } = normalizeCoordinates({ lat: latNum, lng: lngNum });
+
         const result: CoordinatesAndCountry = {
-            city: reverseData.address?.city,
+            city:
+                reverseData.address?.city ??
+                reverseData.address?.town ??
+                reverseData.address?.village ??
+                reverseData.address?.state,
             country: reverseData.address?.country ?? "Unknown",
             formattedAddress: reverseData.display_name,
-            lat: parseFloat(lat),
-            lng: parseFloat(lon),
+            lat,
+            lng,
         };
 
         await cacheSet(cacheKey, result);
-
         return result;
     } catch (error) {
         throw error instanceof ApiError

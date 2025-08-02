@@ -30,7 +30,7 @@ export const userLoginApi = async (data: UserLoginSchemaType) => {
 };
 
 export const userRefreshTokenApi = async () => {
-  const res = await axiosPrivate.post<ApiResponse<User>>("/auth/refresh-token");
+  const res = await axiosPublic.post<ApiResponse<User>>("/auth/refresh-token");
 
   return res.data;
 };

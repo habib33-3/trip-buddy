@@ -63,13 +63,13 @@ const typescriptRules = {
         "@typescript-eslint/no-confusing-void-expression": ["warn", { ignoreArrowShorthand: true }],
         "@typescript-eslint/no-empty-interface": "warn",
         "@typescript-eslint/no-empty-object-type": "off",
-        "@typescript-eslint/no-explicit-any": "error",
+
         "@typescript-eslint/no-floating-promises": "error",
         "@typescript-eslint/no-magic-numbers": [
             "warn",
             {
                 enforceConst: true,
-                ignore: [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 200, 400, 401, 403, 404, 500],
+                ignore: [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 200, 400, 401, 403, 404, 500, 0.0001],
             },
         ],
         "@typescript-eslint/no-misused-promises": ["error", { checksVoidReturn: false }],
@@ -83,6 +83,8 @@ const typescriptRules = {
         "@typescript-eslint/no-unsafe-call": "warn",
         "@typescript-eslint/no-unsafe-member-access": "warn",
         "@typescript-eslint/no-unsafe-return": "warn",
+        "@typescript-eslint/no-explicit-any": "error",
+
         "@typescript-eslint/no-unused-vars": [
             "warn",
             {

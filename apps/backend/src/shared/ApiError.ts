@@ -6,7 +6,6 @@ class ApiError extends Error {
         this.statusCode = statusCode;
         this.name = new.target.name;
 
-        // ✅ Ensure correct prototype chain
         Object.setPrototypeOf(this, new.target.prototype);
 
         if (stack) {

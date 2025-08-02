@@ -20,7 +20,7 @@ const TripsPage = () => {
           </div>
           <div>
             <h2 className="text-2xl font-bold text-gray-800">
-              Hello,{" "}
+              Hello,
               <span className="text-blue-700">{user?.name ?? "Guest"}</span>
             </h2>
             <p className="mt-1 text-sm text-gray-500">

@@ -1,5 +1,30 @@
 import z from "zod";
 
+import { TripStatus } from "@/generated/prisma";
+
+export const searchTripParamSchema = z.object({
+    query: z.object({
+        searchQuery: z
+            .string()
+            .optional()
+            .refine(
+                (val) => val === undefined || val.trim().length === 0 || val.trim().length >= 3,
+                {
+                    message: "Query must be at least 3 characters long",
+                }
+            ),
+        status: z
+            .union([z.nativeEnum(TripStatus), z.array(z.nativeEnum(TripStatus))])
+            .optional()
+            .transform((val) => {
+                if (!val) return [TripStatus.ACTIVE, TripStatus.PLANNED];
+                return Array.isArray(val) ? val : [val];
+            }),
+    }),
+});
+
+export type SearchTripParamSchemaType = z.infer<typeof searchTripParamSchema>["query"];
+
 export const createTripSchema = z.object({
     body: z
         .object({
@@ -34,7 +59,7 @@ export const updateTripSchema = z.object({
                 .string()
                 .optional()
                 .refine((val) => {
-                    return val === undefined || val.trim().length >= 3;
+                    return val === undefined || val.trim().length === 0 || val.trim().length >= 3;
                 }),
             endDate: z
                 .string()
@@ -50,7 +75,7 @@ export const updateTripSchema = z.object({
                 .string()
                 .optional()
                 .refine((val) => {
-                    return val === undefined || val.trim().length >= 3;
+                    return val === undefined || val.trim().length === 0 || val.trim().length >= 3;
                 }),
         })
         .refine(
@@ -68,3 +93,13 @@ export const updateTripSchema = z.object({
 });
 
 export type UpdateTripSchemaType = z.infer<typeof updateTripSchema>["body"];
+
+export const changeTripStatusSchema = z.object({
+    body: z
+        .object({
+            status: z.nativeEnum(TripStatus).optional(),
+        })
+        .strict(),
+});
+
+export type ChangeTripStatusSchemaType = z.infer<typeof changeTripStatusSchema>["body"];
