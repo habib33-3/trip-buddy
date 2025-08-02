@@ -25,13 +25,13 @@ const Map = memo(({ center, zoom = 3 }: MapProps) => {
       <ErrorComponent message="Something went wrong while fetching locations" />
     );
 
-  const hasLocations = locations.length > 0;
-
-  const first = locations.find(
+  const validLocations = locations.filter(
     (l) => Number.isFinite(l.lat) && Number.isFinite(l.lng)
   );
 
-  const mapCenter = center ?? (first ? [first.lat, first.lng] : [0, 0]);
+  const hasLocations = validLocations.length > 0;
+  const first = validLocations[0];
+  const mapCenter = center ?? [first.lat, first.lng];
 
   return (
     <div className="h-full min-h-[400px] w-full flex-1 rounded-2xl border border-gray-200 bg-white shadow-sm">
@@ -59,16 +59,14 @@ const Map = memo(({ center, zoom = 3 }: MapProps) => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           />
-          {locations
-            .filter((l) => Number.isFinite(l.lat) && Number.isFinite(l.lng))
-            .map((location) => (
-              <Marker
-                key={location.id}
-                position={[location.lat, location.lng] as [number, number]}
-              >
-                <Popup>{location.formattedAddress}</Popup>
-              </Marker>
-            ))}
+          {validLocations.map((location) => (
+            <Marker
+              key={location.id}
+              position={[location.lat, location.lng] as [number, number]}
+            >
+              <Popup>{location.formattedAddress}</Popup>
+            </Marker>
+          ))}
         </MapContainer>
       )}
     </div>

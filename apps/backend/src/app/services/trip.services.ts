@@ -78,7 +78,7 @@ export const getAllTripsService = async (
 
     const cachedTrips = await cacheGet<Trip[]>(key);
 
-    if (cachedTrips?.length) {
+    if (cachedTrips !== null) {
         await cacheRefreshTTL(key);
         return cachedTrips;
     }
@@ -87,23 +87,27 @@ export const getAllTripsService = async (
 
     const trips = await prisma.trip.findMany({
         where: {
-            OR: [
-                {
-                    title: {
-                        contains: searchQuery,
-                        mode: "insensitive",
+            ...(searchQuery && {
+                OR: [
+                    {
+                        title: {
+                            contains: searchQuery,
+                            mode: "insensitive",
+                        },
                     },
-                },
-                {
-                    description: {
-                        contains: searchQuery,
-                        mode: "insensitive",
+                    {
+                        description: {
+                            contains: searchQuery,
+                            mode: "insensitive",
+                        },
                     },
+                ],
+            }),
+            ...(status.length > 0 && {
+                status: {
+                    in: status,
                 },
-            ],
-            status: {
-                in: status,
-            },
+            }),
             userId,
         },
     });
@@ -162,8 +166,6 @@ export const deleteTripService = async (
     });
 
     await cacheListRemoveItem<Trip>(key, tripId);
-
-    await cacheInvalidate(key);
 
     await invalidateStatsCache(userId);
 

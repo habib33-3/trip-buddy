@@ -49,7 +49,9 @@ export const cacheGet = async <T>(key: string): Promise<T | null> => {
  */
 export const cacheRefreshTTL = async (key: string): Promise<void> => {
     try {
-        const result = await redis.expire(key, env.REDIS_EXPIRATION / 3);
+        const ttl = Math.floor(env.REDIS_EXPIRATION / 3);
+
+        const result = await redis.expire(key, ttl);
         logger.info(`Cache TTL refreshed [${key}]: ${result ? "success" : "failed"}`);
     } catch (error) {
         logger.error(

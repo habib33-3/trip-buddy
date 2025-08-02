@@ -73,6 +73,8 @@ model Place {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([lat, lng])
 }
 
 model Itinerary {

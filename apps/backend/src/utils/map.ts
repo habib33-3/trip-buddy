@@ -66,8 +66,8 @@ export const getCoordinatesAndCountry = async (address: string): Promise<Coordin
             throw new ApiError(StatusCodes.NOT_FOUND, `Address not found: ${address}`);
         }
 
-        const latNum = Number(parseFloat(searchData[0].lat).toFixed(6));
-        const lngNum = Number(parseFloat(searchData[0].lon).toFixed(6));
+        const latNum = parseFloat(searchData[0].lat);
+        const lngNum = parseFloat(searchData[0].lon);
 
         const reverseUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latNum}&lon=${lngNum}&zoom=10&addressdetails=1`;
 

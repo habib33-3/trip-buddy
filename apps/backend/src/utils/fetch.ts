@@ -28,12 +28,16 @@ export const fetchWithRetry = async <T>(
                 `Failed to parse JSON from ${url}`
             );
         }
-    } catch {
+    } catch (error) {
         if (retries === 0) {
             throw new ApiError(
-                StatusCodes.BAD_GATEWAY,
+                StatusCodes.SERVICE_UNAVAILABLE,
                 `Failed to fetch ${url} after multiple retries`
             );
+        }
+
+        if (error instanceof ApiError) {
+            throw error;
         }
 
         await delay(backoff);

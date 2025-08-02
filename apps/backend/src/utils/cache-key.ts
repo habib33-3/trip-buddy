@@ -2,7 +2,8 @@ import { env } from "@/config/env.config";
 
 import type { SearchTripParamSchemaType } from "@/validations/trip.validations";
 
-const withPrefix = (...parts: string[]): string => `${env.REDIS_KEY_PREFIX}:${parts.join(":")}`;
+const withPrefix = (...parts: string[]): string =>
+    `${env.REDIS_KEY_PREFIX}:${parts.map((p) => encodeURIComponent(p)).join(":")}`;
 
 // 👤 User-related
 export const cacheKeyUser = (userId: string): string => withPrefix("user", userId);
@@ -13,15 +14,15 @@ export const cacheKeyStats = (userId: string): string => withPrefix("stats", use
 
 // 🧳 Trip-related
 export const cacheKeyTrip = (userId: string, searchParams?: SearchTripParamSchemaType): string => {
-    const searchQuery = searchParams?.searchQuery?.trim() ?? "";
+    const searchQuery = (searchParams?.searchQuery ?? "").trim().toLowerCase();
 
     const statusArray = Array.isArray(searchParams?.status)
-        ? [...searchParams.status]
+        ? [...new Set(searchParams.status.map((s) => s.toUpperCase()))]
         : ["ACTIVE", "PLANNED"];
 
     const status = statusArray.sort().join(",");
 
-    return withPrefix("trip", userId, `query=${searchQuery}&status=${status}`);
+    return withPrefix("trip", userId, `query=${encodeURIComponent(searchQuery)}&status=${status}`);
 };
 
 export const cacheKeyPlacesByTrip = (userId: string, tripId: string): string =>
@@ -33,7 +34,7 @@ export const cacheKeyItinerary = (userId: string, tripId: string): string =>
 
 // 📍 Place-related
 export const cacheKeyPlace = (searchQuery = ""): string =>
-    withPrefix("place", "search", searchQuery);
+    withPrefix("place", "search", searchQuery.toLowerCase());
 
 export const cacheKeySinglePlace = (placeId: string): string =>
     withPrefix("place", "single", placeId);

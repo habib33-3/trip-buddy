@@ -26,6 +26,8 @@ const TripCard = ({ trip }: Props) => {
     <Card className="group relative flex h-72 flex-col justify-between rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition-all duration-300 hover:shadow-md">
       <div
         className={`absolute top-4 right-4 rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${tripStatusColorMap[trip.status] || "bg-muted text-muted-foreground"}`}
+        role="status"
+        aria-label={`Trip status: ${trip.status}`}
       >
         {trip.status}
       </div>
@@ -52,6 +54,7 @@ const TripCard = ({ trip }: Props) => {
             <Button
               variant="ghost"
               className="flex items-center gap-2 px-0 text-primary transition-transform group-hover:opacity-100 hover:translate-x-1"
+              aria-label={`View details for ${trip.title}`}
             >
               <span className="font-medium">View Trip</span>
               <ArrowRight className="h-4 w-4 transition-transform group-hover:scale-110" />

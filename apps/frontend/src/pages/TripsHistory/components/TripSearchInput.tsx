@@ -14,13 +14,18 @@ const TripSearchInput = () => {
   const debouncedSearch = useDebounce(searchTerm, 500);
 
   useEffect(() => {
-    const updated = new URLSearchParams(searchParams);
-    if (debouncedSearch.trim()) {
-      updated.set("search", debouncedSearch);
-    } else {
+    const trimmedSearch = debouncedSearch.trim();
+    const currentSearch = searchParams.get("search") ?? "";
+
+    if (trimmedSearch && trimmedSearch !== currentSearch) {
+      const updated = new URLSearchParams(searchParams);
+      updated.set("search", trimmedSearch);
+      setSearchParams(updated);
+    } else if (!trimmedSearch && currentSearch) {
+      const updated = new URLSearchParams(searchParams);
       updated.delete("search");
+      setSearchParams(updated);
     }
-    setSearchParams(updated);
   }, [debouncedSearch, searchParams, setSearchParams]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {

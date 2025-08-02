@@ -15,7 +15,7 @@ import ApiError from "@/shared/ApiError";
 
 import type { AddPlaceSchemaType } from "@/validations/places.validations";
 
-import type { Place } from "@/generated/prisma";
+import { type Place, Prisma } from "@/generated/prisma";
 
 import { getTripById } from "./trip.services";
 
@@ -31,8 +31,14 @@ const getPlaceByCoordinateService = async (coordinate: { lat: number; lng: numbe
 
     const place = await prisma.place.findFirst({
         where: {
-            lat: coordinate.lat,
-            lng: coordinate.lng,
+            lat: {
+                gte: coordinate.lat - 0.0001,
+                lte: coordinate.lat + 0.0001,
+            },
+            lng: {
+                gte: coordinate.lng - 0.0001,
+                lte: coordinate.lng + 0.0001,
+            },
         },
     });
 
@@ -48,28 +54,36 @@ export const addPlaceService = async (payload: AddPlaceSchemaType) => {
         payload.address
     );
 
-    const existingPlace = await getPlaceByCoordinateService({
-        lat,
-        lng,
-    });
+    const existingPlace = await getPlaceByCoordinateService({ lat, lng });
+    if (existingPlace) return existingPlace;
 
-    if (existingPlace) {
-        return existingPlace;
+    try {
+        const place = await prisma.place.create({
+            data: { city: city ?? "", country, formattedAddress, lat, lng },
+        });
+
+        const key = cacheKeyPlace();
+        const singleKey = cacheKeySinglePlace(place.id);
+
+        await cacheSet(singleKey, place);
+        await cacheListPrepend(key, place);
+
+        return place;
+    } catch (error: unknown) {
+        if (
+            error instanceof Prisma.PrismaClientKnownRequestError &&
+            error.code === "P2002" &&
+            Array.isArray(error.meta?.target) &&
+            (error.meta.target as string[]).includes("Place_lat_lng_key")
+        ) {
+            const fallback = await getPlaceByCoordinateService({ lat, lng });
+            if (fallback) return fallback;
+
+            throw new ApiError(StatusCodes.CONFLICT, "Place already exists at these coordinates.");
+        }
+
+        throw error;
     }
-
-    const place = await prisma.place.create({
-        data: { city: city ?? "", country, formattedAddress, lat, lng },
-    });
-
-    const key = cacheKeyPlace();
-
-    const singleKey = cacheKeySinglePlace(place.id);
-
-    await cacheSet(singleKey, place);
-
-    await cacheListPrepend(key, place);
-
-    return place;
 };
 
 export const getPlacesService = async (searchQuery?: string) => {

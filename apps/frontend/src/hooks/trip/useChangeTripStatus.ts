@@ -13,7 +13,13 @@ const useChangeTripStatus = () => {
   const { tripId } = useParams<{ tripId: string }>();
 
   if (!tripId) {
-    throw new Error("tripId is required");
+    return {
+      error: "Trip ID is required",
+      handleChangeTripStatus: () => {
+        toast.error("Trip ID is required");
+      },
+      isLoading: false,
+    };
   }
 
   const query = useQueryClient();

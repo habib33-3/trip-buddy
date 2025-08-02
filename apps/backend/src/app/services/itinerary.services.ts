@@ -106,7 +106,9 @@ export const getItineraryByIdService = async (itineraryId: string, userId: strin
         },
     });
 
-    await cacheSet(itineraryKey, itinerary);
+    if (itinerary) {
+        await cacheSet(itineraryKey, itinerary);
+    }
     return itinerary;
 };
 
@@ -151,6 +153,7 @@ export const deleteItineraryService = async (itineraryId: string, userId: string
         cacheInvalidate(cacheKeyItinerary(userId, itinerary.tripId)),
         cacheListRemoveItem<Itinerary>(cacheKeyTrip(userId), itineraryId),
         invalidateStatsCache(userId),
+        cacheInvalidate(cacheKeyTrip(userId)),
     ]);
 
     return { message: "Itinerary deleted successfully" };
