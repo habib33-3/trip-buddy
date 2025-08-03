@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { Loader } from "lucide-react";
+
 import useAddPlace from "@/hooks/place/useAddPlace";
 import useGetPlaces from "@/hooks/place/useGetPlaces";
 import useDebounce from "@/hooks/useDebounce";
@@ -70,7 +72,9 @@ const AddPlaceForm = () => {
         <h3 className="text-sm font-semibold text-gray-700">Search Results</h3>
         <div className="mt-2 max-h-60 space-y-1 overflow-y-auto pr-2">
           {status === "pending" ? (
-            <p className="text-sm text-muted-foreground">Loading...</p>
+            <div className="flex items-center justify-center">
+              <Loader />
+            </div>
           ) : searchQuery.length < 3 ? (
             <p className="text-sm text-muted-foreground">
               Enter at least 3 characters to search.

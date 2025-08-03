@@ -1,3 +1,5 @@
+import { Loader } from "lucide-react";
+
 import useGetSingleTrip from "@/hooks/trip/useGetSingleTrip";
 import useUpdateTrip from "@/hooks/trip/useUpdateTrip";
 
@@ -20,7 +22,11 @@ const UpdateTripForm = ({ closeModal }: Props) => {
   const { status, trip } = useGetSingleTrip();
 
   if (isLoading || status === "pending") {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex items-center justify-center">
+        <Loader />
+      </div>
+    );
   }
 
   if (status === "error") {

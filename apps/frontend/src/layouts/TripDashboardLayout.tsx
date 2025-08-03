@@ -2,7 +2,7 @@ import { Navigate, Outlet } from "react-router";
 
 import { useAuthStore } from "@/stores/useAuthStore";
 
-import DashboardNavbar from "@/shared/DashboardNavbar/DashboardNavbar";
+import Navbar from "./TripDashboardLayout/Navbar/Navbar";
 
 const TripDashboardLayout = () => {
   const { user } = useAuthStore();
@@ -13,7 +13,7 @@ const TripDashboardLayout = () => {
 
   return (
     <div>
-      <DashboardNavbar />
+      <Navbar />
       <Outlet />
     </div>
   );

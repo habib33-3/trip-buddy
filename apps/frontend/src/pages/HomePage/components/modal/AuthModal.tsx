@@ -16,14 +16,18 @@ import {
 import LoginForm from "./form/LoginForm";
 import RegisterUserForm from "./form/RegisterUserForm";
 
-const AuthModal = () => {
+type Props = {
+  buttonText?: string;
+};
+
+const AuthModal = ({ buttonText = "Login" }: Props) => {
   const [formType, setFormType] = useState<"login" | "register">("login");
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="rounded-xl bg-primary px-6 py-2 text-white shadow transition-colors hover:bg-primary/90">
-          Login
+        <Button className="rounded-md bg-blue-700 px-4 py-2 font-semibold text-white transition hover:bg-blue-800">
+          {buttonText}
         </Button>
       </DialogTrigger>
 
@@ -64,7 +68,7 @@ const AuthModal = () => {
               onClick={() =>
                 setFormType((prev) => (prev === "login" ? "register" : "login"))
               }
-              className="px-1 text-primary"
+              className="px-1 text-secondary-foreground hover:underline"
             >
               {formType === "login" ? "Register" : "Login"}
             </Button>

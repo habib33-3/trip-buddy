@@ -4,12 +4,10 @@ import { useAuthStore } from "@/stores/useAuthStore";
 
 import { navLinks } from "@/constants/index";
 
-import { Button } from "@/ui/button";
-
 import AvatarDropdown from "./AvatarDropdown";
 import MenuButton from "./MenuButton";
 
-const DashboardNavbar = () => {
+const Navbar = () => {
   const { user } = useAuthStore();
 
   return (
@@ -19,15 +17,13 @@ const DashboardNavbar = () => {
       aria-label="Main navigation"
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:py-3">
-        {/* Logo */}
         <Link
           to="/"
           className="text-2xl font-semibold tracking-tight text-foreground"
         >
-          MySite
+          TripBuddy
         </Link>
 
-        {/* Desktop Nav */}
         <nav className="hidden items-center gap-6 md:flex">
           {navLinks.map((link) => (
             <Link
@@ -39,16 +35,9 @@ const DashboardNavbar = () => {
             </Link>
           ))}
 
-          {user ? (
-            <AvatarDropdown />
-          ) : (
-            <Button asChild>
-              <Link to="/login">Login</Link>
-            </Button>
-          )}
+          {user ? <AvatarDropdown /> : null}
         </nav>
 
-        {/* Mobile Nav */}
         <div className="md:hidden">
           <MenuButton />
         </div>
@@ -57,4 +46,4 @@ const DashboardNavbar = () => {
   );
 };
 
-export default DashboardNavbar;
+export default Navbar;
