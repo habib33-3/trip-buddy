@@ -17,11 +17,11 @@ const TripsDetailsPage = () => {
   const { status, trip } = useGetSingleTrip();
 
   if (status === "pending") return <Loader />;
-  if (status === "error")
+
+  if (status === "error" || !trip)
     return (
       <ErrorComponent message="Something went wrong while fetching trip" />
     );
-  if (!trip) return null;
 
   return (
     <main className="mx-auto max-w-5xl space-y-12 px-4 py-12 sm:px-6 lg:px-8">

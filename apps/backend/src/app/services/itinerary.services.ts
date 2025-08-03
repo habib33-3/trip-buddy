@@ -71,7 +71,7 @@ export const getAllItinerariesService = async (tripId: string, userId: string) =
     const itineraryKey = cacheKeyItinerary(userId, tripId);
 
     const cachedItineraries = await cacheGet<Itinerary[]>(itineraryKey);
-    if (cachedItineraries) {
+    if (cachedItineraries && cachedItineraries.length > 0) {
         await cacheRefreshTTL(itineraryKey);
         return cachedItineraries;
     }

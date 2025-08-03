@@ -93,7 +93,7 @@ export const getPlacesService = async (searchQuery?: string) => {
 
     const cachedPlaces = await cacheGet<Place[]>(key);
 
-    if (cachedPlaces !== null) {
+    if (cachedPlaces && cachedPlaces.length > 0) {
         await cacheRefreshTTL(key);
         return cachedPlaces;
     }
@@ -136,7 +136,7 @@ export const getPlacesByTripService = async (tripId: string, userId: string) => 
 
     const cachedPlaces = await cacheGet<Place[]>(key);
 
-    if (cachedPlaces !== null) {
+    if (cachedPlaces && cachedPlaces.length > 0) {
         await cacheRefreshTTL(key);
         return cachedPlaces;
     }

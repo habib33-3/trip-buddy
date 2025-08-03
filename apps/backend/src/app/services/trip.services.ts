@@ -75,7 +75,7 @@ export const getRecentTripsService = async (userId: string): Promise<Trip[]> => 
     const key = cacheKeyRecentTrips(userId);
 
     const cachedTrips = await cacheGet<Trip[]>(key);
-    if (cachedTrips !== null) {
+    if (cachedTrips && cachedTrips.length > 0) {
         await cacheRefreshTTL(key);
         return cachedTrips;
     }
@@ -102,7 +102,7 @@ export const getAllTripsService = async (
     const key = cacheKeyTrip(userId, searchTripParams);
 
     const cachedTrips = await cacheGet<Trip[]>(key);
-    if (cachedTrips !== null) {
+    if (cachedTrips && cachedTrips.length > 0) {
         await cacheRefreshTTL(key);
         return cachedTrips;
     }

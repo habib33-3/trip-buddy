@@ -1,4 +1,4 @@
-import { lazy } from "react";
+import { Suspense, lazy } from "react";
 
 import { Calendar1Icon, MapPin } from "lucide-react";
 
@@ -62,7 +62,9 @@ const Overview = () => {
               No locations available
             </div>
           ) : (
-            <Map />
+            <Suspense fallback={<Loader />}>
+              <Map zoom={6} />
+            </Suspense>
           )}
         </CardContent>
       </Card>
