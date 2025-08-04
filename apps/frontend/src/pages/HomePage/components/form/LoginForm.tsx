@@ -19,7 +19,7 @@ const LoginForm = ({ navigateToRegister }: Props) => {
 
   return (
     <div className="h-full w-full max-w-md">
-      <Card className="w-full rounded-2xl border border-white/20 bg-white/80 p-8 shadow-2xl backdrop-blur-md transition-all duration-300">
+      <Card className="w-full rounded-2xl bg-fuchsia-200 p-8 shadow-xl transition-all duration-300">
         <Form {...form}>
           <form
             className="flex flex-col gap-6"

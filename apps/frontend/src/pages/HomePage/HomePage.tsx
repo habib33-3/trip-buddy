@@ -26,7 +26,7 @@ const HomePage = () => {
     <main
       className={`flex min-h-screen min-w-screen flex-col items-center justify-center text-white ${
         isLogin
-          ? "bg-gradient-to-tr from-blue-800 via-blue-600 to-purple-700"
+          ? "bg-gradient-to-tr from-orange-700 via-yellow-600 to-red-600"
           : "bg-gradient-to-tr from-pink-800 via-pink-600 to-red-700"
       }`}
     >

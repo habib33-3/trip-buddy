@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
+import { Button } from "@/ui/button";
+
 type PasswordFieldProps<T extends FieldValues> = {
   form: { control: Control<T> };
   name: Path<T>;
@@ -43,16 +45,22 @@ const PasswordField = <T extends FieldValues>({
               <Input
                 {...field}
                 type={showPassword ? "text" : "password"}
-                placeholder={placeholder ?? "Enter your password"}
+                placeholder={placeholder ?? "******"}
               />
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
                 type="button"
                 onClick={togglePasswordVisibility}
-                className="absolute top-1.5 right-3 cursor-pointer p-1 transition-opacity hover:opacity-70"
+                className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer p-1 transition-opacity hover:border-0 hover:bg-transparent hover:opacity-70 hover:ring-0 hover:outline-none"
                 title="Toggle Password Visibility"
               >
-                {showPassword ? <Eye /> : <EyeOff />}
-              </button>
+                {showPassword ? (
+                  <Eye className="size-5" />
+                ) : (
+                  <EyeOff className="size-5" />
+                )}
+              </Button>
             </div>
           </FormControl>
           <FormMessage />
