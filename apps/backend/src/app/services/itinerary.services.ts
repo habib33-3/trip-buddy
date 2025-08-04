@@ -15,8 +15,8 @@ import { cacheKeyItinerary, cacheKeyStats, cacheKeyTrip } from "@/utils/cache-ke
 import ApiError from "@/shared/ApiError";
 
 import type {
-    AddItinerarySchemaType,
     ChangeItineraryStatusSchemaType,
+    CreateItinerarySchemaType,
     UpdateItinerarySchemaType,
 } from "@/validations/itinerary.validations";
 
@@ -25,7 +25,10 @@ import type { Itinerary } from "@/generated/prisma";
 import { getSinglePlaceService } from "./place.services";
 import { getTripById } from "./trip.services";
 
-export const addItineraryService = async (payload: AddItinerarySchemaType, userId: string) => {
+export const createItineraryService = async (
+    payload: CreateItinerarySchemaType,
+    userId: string
+) => {
     const tripKey = cacheKeyTrip(userId);
     const itineraryKey = cacheKeyItinerary(userId, payload.tripId);
     const statsKey = cacheKeyStats(userId);

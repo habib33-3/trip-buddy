@@ -18,7 +18,7 @@ import {
     deleteTripService,
     getAllTripsService,
     getRecentTripsService,
-    getSingleTripService,
+    getTripById,
     updateTripService,
 } from "@/services/trip.services";
 
@@ -71,7 +71,7 @@ export const getSingleTripHandler = asyncHandler(async (req: Request<{ id: strin
     const tripId = req.params.id;
     const userId = req.user?.id as string;
 
-    const result = await getSingleTripService(tripId, userId);
+    const result = await getTripById(tripId, userId);
 
     sendResponse(req, res, {
         data: result,

@@ -18,8 +18,8 @@ const LoginForm = ({ navigateToRegister }: Props) => {
   const { form, handleLoginUser, isLoading } = useUserLogin();
 
   return (
-    <div className="w-full max-w-md">
-      <Card className="rounded-lg border border-gray-200 bg-white p-8 shadow-lg">
+    <div className="h-full w-full max-w-md">
+      <Card className="w-full rounded-2xl border border-white/20 bg-white/80 p-8 shadow-2xl backdrop-blur-md transition-all duration-300">
         <Form {...form}>
           <form
             className="flex flex-col gap-6"

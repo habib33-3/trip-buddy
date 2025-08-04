@@ -84,7 +84,7 @@ export const getRecentTripsService = async (userId: string): Promise<Trip[]> => 
         orderBy: {
             createdAt: "desc",
         },
-        take: 5,
+        take: 4,
         where: {
             userId,
         },
@@ -142,13 +142,6 @@ export const getAllTripsService = async (
     }
 
     return trips;
-};
-
-export const getSingleTripService = async (
-    tripId: string,
-    userId: string
-): Promise<Trip | null> => {
-    return getTripById(tripId, userId);
 };
 
 export const updateTripService = async (

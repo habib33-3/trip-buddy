@@ -19,7 +19,7 @@ const defaultOptions: LoggerOptions = {
     showTimestamp: true,
 };
 
-const getTimestamp = () => new Date().toISOString();
+const getTimestamp = () => new Date().toLocaleString("en-UK");
 
 export function createLogger(options: LoggerOptions = {}) {
     const config = { ...defaultOptions, ...options };
