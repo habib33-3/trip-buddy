@@ -31,7 +31,7 @@ const AddItineraryModal = () => {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="!w-full !max-w-4xl p-6">
+      <DialogContent className="z-5000 w-full max-w-4xl p-6">
         <DialogHeader>
           <DialogTitle className="text-center text-xl font-semibold">
             Add a New Location

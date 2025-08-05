@@ -2,11 +2,11 @@ import type { itineraryStatus, tripStatus } from "../constants";
 
 export type User = {
   id: string;
-  name?: string | null;
+  name: string;
   email: string;
   role: "ADMIN" | "USER";
-  image?: string | null;
-  initials: string | null;
+  image?: string;
+  initials: string;
   trips?: Trip[];
 };
 

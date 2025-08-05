@@ -5,7 +5,7 @@ import useUpdateTrip from "@/hooks/trip/useUpdateTrip";
 
 import type { UpdateTripSchemaType } from "@/validations/tripValidation";
 
-import { DatePickerField } from "@/ui/date-picker";
+import DatePickerField from "@/ui/date-picker";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/ui/form";
 import { Input } from "@/ui/input";
 import { Label } from "@/ui/label";

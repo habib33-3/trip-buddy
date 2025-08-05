@@ -4,6 +4,8 @@ import { Navigate } from "react-router";
 
 import { useAuthStore } from "@/stores/useAuthStore";
 
+import Logo from "@/shared/Logo";
+
 import LoginForm from "./components/form/LoginForm";
 import RegisterUserForm from "./components/form/RegisterUserForm";
 
@@ -30,9 +32,7 @@ const HomePage = () => {
           : "bg-gradient-to-tr from-pink-800 via-pink-600 to-red-700"
       }`}
     >
-      <header className="px-6 py-4 text-3xl font-bold md:text-4xl">
-        TripBuddy
-      </header>
+      <Logo />
 
       <section className="flex min-h-[calc(100vh-5rem)] flex-1 flex-col items-center justify-center gap-20 md:flex-row">
         {/* Form Section */}

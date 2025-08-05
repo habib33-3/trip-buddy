@@ -2,7 +2,7 @@ import useCreateTrip from "@/hooks/trip/useCreateTrip";
 
 import type { CreateTripSchemaType } from "@/validations/tripValidation";
 
-import { DatePickerField } from "@/ui/date-picker";
+import DatePickerField from "@/ui/date-picker";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/ui/form";
 import { Input } from "@/ui/input";
 import { Label } from "@/ui/label";
@@ -34,12 +34,13 @@ const CreateTripForm = ({ closeModal }: Props) => {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <Label>Trip Title</Label>
+              <Label className="text-gray-200">Trip Title</Label>
               <FormControl>
                 <Input
                   type="text"
                   placeholder="Trip Title"
                   {...field}
+                  className="text-gray-200 placeholder:text-gray-400"
                 />
               </FormControl>
               <FormMessage />
@@ -51,10 +52,11 @@ const CreateTripForm = ({ closeModal }: Props) => {
           name="description"
           render={({ field }) => (
             <FormItem>
-              <Label>Trip Title</Label>
+              <Label className="text-gray-200">Trip Description</Label>
               <FormControl>
                 <Textarea
                   placeholder="Trip Title"
+                  className="text-gray-200 placeholder:text-gray-400"
                   {...field}
                 />
               </FormControl>
