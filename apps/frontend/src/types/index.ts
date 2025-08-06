@@ -59,7 +59,11 @@ export type Stats = {
   cities: CityPoint[];
   countries: number;
   itineraryCount: number;
-  mostVisitedCountry: string;
+  mostVisitedCountry: {
+    name: string;
+    count: number;
+    flag: string;
+  };
   tripsCount: number;
   tripStatusCounts: {
     completed: number;

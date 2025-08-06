@@ -62,12 +62,13 @@ model Trip {
 }
 
 model Place {
-  id               String @id @default(uuid())
+  id               String  @id @default(uuid())
   formattedAddress String
   lat              Float
   lng              Float
   country          String
   city             String
+  countryFlag      String?
 
   itineraries Itinerary[]
 

@@ -47,3 +47,5 @@ export const cachePlaceCoordinatesKey = (coordinate: { lat: number; lng: number 
 
 // 🌍 Geo-related
 export const cacheGeoKey = (address: string): string => withPrefix("geo", address.toLowerCase());
+
+export const cacheKeyFlag = (countryName: string) => withPrefix("flag", countryName);

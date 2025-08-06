@@ -50,7 +50,7 @@ const getPlaceByCoordinateService = async (coordinate: { lat: number; lng: numbe
 };
 
 export const addPlaceService = async (payload: AddPlaceSchemaType) => {
-    const { city, country, formattedAddress, lat, lng } = await getCoordinatesAndCountry(
+    const { city, country, flag, formattedAddress, lat, lng } = await getCoordinatesAndCountry(
         payload.address
     );
 
@@ -59,7 +59,14 @@ export const addPlaceService = async (payload: AddPlaceSchemaType) => {
 
     try {
         const place = await prisma.place.create({
-            data: { city: city ?? "", country, formattedAddress, lat, lng },
+            data: {
+                city: city ?? "",
+                country,
+                countryFlag: flag,
+                formattedAddress,
+                lat,
+                lng,
+            },
         });
 
         const key = cacheKeyPlace();

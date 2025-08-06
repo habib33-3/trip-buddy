@@ -7,7 +7,7 @@ import { cacheKeyStats } from "@/utils/cache-key";
 
 import ApiError from "@/shared/ApiError";
 
-import type { Stat } from "@/types";
+import type { CityStat, Stat } from "@/types";
 
 import { findUserById } from "./user.service";
 
@@ -15,8 +15,18 @@ const generateStatReport = async (userId: string): Promise<Stat> => {
     const [itineraries, tripsCount, itineraryCount, tripStatusCounts] = await Promise.all([
         prisma.itinerary.findMany({
             select: {
-                place: { select: { city: true, country: true, lat: true, lng: true } },
-                trip: { select: { userId: true } },
+                place: {
+                    select: {
+                        city: true,
+                        country: true,
+                        countryFlag: true,
+                        lat: true,
+                        lng: true,
+                    },
+                },
+                trip: {
+                    select: { userId: true },
+                },
             },
             where: {
                 trip: { userId },
@@ -31,39 +41,58 @@ const generateStatReport = async (userId: string): Promise<Stat> => {
         }),
     ]);
 
-    const cityMap = new Map<string, { lat: number; lng: number; name: string; count: number }>();
+    const cityMap = new Map<string, CityStat>();
     const countryMap = new Map<string, number>();
     const countrySet = new Set<string>();
 
     for (const itinerary of itineraries) {
-        const { city, country, lat, lng } = itinerary.place;
+        const { place } = itinerary;
+        if (!place.country || !place.city) continue;
 
-        if (country) {
-            const countryKey = country.toLowerCase();
-            countrySet.add(countryKey);
-            countryMap.set(countryKey, (countryMap.get(countryKey) ?? 0) + 1);
-        }
+        const { city, country, lat, lng } = place;
 
-        if (city) {
-            const cityKey = city.toLowerCase();
-            const existing = cityMap.get(cityKey);
+        const countryKey = country.toLowerCase();
+        countrySet.add(countryKey);
+        countryMap.set(countryKey, (countryMap.get(countryKey) ?? 0) + 1);
 
-            if (existing) {
-                existing.count += 1;
-            } else {
-                cityMap.set(cityKey, {
-                    count: 1,
-                    lat,
-                    lng,
-                    name: city,
-                });
-            }
+        const cityKey = city.toLowerCase();
+        const existing = cityMap.get(cityKey);
+
+        if (existing) {
+            existing.count += 1;
+        } else {
+            cityMap.set(cityKey, {
+                count: 1,
+                lat,
+                lng,
+                name: city,
+            });
         }
     }
 
-    const mostVisitedCountry =
-        [...countryMap.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
     const cities = [...cityMap.values()].sort((a, b) => b.count - a.count);
+
+    let mostVisitedCountry: Stat["mostVisitedCountry"] = {
+        count: 0,
+        flag: "",
+        name: "",
+    };
+
+    if (countryMap.size > 0) {
+        const [mostVisitedName, mostVisitedCount] = [...countryMap.entries()].sort(
+            (a, b) => b[1] - a[1]
+        )[0];
+
+        const countryFlag =
+            itineraries.find((it) => it.place.country.toLowerCase() === mostVisitedName)?.place
+                .countryFlag ?? "";
+
+        mostVisitedCountry = {
+            count: mostVisitedCount,
+            flag: countryFlag,
+            name: mostVisitedName,
+        };
+    }
 
     const statusCountMap = Object.fromEntries(
         tripStatusCounts.map((item) => [item.status, item._count._all])
