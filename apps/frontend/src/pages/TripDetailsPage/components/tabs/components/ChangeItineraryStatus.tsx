@@ -32,7 +32,7 @@ const ChangeItineraryStatus = ({ itinerary }: Props) => {
   };
 
   return (
-    <div className="w-[180px]">
+    <div className="w-[180px] bg-gray-600/70 text-white">
       <Select
         onValueChange={handleStatusChange}
         value={itinerary.status}
@@ -49,14 +49,14 @@ const ChangeItineraryStatus = ({ itinerary }: Props) => {
         >
           <SelectValue
             placeholder={
-              <span className="flex items-center gap-2 text-muted-foreground">
+              <span className="flex items-center gap-2 text-gray-300">
                 Select status
               </span>
             }
           />
         </SelectTrigger>
 
-        <SelectContent className="rounded-md border bg-white p-1 shadow-lg">
+        <SelectContent className="rounded-md border bg-gray-700 p-1 shadow-lg">
           {itineraryStatus.map((status) => {
             const isSelected = status === itinerary.status;
 
@@ -65,8 +65,8 @@ const ChangeItineraryStatus = ({ itinerary }: Props) => {
                 key={status}
                 value={status}
                 className={cn(
-                  "flex items-center justify-between rounded px-3 py-2 text-sm capitalize transition-colors hover:bg-muted focus:bg-muted",
-                  isSelected && "bg-muted font-semibold text-primary"
+                  "flex items-center justify-between rounded px-3 py-2 text-sm text-gray-200 capitalize transition-colors hover:bg-muted focus:bg-muted",
+                  isSelected && "bg-slate-400 font-semibold text-white"
                 )}
               >
                 <span>{status}</span>
@@ -78,7 +78,7 @@ const ChangeItineraryStatus = ({ itinerary }: Props) => {
 
       {isLoading ? (
         <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-          <Loader className="h-4 w-4 animate-spin" />
+          <Loader className="size-4 animate-spin" />
           Updating status...
         </p>
       ) : null}

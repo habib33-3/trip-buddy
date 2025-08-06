@@ -31,8 +31,8 @@ const AddItineraryForm = ({ closeModal }: Props) => {
   };
 
   return (
-    <div className="h-full rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
-      <h3 className="mb-2 text-sm font-medium text-muted-foreground">
+    <div className="h-full rounded-2xl border border-gray-200 p-6 shadow-md">
+      <h3 className="mb-2 text-sm font-medium text-gray-200">
         {place?.formattedAddress ?? "No place selected"}
       </h3>
       <Form {...form}>

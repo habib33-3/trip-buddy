@@ -18,7 +18,7 @@ const TripsPage = () => {
         <CreateTripModal />
       </div>
 
-      <div className="mt-8 rounded-xl bg-gradient-to-r from-blue-900/30 via-slate-800 to-purple-800/40 px-6 py-8 shadow-lg">
+      <div className="mt-8 rounded-xl bg-gradient-to-br from-blue-900/30 via-slate-800 to-purple-800/40 px-6 py-8 shadow-lg">
         <div className="flex items-center gap-5">
           <div className="flex size-16 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition-transform hover:scale-105">
             <Hand className="size-8 animate-pulse" />

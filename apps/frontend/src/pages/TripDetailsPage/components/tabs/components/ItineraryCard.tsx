@@ -21,9 +21,9 @@ const ItineraryCard = ({ itinerary }: Props) => {
 
       <div className="absolute top-5 left-[5.5px] h-full w-px bg-gray-300" />
 
-      <div className="flex-1 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:shadow-md">
+      <div className="flex-1 rounded-xl border border-gray-200 bg-gray-700 p-4 shadow-sm transition-all hover:shadow-md">
         <div className="flex items-start justify-between">
-          <h4 className="text-base font-semibold text-gray-800">{title}</h4>
+          <h4 className="text-base font-semibold text-gray-200">{title}</h4>
           <Badge
             variant="secondary"
             className={`rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${
@@ -35,10 +35,9 @@ const ItineraryCard = ({ itinerary }: Props) => {
           </Badge>
         </div>
 
-        {notes ? <p className="mt-1 text-sm text-gray-600">{notes}</p> : null}
-        <p className="mt-1 text-sm text-gray-500 italic">{formattedAddress}</p>
+        {notes ? <p className="mt-1 text-sm text-gray-200">{notes}</p> : null}
+        <p className="mt-1 text-sm text-gray-300 italic">{formattedAddress}</p>
 
-        {/* Status Action Button */}
         <div className="mt-3">
           <ChangeItineraryStatus itinerary={itinerary} />
         </div>

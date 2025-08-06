@@ -17,38 +17,36 @@ const Overview = () => {
   const { destinationCount, status, trip } = useGetSingleTrip();
 
   if (status === "pending") return <Loader />;
-  if (status === "error")
+  if (status === "error" || !trip)
     return (
       <ErrorComponent message="Something went wrong while fetching trip" />
     );
-  if (!trip) return null;
 
   const dateRange = formatDateRange(trip.startDate, trip.endDate);
 
   return (
     <div className="grid grid-cols-1 gap-6 p-4 md:grid-cols-2 md:p-6">
-      {/* Trip Summary */}
-      <Card className="rounded-2xl border border-gray-200 bg-white shadow-md transition-shadow hover:shadow-lg">
+      <Card className="rounded-2xl border border-gray-200 bg-slate-700 shadow-md transition-shadow hover:shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl font-semibold text-gray-900">
+          <CardTitle className="text-2xl font-semibold text-white">
             Trip Summary
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4 text-gray-700">
+        <CardContent className="space-y-4 text-gray-200">
           <div className="flex items-center gap-3">
-            <Calendar1Icon className="h-5 w-5 text-muted-foreground" />
+            <Calendar1Icon className="h-5 w-5 text-gray-300" />
             <span className="text-base font-medium">{dateRange}</span>
           </div>
 
           <div className="flex items-center gap-3">
             <MapPin className="h-5 w-5 text-muted-foreground" />
             <span className="text-base font-medium">
-              Destinations: {destinationCount}
+              Itineraries: {destinationCount}
             </span>
           </div>
 
           {trip.description ? (
-            <p className="text-sm leading-relaxed text-muted-foreground">
+            <p className="text-sm leading-relaxed text-gray-300">
               {trip.description}
             </p>
           ) : null}

@@ -21,14 +21,14 @@ export const tripStatus = [
 export const itineraryStatus = ["CANCELLED", "COMPLETED", "UPCOMING"] as const;
 
 export const tripStatusColorMap: Record<TripStatus, string> = {
-  ACTIVE: "bg-green-200 text-green-800",
-  CANCELLED: "bg-red-200 text-red-800",
-  COMPLETED: "bg-gray-200 text-gray-800",
-  PLANNED: "bg-blue-200 text-blue-800",
+  ACTIVE: "bg-green-300 text-green-900",
+  CANCELLED: "bg-red-300 text-red-900",
+  COMPLETED: "bg-teal-200 text-teal-900",
+  PLANNED: "bg-amber-200 text-amber-900",
 };
 
 export const itineraryStatusColorMap: Record<ItineraryStatus, string> = {
-  CANCELLED: "bg-pink-100 text-pink-700",
-  COMPLETED: "bg-neutral-100 text-neutral-700",
-  UPCOMING: "bg-cyan-100 text-cyan-700",
+  CANCELLED: "bg-red-300 text-red-900",
+  COMPLETED: "bg-teal-200 text-teal-900",
+  UPCOMING: "bg-orange-200 text-orange-900",
 };
