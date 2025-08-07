@@ -55,7 +55,7 @@ const CreateTripForm = ({ closeModal }: Props) => {
               <Label className="text-gray-200">Trip Description</Label>
               <FormControl>
                 <Textarea
-                  placeholder="Trip Title"
+                  placeholder="Trip Description"
                   className="text-gray-200 placeholder:text-gray-400"
                   {...field}
                 />

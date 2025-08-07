@@ -38,7 +38,7 @@ const UpdateTripModal = () => {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-gray-200">
-            Edit Trips Details
+            Edit Trip Details
           </DialogTitle>
           <DialogDescription />
         </DialogHeader>

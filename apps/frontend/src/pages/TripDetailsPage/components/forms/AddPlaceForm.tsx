@@ -69,14 +69,17 @@ const AddPlaceForm = () => {
       </Form>
 
       <div className="mt-6 min-h-[100px] max-w-md">
-        <h3 className="text-sm font-semibold text-gray-100">Search Results</h3>
+        <h3 className="text-sm font-semibold text-gray-700">Search Results</h3>
         <div className="mt-2 h-full max-h-60 space-y-1 overflow-y-auto pr-2">
           {status === "pending" ? (
             <div className="flex items-center justify-center">
-              <Loader />
+              <Loader
+                className="h-4 w-4 animate-spin"
+                aria-label="Loading search results"
+              />
             </div>
           ) : searchQuery.length < 3 ? (
-            <p className="text-sm text-stone-200/80">
+            <p className="text-sm text-stone-600">
               Enter at least 3 characters to search.
             </p>
           ) : places?.length ? (
@@ -86,7 +89,7 @@ const AddPlaceForm = () => {
                 type="button"
                 variant="ghost"
                 onClick={() => handlePlaceClick(place)}
-                className="h-full w-full justify-start px-1 py-2 text-left text-sm text-pretty break-words whitespace-normal text-gray-200 hover:bg-gray-100"
+                className="h-full w-full justify-start px-1 py-2 text-left text-sm text-pretty break-words whitespace-normal text-gray-700 hover:bg-gray-100"
               >
                 {place.formattedAddress}
               </Button>

@@ -37,9 +37,13 @@ const Globe = ({ cities }: Props) => {
       if (globeRef.current) {
         globeRef.current.pointOfView({ altitude: 2, lat: 0, lng: 0 }, 0);
 
-        const controls = globeRef.current.controls();
-        controls.autoRotate = true;
-        controls.autoRotateSpeed = 0.9;
+        const controls = globeRef.current.controls() as
+          | OrbitControls
+          | undefined;
+        if (controls) {
+          controls.autoRotate = true;
+          controls.autoRotateSpeed = 0.9;
+        }
       }
     };
 

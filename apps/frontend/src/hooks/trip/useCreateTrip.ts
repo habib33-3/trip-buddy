@@ -40,13 +40,15 @@ const useCreateTrip = () => {
     onSuccess: (data) => {
       form.reset();
 
-      void query.invalidateQueries({
-        queryKey: ["trips", user?.id],
-      });
+      if (user?.id) {
+        void query.invalidateQueries({
+          queryKey: ["trips", user.id],
+        });
 
-      void query.invalidateQueries({
-        queryKey: ["recent-trip", user?.id],
-      });
+        void query.invalidateQueries({
+          queryKey: ["recent-trip", user.id],
+        });
+      }
 
       toast.success(data.message);
     },

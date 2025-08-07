@@ -8,7 +8,8 @@ const useGetRecentTrip = () => {
   const { user } = useAuthStore();
 
   const { data, status } = useQuery({
-    queryFn: getRecentTripsApi,
+    enabled: Boolean(user?.id),
+    queryFn: async () => getRecentTripsApi(),
     queryKey: ["recent-trip", user?.id],
     retry: 3,
   });

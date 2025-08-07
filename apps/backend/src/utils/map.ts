@@ -65,6 +65,11 @@ export const getCountryFlag = async (countryName: string): Promise<string> => {
 
     const url = `https://restcountries.com/v3.1/name/${countryName.trim().toLowerCase()}?fields=flags`;
     const data = await fetchWithRetry<CountryApiResponse>(url, { method: "GET" });
+
+    if (data.length === 0) {
+        throw new ApiError(StatusCodes.NOT_FOUND, `Country not found: ${countryName}`);
+    }
+
     const flag = data[0].flags.png;
 
     if (!flag) {
