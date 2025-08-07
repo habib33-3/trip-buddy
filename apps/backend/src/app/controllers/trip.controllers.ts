@@ -5,13 +5,20 @@ import { StatusCodes } from "http-status-codes";
 import asyncHandler from "@/shared/asyncHandler";
 import sendResponse from "@/shared/sendResponse";
 
-import type { CreateTripSchemaType, UpdateTripSchemaType } from "@/validations/trip.validations";
+import type {
+    ChangeTripStatusSchemaType,
+    CreateTripSchemaType,
+    SearchTripParamSchemaType,
+    UpdateTripSchemaType,
+} from "@/validations/trip.validations";
 
 import {
+    changeTripStatusService,
     createTripService,
     deleteTripService,
     getAllTripsService,
-    getSingleTripService,
+    getRecentTripsService,
+    getTripById,
     updateTripService,
 } from "@/services/trip.services";
 
@@ -30,10 +37,27 @@ export const createTripHandler = asyncHandler(
     }
 );
 
-export const getAllTripsHandler = asyncHandler(async (req, res) => {
+export const getAllTripsHandler = asyncHandler(
+    async (req: Request<{}, {}, {}, SearchTripParamSchemaType>, res) => {
+        const userId = req.user?.id as string;
+
+        const searchTripParams = req.query;
+
+        const result = await getAllTripsService(userId, searchTripParams);
+
+        sendResponse(req, res, {
+            data: result,
+            message: "Trips fetched successfully",
+            statusCode: StatusCodes.OK,
+            success: true,
+        });
+    }
+);
+
+export const getRecentTripsHandler = asyncHandler(async (req, res) => {
     const userId = req.user?.id as string;
 
-    const result = await getAllTripsService(userId);
+    const result = await getRecentTripsService(userId);
 
     sendResponse(req, res, {
         data: result,
@@ -47,7 +71,7 @@ export const getSingleTripHandler = asyncHandler(async (req: Request<{ id: strin
     const tripId = req.params.id;
     const userId = req.user?.id as string;
 
-    const result = await getSingleTripService(tripId, userId);
+    const result = await getTripById(tripId, userId);
 
     sendResponse(req, res, {
         data: result,
@@ -85,3 +109,28 @@ export const deleteTripHandler = asyncHandler(async (req: Request<{ id: string }
         success: true,
     });
 });
+
+export const changeTripStatusHandler = asyncHandler(
+    async (
+        req: Request<
+            {
+                id: string;
+            },
+            {},
+            ChangeTripStatusSchemaType
+        >,
+        res
+    ) => {
+        const tripId = req.params.id;
+        const userId = req.user?.id as string;
+
+        const result = await changeTripStatusService(tripId, req.body, userId);
+
+        sendResponse(req, res, {
+            data: result,
+            message: "Trip status changed successfully",
+            statusCode: StatusCodes.OK,
+            success: true,
+        });
+    }
+);

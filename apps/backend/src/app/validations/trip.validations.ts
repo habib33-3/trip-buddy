@@ -1,9 +1,32 @@
 import z from "zod";
 
+import { TripStatus } from "@/generated/prisma";
+
+export const searchTripParamSchema = z.object({
+    query: z.object({
+        searchQuery: z
+            .string()
+            .trim()
+            .default("")
+            .refine((val) => val.length === 0 || val.length >= 3, {
+                message: "Search query must be empty or at least 3 characters long",
+            }),
+        status: z
+            .union([z.nativeEnum(TripStatus), z.array(z.nativeEnum(TripStatus))])
+            .optional()
+            .transform((val) => {
+                if (!val) return [TripStatus.ACTIVE, TripStatus.PLANNED];
+                return Array.isArray(val) ? val : [val];
+            }),
+    }),
+});
+
+export type SearchTripParamSchemaType = z.infer<typeof searchTripParamSchema>["query"];
+
 export const createTripSchema = z.object({
     body: z
         .object({
-            description: z.string().min(1, "Description is required"),
+            description: z.string().min(3, "Description must be at least 3 characters long"),
             endDate: z
                 .string()
                 .refine((val) => !isNaN(Date.parse(val)), "Invalid end date")
@@ -30,7 +53,12 @@ export type CreateTripSchemaType = z.infer<typeof createTripSchema>["body"];
 export const updateTripSchema = z.object({
     body: z
         .object({
-            description: z.string().min(1, "Description is required").optional(),
+            description: z
+                .string()
+                .optional()
+                .refine((val) => {
+                    return val === undefined || val.trim().length === 0 || val.trim().length >= 3;
+                }),
             endDate: z
                 .string()
                 .refine((val) => !isNaN(Date.parse(val)), "Invalid end date")
@@ -41,7 +69,12 @@ export const updateTripSchema = z.object({
                 .refine((val) => !isNaN(Date.parse(val)), "Invalid start date")
                 .transform((val) => new Date(val))
                 .optional(),
-            title: z.string().min(1, "Title is required").optional(),
+            title: z
+                .string()
+                .optional()
+                .refine((val) => {
+                    return val === undefined || val.trim().length === 0 || val.trim().length >= 3;
+                }),
         })
         .refine(
             (data) => {
@@ -58,3 +91,13 @@ export const updateTripSchema = z.object({
 });
 
 export type UpdateTripSchemaType = z.infer<typeof updateTripSchema>["body"];
+
+export const changeTripStatusSchema = z.object({
+    body: z
+        .object({
+            status: z.nativeEnum(TripStatus).optional(),
+        })
+        .strict(),
+});
+
+export type ChangeTripStatusSchemaType = z.infer<typeof changeTripStatusSchema>["body"];

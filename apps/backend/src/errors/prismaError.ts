@@ -34,7 +34,6 @@ export const handlePrismaValidationError = (
     }
 };
 
-// Handle Prisma known request errors
 export const handlePrismaKnownRequestError = (
     err: PrismaClientKnownRequestError,
     myResponseObj: ApiResponse<null>

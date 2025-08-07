@@ -10,7 +10,13 @@ datasource db {
 
 enum TripStatus {
   PLANNED
-  IN_PROGRESS
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum ItineraryStatus {
+  UPCOMING
   COMPLETED
   CANCELLED
 }
@@ -27,7 +33,7 @@ model User {
   password String
   role     UserRole @default(USER)
   image    String?
-  initials String?
+  initials String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -36,15 +42,17 @@ model User {
 }
 
 model Trip {
-  id          String     @id @default(uuid())
+  id          String @id @default(uuid())
   title       String
   description String
-  status      TripStatus @default(PLANNED)
+
+  status   TripStatus @default(PLANNED)
+  coverImg String?
 
   startDate DateTime
   endDate   DateTime
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
   itineraries Itinerary[]
@@ -53,23 +61,38 @@ model Trip {
   updatedAt DateTime @updatedAt
 }
 
-model Itinerary {
+model Place {
   id               String  @id @default(uuid())
-  title            String
-  order            Int     @default(0)
-  formattedAddress String?
-  latitude         Float
-  longitude        Float
+  formattedAddress String
+  lat              Float
+  lng              Float
   country          String
-  city             String?
+  city             String
+  countryFlag      String?
 
-  tripId  String
-
-
-  trip Trip @relation(fields: [tripId], references: [id])
+  itineraries Itinerary[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([tripId])
+  @@unique([lat, lng])
+}
+
+model Itinerary {
+  id    String  @id @default(uuid())
+  title String
+  notes String?
+
+  status ItineraryStatus @default(UPCOMING)
+
+  trip   Trip   @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  tripId String
+
+  place   Place  @relation(fields: [placeId], references: [id])
+  placeId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tripId], name: "trip_id_idx")
 }

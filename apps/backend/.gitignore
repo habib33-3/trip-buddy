@@ -42,3 +42,4 @@ pids/
 *.pid.lock
 
 /src/generated/prisma
+prisma/generated

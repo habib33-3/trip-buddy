@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 
-import { cacheGet, cacheSet } from "@/utils/redis";
-import { cacheKeyUser } from "@/utils/redis-key";
+import { cacheGet, cacheRefreshTTL, cacheSet } from "@/utils/cache";
+import { cacheKeyUser } from "@/utils/cache-key";
 
 import type { User } from "@/generated/prisma";
 
@@ -14,6 +14,7 @@ export const findUserById = async (id: string) => {
 
     const cachedUser = await cacheGet<User>(key);
     if (cachedUser) {
+        await cacheRefreshTTL(key);
         return cachedUser;
     }
 

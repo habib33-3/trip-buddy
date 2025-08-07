@@ -4,7 +4,7 @@ export const registerUserSchema = z
   .object({
     confirmPassword: z.string().min(6),
     email: z.string().email(),
-    name: z.string(),
+    name: z.string().min(3),
     password: z.string().min(6),
   })
   .refine((data) => data.password === data.confirmPassword, {

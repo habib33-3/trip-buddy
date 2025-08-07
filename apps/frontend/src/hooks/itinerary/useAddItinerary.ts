@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import { useParams } from "react-router";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,36 +12,40 @@ import { addItineraryApi } from "@/api/itineraryApi";
 
 import type { ApiResponse } from "@/types/response";
 
-import type { AddItinerarySchemaType } from "@/validations/itineraryValidation";
-import { addItinerarySchema } from "@/validations/itineraryValidation";
+import {
+  type AddItinerarySchemaType,
+  addItinerarySchema,
+} from "@/validations/itineraryValidation";
 
-const useAddItinerary = () => {
+const useAddItinerary = (closeModal: () => void) => {
   const { tripId } = useParams<{ tripId: string }>();
 
   if (!tripId) {
     throw new Error("tripId is required");
   }
 
-  const { user } = useAuthStore();
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   const form = useForm<AddItinerarySchemaType>({
     defaultValues: {
-      address: "",
+      notes: "",
+      title: "",
     },
     resolver: zodResolver(addItinerarySchema),
   });
 
+  const { user } = useAuthStore();
+
   const query = useQueryClient();
 
   const mutate = useMutation({
-    mutationFn: async (data: AddItinerarySchemaType) =>
+    mutationFn: async (data: AddItinerarySchemaType & { placeId: string }) =>
       addItineraryApi({
-        address: data.address,
+        notes: data.notes,
+        placeId: data.placeId,
+        title: data.title,
         tripId,
       }),
     onError: (error: AxiosError<ApiResponse<{ message: string }>>) => {
+      form.reset();
       toast.error(error.response?.data.message ?? "Something went wrong");
     },
     onSuccess: (data) => {
@@ -53,21 +55,24 @@ const useAddItinerary = () => {
 
       form.reset();
 
-      setIsModalOpen(false);
       toast.success(data.message);
+
+      closeModal();
     },
   });
 
-  const handleAddLocation = (data: AddItinerarySchemaType) => {
+  const handleAddLocation = (
+    data: AddItinerarySchemaType & { placeId: string }
+  ) => {
     mutate.mutate(data);
   };
 
   return {
     form,
     handleAddLocation,
-    isLoading: mutate.isPending,
-    isModalOpen,
-    setIsModalOpen,
+    isLoading: mutate.isPending || form.formState.isSubmitting,
+
+    mutate,
   };
 };
 

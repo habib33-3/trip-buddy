@@ -18,22 +18,26 @@ const AvatarDropdown = () => {
   const { user } = useAuthStore();
   const { handleLogout, isLoading } = useUserLogout();
 
+  if (!user) {
+    return null;
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="cursor-pointer bg-muted">
           <AvatarImage
-            src={user?.image}
-            alt={user?.initials}
+            src={user.image}
+            alt={user.initials}
           />
           <AvatarFallback className="text-sm font-medium">
-            {user?.initials}
+            {user.initials}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-48"
+        className="w-48 bg-slate-800 text-white"
       >
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />

@@ -1,47 +1,58 @@
+import { lazy } from "react";
+
 import { createBrowserRouter } from "react-router";
 
-import TripDashboardLayout from "@/layouts/TripDashboardLayout";
+import { suspenseWrapper } from "@/shared/suspense-wrapper";
 
 import ErrorPage from "@/pages/ErrorPage/ErrorPage";
-import GlobePage from "@/pages/GlobePage/GlobePage";
-import LoginPage from "@/pages/LoginPage/LoginPage";
-import NotFoundPage from "@/pages/NotFoundPage/NotFoundPage";
-import RegisterPage from "@/pages/RegisterPage/RegisterPage";
-import TripsDetailsPage from "@/pages/TripDetailsPage/TripsDetailsPage";
-import TripsPage from "@/pages/TripsPage/TripsPage";
+
+const HomePage = lazy(async () => import("@/pages/HomePage/HomePage"));
+const TripsPage = lazy(async () => import("@/pages/TripsPage/TripsPage"));
+const TripsDetailsPage = lazy(
+  async () => import("@/pages/TripDetailsPage/TripsDetailsPage")
+);
+const GlobePage = lazy(async () => import("@/pages/GlobePage/GlobePage"));
+const TripsHistory = lazy(
+  async () => import("@/pages/TripsHistory/TripsHistory")
+);
+const NotFoundPage = lazy(
+  async () => import("@/pages/NotFoundPage/NotFoundPage")
+);
+const TripDashboardLayout = lazy(
+  async () => import("@/layouts/TripDashboardLayout")
+);
 
 const router = createBrowserRouter([
   {
     children: [
       {
-        element: <RegisterPage />,
-        path: "register",
-      },
-      {
-        element: <LoginPage />,
-        path: "login",
+        element: suspenseWrapper(HomePage),
+        path: "",
       },
       {
         children: [
           {
-            element: <TripsPage />,
+            element: suspenseWrapper(TripsPage),
             path: "",
           },
           {
-            element: <TripsDetailsPage />,
+            element: suspenseWrapper(TripsDetailsPage),
             path: ":tripId",
           },
           {
-            element: <GlobePage />,
+            element: suspenseWrapper(GlobePage),
             path: "globe",
           },
+          {
+            element: suspenseWrapper(TripsHistory),
+            path: "history",
+          },
         ],
-        element: <TripDashboardLayout />,
+        element: suspenseWrapper(TripDashboardLayout),
         path: "trips",
       },
-
       {
-        element: <NotFoundPage />,
+        element: suspenseWrapper(NotFoundPage),
         path: "*",
       },
     ],

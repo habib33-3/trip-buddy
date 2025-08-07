@@ -1,9 +1,11 @@
+import { Loader } from "lucide-react";
+
 import useGetSingleTrip from "@/hooks/trip/useGetSingleTrip";
 import useUpdateTrip from "@/hooks/trip/useUpdateTrip";
 
 import type { UpdateTripSchemaType } from "@/validations/tripValidation";
 
-import { DatePickerField } from "@/ui/date-picker";
+import DatePickerField from "@/ui/date-picker";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/ui/form";
 import { Input } from "@/ui/input";
 import { Label } from "@/ui/label";
@@ -20,7 +22,11 @@ const UpdateTripForm = ({ closeModal }: Props) => {
   const { status, trip } = useGetSingleTrip();
 
   if (isLoading || status === "pending") {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex items-center justify-center">
+        <Loader />
+      </div>
+    );
   }
 
   if (status === "error") {

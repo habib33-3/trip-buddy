@@ -19,16 +19,22 @@ export type TokenPayload = JwtPayload & {
     email: string;
 };
 
+export type CityStat = {
+    name: string;
+    lat: number;
+    lng: number;
+    count: number;
+};
+
 export type Stat = {
-    cities: {
-        lat: number;
-        lng: number;
-        name: string;
-        count: number;
-    }[];
+    cities: CityStat[];
     countries: number;
     itineraryCount: number;
-    mostVisitedCountry: string;
+    mostVisitedCountry: {
+        name: string;
+        count: number;
+        flag: string;
+    };
     tripsCount: number;
     tripStatusCounts: {
         completed: number;

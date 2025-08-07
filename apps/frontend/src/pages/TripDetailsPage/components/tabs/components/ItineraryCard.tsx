@@ -1,44 +1,46 @@
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-
 import type { Itinerary } from "@/types/index";
+
+import { itineraryStatusColorMap } from "@/constants/index";
+
+import { Badge } from "@/ui/badge";
+
+import ChangeItineraryStatus from "./ChangeItineraryStatus";
 
 type Props = {
   itinerary: Itinerary;
 };
 
 const ItineraryCard = ({ itinerary }: Props) => {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: itinerary.id });
+  const { notes, place, status, title } = itinerary;
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
+  const formattedAddress = place?.formattedAddress ?? "No place selected";
 
   return (
-    <div
-      ref={setNodeRef}
-      {...attributes}
-      {...listeners}
-      style={style}
-      role="button"
-      tabIndex={0}
-      aria-label={`Reorder ${itinerary.formattedAddress}, currently day ${itinerary.order + 1}`}
-      className="flex cursor-grab items-center justify-between gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:shadow-md active:cursor-grabbing"
-    >
-      <div className="flex flex-col">
-        <h4 className="text-base font-semibold text-gray-800">
-          {itinerary.formattedAddress || "Address not available"}
-        </h4>
-        <p className="text-sm text-gray-600">
-          Lon: {itinerary.longitude.toFixed(4) || "N/A"}, Lat:{" "}
-          {itinerary.latitude.toFixed(4) || "N/A"}
-        </p>
-      </div>
+    <div className="relative flex items-start gap-4 pl-6">
+      <div className="absolute top-2 left-0 h-3 w-3 rounded-full bg-blue-500 shadow-md ring-2 ring-white" />
 
-      <div className="shrink-0 rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600 shadow-inner">
-        Day {itinerary.order + 1}
+      <div className="absolute top-5 left-[5.5px] h-full w-px bg-gray-300" />
+
+      <div className="flex-1 rounded-xl border border-gray-200 bg-gray-700 p-4 shadow-sm transition-all hover:shadow-md">
+        <div className="flex items-start justify-between">
+          <h4 className="text-base font-semibold text-gray-200">{title}</h4>
+          <Badge
+            variant="secondary"
+            className={`rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${
+              // eslint-disable-next-line security/detect-object-injection
+              itineraryStatusColorMap[status]
+            }`}
+          >
+            {status}
+          </Badge>
+        </div>
+
+        {notes ? <p className="mt-1 text-sm text-gray-200">{notes}</p> : null}
+        <p className="mt-1 text-sm text-gray-300 italic">{formattedAddress}</p>
+
+        <div className="mt-3">
+          <ChangeItineraryStatus itinerary={itinerary} />
+        </div>
       </div>
     </div>
   );

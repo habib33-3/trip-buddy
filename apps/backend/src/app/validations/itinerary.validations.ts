@@ -1,23 +1,65 @@
 import { z } from "zod";
 
-export const addItinerarySchema = z.object({
+import { ItineraryStatus } from "@/generated/prisma";
+
+export const createItinerarySchema = z.object({
+    body: z.object({
+        notes: z
+            .string()
+            .trim()
+            .optional()
+            .default("")
+            .refine((val) => val.trim().length === 0 || val.trim().length >= 3, {
+                message: "Notes must be at least 3 characters long",
+            }),
+        placeId: z.string().uuid(),
+        title: z
+            .string()
+            .trim()
+            .optional()
+            .refine(
+                (val) => val === undefined || val.trim().length === 0 || val.trim().length >= 3,
+                {
+                    message: "Title must be at least 3 characters long",
+                }
+            ),
+        tripId: z.string().uuid(),
+    }),
+});
+
+export type CreateItinerarySchemaType = z.infer<typeof createItinerarySchema>["body"];
+
+export const updateItinerarySchema = z.object({
+    body: z.object({
+        notes: z
+            .string()
+            .trim()
+            .optional()
+            .default("")
+            .refine((val) => val.trim().length === 0 || val.trim().length >= 3, {
+                message: "Notes must be at least 3 characters long",
+            }),
+        title: z
+            .string()
+            .trim()
+            .optional()
+            .refine(
+                (val) => val === undefined || val.trim().length === 0 || val.trim().length >= 3,
+                {
+                    message: "Title must be at least 3 characters long",
+                }
+            ),
+    }),
+});
+
+export type UpdateItinerarySchemaType = z.infer<typeof updateItinerarySchema>["body"];
+
+export const changeItineraryStatusSchema = z.object({
     body: z
         .object({
-            address: z.string(),
-            tripId: z.string(),
+            status: z.nativeEnum(ItineraryStatus).optional(),
         })
         .strict(),
 });
 
-export type AddItinerarySchemaType = z.infer<typeof addItinerarySchema>["body"];
-
-export const reorderItinerarySchema = z.object({
-    body: z
-        .object({
-            itineraryIds: z.array(z.string()),
-            tripId: z.string().uuid(),
-        })
-        .strict(),
-});
-
-export type ReorderItinerarySchemaType = z.infer<typeof reorderItinerarySchema>["body"];
+export type ChangeItineraryStatusSchemaType = z.infer<typeof changeItineraryStatusSchema>["body"];

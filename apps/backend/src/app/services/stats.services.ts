@@ -2,33 +2,31 @@ import { StatusCodes } from "http-status-codes";
 
 import { prisma } from "@/lib/prisma";
 
-import { cacheGet, cacheSet } from "@/utils/redis";
-import { cacheKeyStats } from "@/utils/redis-key";
+import { cacheGet, cacheRefreshTTL, cacheSet } from "@/utils/cache";
+import { cacheKeyStats } from "@/utils/cache-key";
 
 import ApiError from "@/shared/ApiError";
 
-import type { Stat } from "@/types";
+import type { CityStat, Stat } from "@/types";
 
 import { findUserById } from "./user.service";
 
-export const getUserStatisticsService = async (userId: string) => {
-    const user = await findUserById(userId);
-    if (!user) {
-        throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
-    }
-
-    const cacheKey = cacheKeyStats(userId);
-    const cached = await cacheGet<Stat>(cacheKey);
-    if (cached) return cached;
-
+const generateStatReport = async (userId: string): Promise<Stat> => {
     const [itineraries, tripsCount, itineraryCount, tripStatusCounts] = await Promise.all([
         prisma.itinerary.findMany({
             select: {
-                city: true,
-                country: true,
-                latitude: true,
-                longitude: true,
-                trip: { select: { userId: true } },
+                place: {
+                    select: {
+                        city: true,
+                        country: true,
+                        countryFlag: true,
+                        lat: true,
+                        lng: true,
+                    },
+                },
+                trip: {
+                    select: { userId: true },
+                },
             },
             where: {
                 trip: { userId },
@@ -43,43 +41,64 @@ export const getUserStatisticsService = async (userId: string) => {
         }),
     ]);
 
-    const cityMap = new Map<string, { lat: number; lng: number; name: string; count: number }>();
+    const cityMap = new Map<string, CityStat>();
     const countryMap = new Map<string, number>();
     const countrySet = new Set<string>();
 
-    for (const { city, country, latitude, longitude } of itineraries) {
-        if (country) countrySet.add(country);
-        if (country) {
-            const countryKey = country.toLowerCase();
-            countryMap.set(countryKey, (countryMap.get(countryKey) ?? 0) + 1);
-        }
+    for (const itinerary of itineraries) {
+        const { place } = itinerary;
+        if (!place.country || !place.city) continue;
 
-        if (city) {
-            const cityKey = city.toLowerCase();
-            const existing = cityMap.get(cityKey);
+        const { city, country, lat, lng } = place;
 
-            if (existing) {
-                existing.count += 1;
-            } else {
-                cityMap.set(cityKey, {
-                    count: 1,
-                    lat: latitude,
-                    lng: longitude,
-                    name: city,
-                });
-            }
+        const countryKey = country.toLowerCase();
+        countrySet.add(countryKey);
+        countryMap.set(countryKey, (countryMap.get(countryKey) ?? 0) + 1);
+
+        const cityKey = city.toLowerCase();
+        const existing = cityMap.get(cityKey);
+
+        if (existing) {
+            existing.count += 1;
+        } else {
+            cityMap.set(cityKey, {
+                count: 1,
+                lat,
+                lng,
+                name: city,
+            });
         }
     }
 
-    const mostVisitedCountry =
-        [...countryMap.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
     const cities = [...cityMap.values()].sort((a, b) => b.count - a.count);
+
+    let mostVisitedCountry: Stat["mostVisitedCountry"] = {
+        count: 0,
+        flag: "",
+        name: "",
+    };
+
+    if (countryMap.size > 0) {
+        const [mostVisitedName, mostVisitedCount] = [...countryMap.entries()].sort(
+            (a, b) => b[1] - a[1]
+        )[0];
+
+        const countryFlag =
+            itineraries.find((it) => it.place.country.toLowerCase() === mostVisitedName)?.place
+                .countryFlag ?? "";
+
+        mostVisitedCountry = {
+            count: mostVisitedCount,
+            flag: countryFlag,
+            name: mostVisitedName,
+        };
+    }
 
     const statusCountMap = Object.fromEntries(
         tripStatusCounts.map((item) => [item.status, item._count._all])
     );
 
-    const stats = {
+    return {
         cities,
         countries: countrySet.size,
         itineraryCount,
@@ -91,8 +110,23 @@ export const getUserStatisticsService = async (userId: string) => {
             planned: statusCountMap.PLANNED || 0,
         },
     };
+};
 
-    await cacheSet(cacheKey, stats);
+export const getUserStatisticsService = async (userId: string) => {
+    const user = await findUserById(userId);
+    if (!user) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
+    }
 
-    return stats;
+    const cacheKey = cacheKeyStats(userId);
+    const cached = await cacheGet<Stat>(cacheKey);
+    if (cached) {
+        await cacheRefreshTTL(cacheKey);
+        return cached;
+    }
+
+    const report = await generateStatReport(userId);
+
+    await cacheSet(cacheKey, report);
+    return report;
 };

@@ -7,7 +7,7 @@ import type {
   UpdateTripSchemaType,
 } from "@/validations/tripValidation";
 
-import type { Trip } from "../types";
+import type { Trip, TripStatus } from "../types";
 
 export const createTripApi = async (payload: CreateTripSchemaType) => {
   const res = await axiosPrivate.post<ApiResponse<Trip>>("/trip", payload);
@@ -15,8 +15,25 @@ export const createTripApi = async (payload: CreateTripSchemaType) => {
   return res.data;
 };
 
-export const getAllTripsApi = async () => {
-  const res = await axiosPrivate.get<ApiResponse<Trip[]>>("/trip");
+export const getAllTripsApi = async ({
+  searchTerm,
+  status,
+}: {
+  searchTerm: string;
+  status: TripStatus[];
+}) => {
+  const params = new URLSearchParams();
+  params.set("searchQuery", searchTerm);
+  status.forEach((s) => params.append("status", s));
+
+  const res = await axiosPrivate.get<ApiResponse<Trip[]>>(
+    `/trip?${params.toString()}`
+  );
+  return res.data;
+};
+
+export const getRecentTripsApi = async () => {
+  const res = await axiosPrivate.get<ApiResponse<Trip[]>>(`/trip/recent`);
 
   return res.data;
 };
@@ -39,6 +56,15 @@ export const updateTripApi = async (
 export const deleteTripApi = async (id: string) => {
   const res = await axiosPrivate.delete<ApiResponse<{ message: string }>>(
     `/trip/${id}`
+  );
+
+  return res.data;
+};
+
+export const changeTripStatusApi = async (id: string, status: TripStatus) => {
+  const res = await axiosPrivate.put<ApiResponse<Trip>>(
+    `/trip/${id}/change-status`,
+    { status }
   );
 
   return res.data;

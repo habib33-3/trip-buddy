@@ -5,10 +5,10 @@ import { env } from "@/config/env.config";
 import { prisma } from "@/lib/prisma";
 import { redis } from "@/lib/redis";
 
+import { cacheSet } from "@/utils/cache";
+import { cacheKeyRefreshToken } from "@/utils/cache-key";
 import { compareHashData, hashData } from "@/utils/hash";
 import { generateAuthTokens, verifyToken } from "@/utils/jwt";
-import { cacheSet } from "@/utils/redis";
-import { cacheKeyRefreshToken } from "@/utils/redis-key";
 
 import ApiError from "@/shared/ApiError";
 

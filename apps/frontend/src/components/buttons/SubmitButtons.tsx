@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes } from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 import { Loader2 } from "lucide-react";
 
@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/ui/button";
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
-  title?: string;
+  title?: ReactNode;
   loading: boolean;
   loadingText?: string;
 };
@@ -23,7 +23,7 @@ const SubmitButton = ({
     <Button
       type="submit"
       disabled={loading}
-      className={cn("w-full", className)}
+      className={cn("w-full bg-accent-foreground", className)}
       {...props}
     >
       {loading ? (

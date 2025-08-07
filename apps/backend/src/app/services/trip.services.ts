@@ -11,23 +11,29 @@ import {
     cacheListUpdateItem,
     cacheRefreshTTL,
     cacheSet,
-} from "@/utils/redis";
-import { cacheKeyStats, cacheKeyTrip } from "@/utils/redis-key";
+    invalidateStatsCache,
+} from "@/utils/cache";
+import { cacheKeyRecentTrips, cacheKeyTrip } from "@/utils/cache-key";
 
 import ApiError from "@/shared/ApiError";
-import { logger } from "@/shared/logger";
 
-import type { CreateTripSchemaType, UpdateTripSchemaType } from "@/validations/trip.validations";
+import type {
+    ChangeTripStatusSchemaType,
+    CreateTripSchemaType,
+    SearchTripParamSchemaType,
+    UpdateTripSchemaType,
+} from "@/validations/trip.validations";
 
 import type { Trip } from "@/generated/prisma";
 
-export const getTripById = async (
-    key: string,
-    tripId: string,
-    userId: string
-): Promise<Trip | null> => {
+export const getTripById = async (tripId: string, userId: string): Promise<Trip | null> => {
+    const key = cacheKeyTrip(userId);
+
     const cachedTrip = await cacheListFindById<Trip>(key, tripId);
-    if (cachedTrip) return cachedTrip;
+    if (cachedTrip) {
+        await cacheRefreshTTL(key);
+        return cachedTrip;
+    }
 
     const trip = await prisma.trip.findFirst({
         include: { itineraries: true },
@@ -41,9 +47,6 @@ export const getTripById = async (
     return trip;
 };
 
-/**
- * Create a new trip and cache it.
- */
 export const createTripService = async (
     payload: CreateTripSchemaType,
     userId: string
@@ -59,60 +62,95 @@ export const createTripService = async (
         include: { itineraries: true },
     });
 
-    const key = cacheKeyTrip(userId);
-    await cacheListPrepend<Trip>(key, trip);
-
-    const statsKey = cacheKeyStats(userId);
-
-    await cacheInvalidate(statsKey);
+    await Promise.all([
+        cacheInvalidate(cacheKeyRecentTrips(userId)),
+        cacheListPrepend<Trip>(cacheKeyTrip(userId), trip),
+        invalidateStatsCache(userId),
+    ]);
 
     return trip;
 };
 
-/**
- * Get all trips for a user with Redis caching.
- */
-export const getAllTripsService = async (userId: string): Promise<Trip[]> => {
-    const key = cacheKeyTrip(userId);
-    const cachedTrips = await cacheGet<Trip[]>(key);
+export const getRecentTripsService = async (userId: string): Promise<Trip[]> => {
+    const key = cacheKeyRecentTrips(userId);
 
-    if (cachedTrips?.length) {
-        logger.info(`Cache hit: ${key}`);
+    const cachedTrips = await cacheGet<Trip[]>(key);
+    if (cachedTrips && cachedTrips.length > 0) {
         await cacheRefreshTTL(key);
         return cachedTrips;
     }
 
-    logger.info(`Cache miss: ${key}`);
-    const trips = await prisma.trip.findMany({ where: { userId } });
+    const trips = await prisma.trip.findMany({
+        orderBy: {
+            createdAt: "desc",
+        },
+        take: 4,
+        where: {
+            userId,
+        },
+    });
+
+    await cacheSet(key, trips);
+
+    return trips;
+};
+
+export const getAllTripsService = async (
+    userId: string,
+    searchTripParams: SearchTripParamSchemaType
+): Promise<Trip[]> => {
+    const key = cacheKeyTrip(userId, searchTripParams);
+
+    const cachedTrips = await cacheGet<Trip[]>(key);
+    if (cachedTrips && cachedTrips.length > 0) {
+        await cacheRefreshTTL(key);
+        return cachedTrips;
+    }
+
+    const { searchQuery, status } = searchTripParams;
+    const isSearchActive = searchQuery.trim().length >= 3;
+
+    const trips = await prisma.trip.findMany({
+        where: {
+            userId,
+            ...(isSearchActive && {
+                OR: [
+                    {
+                        title: {
+                            contains: searchQuery,
+                            mode: "insensitive",
+                        },
+                    },
+                    {
+                        description: {
+                            contains: searchQuery,
+                            mode: "insensitive",
+                        },
+                    },
+                ],
+            }),
+            ...(status.length > 0 && {
+                status: {
+                    in: status,
+                },
+            }),
+        },
+    });
 
     if (trips.length > 0) {
-        await cacheSet<Trip[]>(key, trips);
+        await cacheSet(key, trips);
     }
 
     return trips;
 };
 
-/**
- * Get a single trip by ID for a user.
- */
-export const getSingleTripService = async (
-    tripId: string,
-    userId: string
-): Promise<Trip | null> => {
-    const key = cacheKeyTrip(userId);
-    return getTripById(key, tripId, userId);
-};
-
-/**
- * Update a trip and sync it in Redis.
- */
 export const updateTripService = async (
     tripId: string,
     payload: UpdateTripSchemaType,
     userId: string
 ): Promise<Trip> => {
     const key = cacheKeyTrip(userId);
-    const existingTrip = await getTripById(key, tripId, userId);
+    const existingTrip = await getTripById(tripId, userId);
 
     if (!existingTrip) {
         throw new ApiError(StatusCodes.NOT_FOUND, `Trip not found`);
@@ -125,21 +163,17 @@ export const updateTripService = async (
 
     await cacheListUpdateItem<Trip>(key, tripId, updatedTrip);
 
-    // Optional: Refresh TTL on the trip list cache
-    await cacheRefreshTTL(key);
+    await invalidateStatsCache(userId);
 
     return updatedTrip;
 };
 
-/**
- * Delete a trip and remove it from Redis.
- */
 export const deleteTripService = async (
     tripId: string,
     userId: string
 ): Promise<{ success: true }> => {
     const key = cacheKeyTrip(userId);
-    const existingTrip = await getTripById(key, tripId, userId);
+    const existingTrip = await getTripById(tripId, userId);
 
     if (!existingTrip) {
         throw new ApiError(StatusCodes.NOT_FOUND, `Trip not found`);
@@ -151,11 +185,33 @@ export const deleteTripService = async (
 
     await cacheListRemoveItem<Trip>(key, tripId);
 
-    const statsKey = cacheKeyStats(userId);
+    await invalidateStatsCache(userId);
+
+    return { success: true };
+};
+
+export const changeTripStatusService = async (
+    tripId: string,
+    payload: ChangeTripStatusSchemaType,
+    userId: string
+) => {
+    const key = cacheKeyTrip(userId);
+    const existingTrip = await getTripById(tripId, userId);
+
+    if (!existingTrip) {
+        throw new ApiError(StatusCodes.NOT_FOUND, `Trip not found`);
+    }
+
+    const updatedTrip = await prisma.trip.update({
+        data: { status: payload.status },
+        where: { id: tripId, userId },
+    });
+
+    await cacheListUpdateItem<Trip>(key, tripId, updatedTrip);
 
     await cacheInvalidate(key);
 
-    await cacheInvalidate(statsKey);
+    await invalidateStatsCache(userId);
 
-    return { success: true };
+    return updatedTrip;
 };

@@ -18,7 +18,7 @@ const safeRedirectToLogin = () => {
   if (!isRedirecting) {
     isRedirecting = true;
     useAuthStore.getState().clearUser();
-    window.location.href = "/login";
+    window.location.href = "/";
   }
 };
 
@@ -35,8 +35,13 @@ const handleRefreshToken = async () => {
 createAuthRefreshInterceptor(
   axiosPrivate,
   async () => {
-    await handleRefreshToken();
-    return Promise.resolve();
+    try {
+      await handleRefreshToken();
+      return Promise.resolve();
+    } catch (error) {
+      // Don't resolve here, so the original request also fails
+      return Promise.reject(error);
+    }
   },
   {
     statusCodes: [401],

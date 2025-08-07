@@ -1,6 +1,6 @@
-import { LocationEditIcon } from "lucide-react";
+import { useState } from "react";
 
-import useAddItinerary from "@/hooks/itinerary/useAddItinerary";
+import { PlusIcon } from "lucide-react";
 
 import { Button } from "@/ui/button";
 import {
@@ -11,77 +11,48 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/ui/form";
-import { Input } from "@/ui/input";
-import { Label } from "@/ui/label";
+import { Separator } from "@/ui/separator";
 
-import SubmitButton from "@/buttons/SubmitButtons";
+import AddItineraryForm from "../forms/AddItineraryForm";
+import AddPlaceForm from "../forms/AddPlaceForm";
 
 const AddItineraryModal = () => {
-  const { form, handleAddLocation, isLoading, isModalOpen, setIsModalOpen } =
-    useAddItinerary();
+  const [openModal, setModalOpen] = useState(false);
 
   return (
     <Dialog
-      onOpenChange={setIsModalOpen}
-      open={isModalOpen}
+      open={openModal}
+      onOpenChange={setModalOpen}
     >
       <DialogTrigger asChild>
-        <Button
-          variant="default"
-          className="flex items-center gap-2 rounded-xl px-4 py-2 shadow-md"
-        >
-          <LocationEditIcon className="h-4 w-4" />
-          Add Location
+        <Button className="flex items-center gap-2 rounded-xl px-4 py-2 shadow-md">
+          <PlusIcon className="size-5" />
+          Add Itinerary
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-md rounded-2xl p-6">
+      <DialogContent className="z-5000 w-full max-w-5xl p-6">
         <DialogHeader>
-          <DialogTitle className="text-center text-xl font-semibold">
+          <DialogTitle className="text-center text-2xl font-semibold text-gray-300">
             Add a New Location
           </DialogTitle>
-          <DialogDescription className="sr-only">
-            Add a new location to your trip
+          <DialogDescription className="text-center text-sm text-gray-400">
+            Search for a place and add itinerary details
           </DialogDescription>
         </DialogHeader>
 
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleAddLocation)}
-            className="mt-4 space-y-6"
-          >
-            <FormField
-              control={form.control}
-              name="address"
-              render={({ field }) => (
-                <FormItem>
-                  <Label className="text-sm font-medium text-gray-700">
-                    Location Address
-                  </Label>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      placeholder="Enter the location address..."
-                      className="mt-1"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="flex justify-end">
-              <SubmitButton
-                loading={isLoading}
-                className="w-full"
-              >
-                Save Location
-              </SubmitButton>
-            </div>
-          </form>
-        </Form>
+        <div className="mt-6 flex flex-col gap-6 lg:flex-row">
+          <div className="h-full w-full lg:w-1/2">
+            <AddPlaceForm />
+          </div>
+          <Separator
+            orientation="vertical"
+            className="hidden lg:block"
+          />
+          <div className="w-full lg:w-1/2">
+            <AddItineraryForm closeModal={() => setModalOpen(false)} />
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );
