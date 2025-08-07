@@ -13,7 +13,7 @@ import {
     cacheSet,
     invalidateStatsCache,
 } from "@/utils/cache";
-import { cacheKeyTrip } from "@/utils/cache-key";
+import { cacheKeyRecentTrips, cacheKeyTrip } from "@/utils/cache-key";
 
 import ApiError from "@/shared/ApiError";
 
@@ -62,12 +62,37 @@ export const createTripService = async (
         include: { itineraries: true },
     });
 
-    const key = cacheKeyTrip(userId);
-    await cacheListPrepend<Trip>(key, trip);
-
-    await invalidateStatsCache(userId);
+    await Promise.all([
+        cacheInvalidate(cacheKeyRecentTrips(userId)),
+        cacheListPrepend<Trip>(cacheKeyTrip(userId), trip),
+        invalidateStatsCache(userId),
+    ]);
 
     return trip;
+};
+
+export const getRecentTripsService = async (userId: string): Promise<Trip[]> => {
+    const key = cacheKeyRecentTrips(userId);
+
+    const cachedTrips = await cacheGet<Trip[]>(key);
+    if (cachedTrips && cachedTrips.length > 0) {
+        await cacheRefreshTTL(key);
+        return cachedTrips;
+    }
+
+    const trips = await prisma.trip.findMany({
+        orderBy: {
+            createdAt: "desc",
+        },
+        take: 4,
+        where: {
+            userId,
+        },
+    });
+
+    await cacheSet(key, trips);
+
+    return trips;
 };
 
 export const getAllTripsService = async (
@@ -77,17 +102,18 @@ export const getAllTripsService = async (
     const key = cacheKeyTrip(userId, searchTripParams);
 
     const cachedTrips = await cacheGet<Trip[]>(key);
-
-    if (cachedTrips !== null) {
+    if (cachedTrips && cachedTrips.length > 0) {
         await cacheRefreshTTL(key);
         return cachedTrips;
     }
 
-    const { searchQuery = "", status } = searchTripParams;
+    const { searchQuery, status } = searchTripParams;
+    const isSearchActive = searchQuery.trim().length >= 3;
 
     const trips = await prisma.trip.findMany({
         where: {
-            ...(searchQuery && {
+            userId,
+            ...(isSearchActive && {
                 OR: [
                     {
                         title: {
@@ -108,7 +134,6 @@ export const getAllTripsService = async (
                     in: status,
                 },
             }),
-            userId,
         },
     });
 
@@ -117,13 +142,6 @@ export const getAllTripsService = async (
     }
 
     return trips;
-};
-
-export const getSingleTripService = async (
-    tripId: string,
-    userId: string
-): Promise<Trip | null> => {
-    return getTripById(tripId, userId);
 };
 
 export const updateTripService = async (

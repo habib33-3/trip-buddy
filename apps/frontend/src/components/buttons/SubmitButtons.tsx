@@ -23,7 +23,7 @@ const SubmitButton = ({
     <Button
       type="submit"
       disabled={loading}
-      className={cn("w-full", className)}
+      className={cn("w-full bg-accent-foreground", className)}
       {...props}
     >
       {loading ? (

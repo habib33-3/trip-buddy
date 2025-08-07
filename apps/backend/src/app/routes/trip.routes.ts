@@ -14,6 +14,7 @@ import {
     createTripHandler,
     deleteTripHandler,
     getAllTripsHandler,
+    getRecentTripsHandler,
     getSingleTripHandler,
     updateTripHandler,
 } from "@/controllers/trip.controllers";
@@ -23,6 +24,8 @@ const router = Router();
 router.post("/", verifyAuth, validationMiddleware(createTripSchema), createTripHandler);
 
 router.get("/", verifyAuth, getAllTripsHandler);
+
+router.get("/recent", verifyAuth, getRecentTripsHandler);
 
 router.get("/:id", verifyAuth, getSingleTripHandler);
 

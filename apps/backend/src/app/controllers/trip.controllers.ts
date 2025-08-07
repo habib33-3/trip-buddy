@@ -17,7 +17,8 @@ import {
     createTripService,
     deleteTripService,
     getAllTripsService,
-    getSingleTripService,
+    getRecentTripsService,
+    getTripById,
     updateTripService,
 } from "@/services/trip.services";
 
@@ -53,11 +54,24 @@ export const getAllTripsHandler = asyncHandler(
     }
 );
 
+export const getRecentTripsHandler = asyncHandler(async (req, res) => {
+    const userId = req.user?.id as string;
+
+    const result = await getRecentTripsService(userId);
+
+    sendResponse(req, res, {
+        data: result,
+        message: "Trips fetched successfully",
+        statusCode: StatusCodes.OK,
+        success: true,
+    });
+});
+
 export const getSingleTripHandler = asyncHandler(async (req: Request<{ id: string }>, res) => {
     const tripId = req.params.id;
     const userId = req.user?.id as string;
 
-    const result = await getSingleTripService(tripId, userId);
+    const result = await getTripById(tripId, userId);
 
     sendResponse(req, res, {
         data: result,

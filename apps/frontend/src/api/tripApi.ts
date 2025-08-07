@@ -32,6 +32,12 @@ export const getAllTripsApi = async ({
   return res.data;
 };
 
+export const getRecentTripsApi = async () => {
+  const res = await axiosPrivate.get<ApiResponse<Trip[]>>(`/trip/recent`);
+
+  return res.data;
+};
+
 export const getSingleTripsApi = async (id: string) => {
   const res = await axiosPrivate.get<ApiResponse<Trip>>(`/trip/${id}`);
 

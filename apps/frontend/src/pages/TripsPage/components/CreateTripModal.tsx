@@ -21,13 +21,15 @@ const CreateTripModal = () => {
       open={isModalOpen}
       onOpenChange={setIsModalOpen}
     >
-      <DialogTrigger className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-black px-5 py-2 text-sm font-semibold text-white shadow-md transition hover:bg-gray-900 focus:ring-2 focus:ring-black focus:ring-offset-2 focus:outline-none">
-        <PlusIcon className="h-4 w-4" />
+      <DialogTrigger className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-amber-600/90 px-5 py-2 text-sm font-semibold text-white shadow-md transition hover:bg-amber-200 hover:text-black hover:shadow-lg focus:ring-2 focus:ring-black focus:ring-offset-2 focus:outline-none">
+        <PlusIcon className="size-4" />
         Create Trip
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:max-w-md md:w-full">
         <DialogHeader>
-          <DialogTitle>Create Your Trip</DialogTitle>
+          <DialogTitle className="text-xl font-semibold text-gray-300">
+            Create Your Trip
+          </DialogTitle>
           <DialogDescription />
         </DialogHeader>
 

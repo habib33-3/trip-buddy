@@ -31,12 +31,14 @@ const DeleteTripModal = () => {
           <div className="sr-only">Delete</div>
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent className="bg-slate-800">
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-          <AlertDialogDescription>
+          <AlertDialogTitle className="text-white">
+            Are you absolutely sure?
+          </AlertDialogTitle>
+          <AlertDialogDescription className="text-gray-300">
             This action cannot be undone. This will permanently delete this trip
-            and all associated data.
+            and all associated itineraries.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -45,6 +47,7 @@ const DeleteTripModal = () => {
             <Button
               disabled={isLoading}
               variant="destructive"
+              className="bg-red-800 hover:bg-red-900"
               onClick={() => {
                 deleteTrip();
               }}

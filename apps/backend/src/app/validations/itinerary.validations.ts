@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { ItineraryStatus } from "@/generated/prisma";
 
-export const addItinerarySchema = z.object({
+export const createItinerarySchema = z.object({
     body: z.object({
         notes: z
             .string()
@@ -27,7 +27,7 @@ export const addItinerarySchema = z.object({
     }),
 });
 
-export type AddItinerarySchemaType = z.infer<typeof addItinerarySchema>["body"];
+export type CreateItinerarySchemaType = z.infer<typeof createItinerarySchema>["body"];
 
 export const updateItinerarySchema = z.object({
     body: z.object({

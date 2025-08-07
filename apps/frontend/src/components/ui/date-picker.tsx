@@ -23,22 +23,22 @@ type DatePickerFieldProps<T extends FieldValues> = {
   disabledDate?: (date: Date) => boolean;
 };
 
-export const DatePickerField = <T extends FieldValues>({
+const DatePickerField = <T extends FieldValues>({
   description,
   disabledDate,
   field,
   label,
 }: DatePickerFieldProps<T>) => {
   return (
-    <FormItem className="flex flex-col">
-      <FormLabel>{label}</FormLabel>
+    <FormItem className="flex flex-col text-gray-200">
+      <FormLabel className="text-gray-200/80">{label}</FormLabel>
       <Popover>
         <PopoverTrigger asChild>
           <FormControl>
             <Button
               variant="outline"
               className={cn(
-                "w-[240px] pl-3 text-left font-normal",
+                "w-[240px] bg-slate-700 pl-3 text-left font-normal",
                 !field.value && "text-muted-foreground"
               )}
             >
@@ -52,8 +52,10 @@ export const DatePickerField = <T extends FieldValues>({
           </FormControl>
         </PopoverTrigger>
         <PopoverContent
-          className="w-auto p-0"
-          align="start"
+          className="w-auto bg-gray-300 p-0"
+          align="end"
+          sideOffset={8}
+          side="right"
         >
           <Calendar
             mode="single"
@@ -61,11 +63,20 @@ export const DatePickerField = <T extends FieldValues>({
             onSelect={field.onChange}
             disabled={disabledDate}
             captionLayout="dropdown"
+            classNames={{
+              month: "text-gray-900",
+            }}
           />
         </PopoverContent>
       </Popover>
-      {description ? <FormDescription>{description}</FormDescription> : null}
+      {description ? (
+        <FormDescription className="mt-2 text-gray-200">
+          {description}
+        </FormDescription>
+      ) : null}
       <FormMessage />
     </FormItem>
   );
 };
+
+export default DatePickerField;

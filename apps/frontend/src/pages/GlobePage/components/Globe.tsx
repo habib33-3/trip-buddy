@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 
 import ReactGlobe from "react-globe.gl";
 import type { GlobeMethods } from "react-globe.gl";
+import type { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 import { getCityColorByCount } from "@/lib/utils";
 
@@ -35,15 +36,20 @@ const Globe = ({ cities }: Props) => {
     const initializeGlobe = () => {
       if (globeRef.current) {
         globeRef.current.pointOfView({ altitude: 2, lat: 0, lng: 0 }, 0);
-        globeRef.current.controls().autoRotate = true;
-        globeRef.current.controls().autoRotateSpeed = 0.9;
+
+        const controls = globeRef.current.controls() as
+          | OrbitControls
+          | undefined;
+        if (controls) {
+          controls.autoRotate = true;
+          controls.autoRotateSpeed = 0.9;
+        }
       }
     };
 
-    // Add a small delay to ensure globe is fully initialized
     const timeoutId = setTimeout(initializeGlobe, 100);
     return () => clearTimeout(timeoutId);
-  }, [cities.length]); // Re-run when cities data changes
+  }, [cities.length]);
 
   const maxCount = Math.max(...cities.map((city) => city.count || 1));
 

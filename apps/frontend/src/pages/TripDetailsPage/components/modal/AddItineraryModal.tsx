@@ -31,18 +31,18 @@ const AddItineraryModal = () => {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="!w-full !max-w-4xl p-6">
+      <DialogContent className="z-5000 w-full max-w-5xl p-6">
         <DialogHeader>
-          <DialogTitle className="text-center text-xl font-semibold">
+          <DialogTitle className="text-center text-2xl font-semibold text-gray-300">
             Add a New Location
           </DialogTitle>
-          <DialogDescription className="text-center text-muted-foreground">
+          <DialogDescription className="text-center text-sm text-gray-400">
             Search for a place and add itinerary details
           </DialogDescription>
         </DialogHeader>
 
         <div className="mt-6 flex flex-col gap-6 lg:flex-row">
-          <div className="w-full lg:w-1/2">
+          <div className="h-full w-full lg:w-1/2">
             <AddPlaceForm />
           </div>
           <Separator

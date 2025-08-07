@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { Loader } from "lucide-react";
+
 import useAddPlace from "@/hooks/place/useAddPlace";
 import useGetPlaces from "@/hooks/place/useGetPlaces";
 import useDebounce from "@/hooks/useDebounce";
@@ -26,7 +28,7 @@ const AddPlaceForm = () => {
   };
 
   return (
-    <div className="h-full rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
+    <div className="h-full rounded-2xl border border-gray-200 p-6 shadow-md">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(addPlace)}
@@ -66,13 +68,18 @@ const AddPlaceForm = () => {
         </form>
       </Form>
 
-      <div className="mt-6 min-h-[100px]">
+      <div className="mt-6 min-h-[100px] max-w-md">
         <h3 className="text-sm font-semibold text-gray-700">Search Results</h3>
-        <div className="mt-2 max-h-60 space-y-1 overflow-y-auto pr-2">
+        <div className="mt-2 h-full max-h-60 space-y-1 overflow-y-auto pr-2">
           {status === "pending" ? (
-            <p className="text-sm text-muted-foreground">Loading...</p>
+            <div className="flex items-center justify-center">
+              <Loader
+                className="h-4 w-4 animate-spin"
+                aria-label="Loading search results"
+              />
+            </div>
           ) : searchQuery.length < 3 ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-stone-600">
               Enter at least 3 characters to search.
             </p>
           ) : places?.length ? (
@@ -82,7 +89,7 @@ const AddPlaceForm = () => {
                 type="button"
                 variant="ghost"
                 onClick={() => handlePlaceClick(place)}
-                className="w-full justify-start text-left text-sm hover:bg-gray-100"
+                className="h-full w-full justify-start px-1 py-2 text-left text-sm text-pretty break-words whitespace-normal text-gray-700 hover:bg-gray-100"
               >
                 {place.formattedAddress}
               </Button>

@@ -6,26 +6,26 @@ import asyncHandler from "@/shared/asyncHandler";
 import sendResponse from "@/shared/sendResponse";
 
 import type {
-    AddItinerarySchemaType,
     ChangeItineraryStatusSchemaType,
+    CreateItinerarySchemaType,
     UpdateItinerarySchemaType,
 } from "@/validations/itinerary.validations";
 
 import {
-    addItineraryService,
     changeItineraryStatusService,
+    createItineraryService,
     deleteItineraryService,
     getAllItinerariesService,
     getItineraryByIdService,
     updateItineraryService,
 } from "@/services/itinerary.services";
 
-export const addItineraryHandler = asyncHandler(
-    async (req: Request<{}, {}, AddItinerarySchemaType>, res) => {
+export const createItineraryHandler = asyncHandler(
+    async (req: Request<{}, {}, CreateItinerarySchemaType>, res) => {
         const userId = req.user?.id as string;
         const payload = req.body;
 
-        const itinerary = await addItineraryService(payload, userId);
+        const itinerary = await createItineraryService(payload, userId);
 
         sendResponse(req, res, {
             data: itinerary,

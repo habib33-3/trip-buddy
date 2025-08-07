@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 
 import { useSearchParams } from "react-router";
 
+import { Search } from "lucide-react";
+
 import useDebounce from "@/hooks/useDebounce";
 
 import { Input } from "@/ui/input";
@@ -33,13 +35,17 @@ const TripSearchInput = () => {
   };
 
   return (
-    <div className="relative mx-auto mt-4 mb-2 w-9/12 px-2 py-3">
+    <div className="relative mx-auto mt-6 mb-4 w-full max-w-3xl px-4">
+      <Search
+        className="absolute top-1/2 left-5 -translate-y-1/2 text-gray-400"
+        size={20}
+      />
       <Input
         value={searchTerm}
         onChange={handleSearchChange}
-        placeholder="Search trips..."
-        className="w-full rounded-2xl border border-gray-300 bg-white px-5 py-3 pr-12 text-base shadow-sm transition-all placeholder:text-gray-400 focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none"
+        placeholder="Search your trips..."
         type="search"
+        className="w-full rounded-2xl border border-gray-300 px-12 py-5 text-gray-100 shadow-sm placeholder:text-gray-400 focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none"
       />
     </div>
   );

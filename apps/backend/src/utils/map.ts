@@ -3,11 +3,11 @@ import { StatusCodes } from "http-status-codes";
 
 import { env } from "@/config/env.config";
 
-import { cacheGet, cacheSet } from "@/utils/cache";
+import { cacheGet, cacheRefreshTTL, cacheSet } from "@/utils/cache";
 
 import ApiError from "@/shared/ApiError";
 
-import { cacheGeoKey } from "./cache-key";
+import { cacheGeoKey, cacheKeyFlag } from "./cache-key";
 import { fetchWithRetry } from "./fetch";
 
 type NominatimSearchResponse = {
@@ -37,6 +37,7 @@ export type CoordinatesAndCountry = {
     country: string;
     city?: string;
     formattedAddress: string;
+    flag: string;
 };
 
 export const normalizeCoordinates = (coordinates: { lat: number; lng: number }) => ({
@@ -44,11 +45,52 @@ export const normalizeCoordinates = (coordinates: { lat: number; lng: number }) 
     lng: Math.round(coordinates.lng * 1e6) / 1e6,
 });
 
+type CountryApiResponse = {
+    flags: {
+        png: string;
+        svg: string;
+        alt?: string;
+    };
+}[];
+
+export const getCountryFlag = async (countryName: string): Promise<string> => {
+    const cacheKey = cacheKeyFlag(countryName);
+
+    const cached = await cacheGet<string>(cacheKey);
+
+    if (cached) {
+        await cacheRefreshTTL(cacheKey);
+        return cached;
+    }
+
+    const url = `https://restcountries.com/v3.1/name/${countryName.trim().toLowerCase()}?fields=flags`;
+    const data = await fetchWithRetry<CountryApiResponse>(url, { method: "GET" });
+
+    if (data.length === 0) {
+        throw new ApiError(StatusCodes.NOT_FOUND, `Country not found: ${countryName}`);
+    }
+
+    const flag = data[0].flags.png;
+
+    if (!flag) {
+        throw new ApiError(StatusCodes.NOT_FOUND, `No flag found for country: ${countryName}`);
+    }
+
+    await cacheSet(cacheKey, flag);
+
+    return flag;
+};
+
 export const getCoordinatesAndCountry = async (address: string): Promise<CoordinatesAndCountry> => {
     try {
         const cacheKey = cacheGeoKey(address);
+
         const cached = await cacheGet<CoordinatesAndCountry>(cacheKey);
-        if (cached) return cached;
+
+        if (cached) {
+            await cacheRefreshTTL(cacheKey);
+            return cached;
+        }
 
         const userAgent = `${env.APP_NAME}/1.0 (${env.APP_EMAIL})`;
         const headers = {
@@ -82,6 +124,8 @@ export const getCoordinatesAndCountry = async (address: string): Promise<Coordin
 
         const { lat, lng } = normalizeCoordinates({ lat: latNum, lng: lngNum });
 
+        const flag = await getCountryFlag(reverseData.address?.country ?? "Unknown");
+
         const result: CoordinatesAndCountry = {
             city:
                 reverseData.address?.city ??
@@ -89,6 +133,7 @@ export const getCoordinatesAndCountry = async (address: string): Promise<Coordin
                 reverseData.address?.village ??
                 reverseData.address?.state,
             country: reverseData.address?.country ?? "Unknown",
+            flag,
             formattedAddress: reverseData.display_name,
             lat,
             lng,

@@ -1,8 +1,8 @@
 import { Router } from "express";
 
 import {
-    addItinerarySchema,
     changeItineraryStatusSchema,
+    createItinerarySchema,
     updateItinerarySchema,
 } from "@/validations/itinerary.validations";
 
@@ -10,8 +10,8 @@ import validationMiddleware from "@/middlewares/validation.middleware";
 import verifyAuth from "@/middlewares/verifyAuth";
 
 import {
-    addItineraryHandler,
     changeItineraryStatusHandler,
+    createItineraryHandler,
     deleteItineraryHandler,
     getAllItinerariesHandler,
     getSingleItineraryHandler,
@@ -20,7 +20,7 @@ import {
 
 const router = Router();
 
-router.post("/", verifyAuth, validationMiddleware(addItinerarySchema), addItineraryHandler);
+router.post("/", verifyAuth, validationMiddleware(createItinerarySchema), createItineraryHandler);
 
 router.get("/trip/:tripId", verifyAuth, getAllItinerariesHandler);
 
