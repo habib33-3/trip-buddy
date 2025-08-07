@@ -52,8 +52,8 @@ const PasswordField = <T extends FieldValues>({
                 size="icon"
                 type="button"
                 onClick={togglePasswordVisibility}
-                className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer p-1 transition-opacity hover:border-0 hover:bg-transparent hover:opacity-70 hover:ring-0 hover:outline-none"
-                title="Toggle Password Visibility"
+                className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer p-1 text-gray-200 transition-opacity hover:border-0 hover:bg-transparent hover:text-gray-300 hover:opacity-70 hover:ring-0 hover:outline-none"
+                title="Toggle Password Visibility "
               >
                 {showPassword ? (
                   <Eye className="size-5" />

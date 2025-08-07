@@ -25,7 +25,7 @@ const CreateTripModal = () => {
         <PlusIcon className="size-4" />
         Create Trip
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:max-w-md md:w-full">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-gray-300">
             Create Your Trip

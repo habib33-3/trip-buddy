@@ -19,7 +19,7 @@ const RegisterUserForm = ({ navigateToLogin }: Props) => {
 
   return (
     <div className="h-full w-full max-w-md">
-      <Card className="w-full rounded-2xl border border-white/20 bg-white/90 p-8 shadow-2xl backdrop-blur-md transition-all duration-300">
+      <Card className="w-full rounded-2xl border border-white/10 bg-gradient-to-br from-rose-900 via-pink-800 to-rose-700 p-8 shadow-2xl backdrop-blur-md">
         <Form {...form}>
           <form
             className="flex flex-col gap-6"
@@ -78,7 +78,7 @@ const RegisterUserForm = ({ navigateToLogin }: Props) => {
             <SubmitButton
               loading={isLoading}
               title="Register"
-              className="w-full"
+              className="w-full bg-pink-600 text-white hover:bg-pink-700"
               disabled={isLoading}
             />
           </form>
@@ -90,7 +90,7 @@ const RegisterUserForm = ({ navigateToLogin }: Props) => {
             type="button"
             variant="link"
             onClick={navigateToLogin}
-            className="px-1 text-secondary-foreground hover:underline"
+            className="px-1 text-pink-200 underline hover:text-pink-100"
             disabled={isLoading}
           >
             Login

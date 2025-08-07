@@ -12,7 +12,7 @@ const TripDashboardLayout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-700 to-slate-800">
       <Navbar />
       <main className="mx-auto max-w-7xl px-4 py-6">
         <Outlet />
