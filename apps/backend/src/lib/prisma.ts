@@ -1,6 +1,3 @@
-import { StatusCodes } from "http-status-codes";
-
-import ApiError from "@/shared/ApiError";
 import { logger } from "@/shared/logger";
 
 import { PrismaClient } from "@/generated/prisma";

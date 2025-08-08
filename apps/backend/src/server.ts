@@ -5,15 +5,18 @@ import { prisma, shutDownPrisma } from "./lib/prisma";
 import { redis } from "./lib/redis";
 import { logger } from "./shared/logger";
 
-let server: ReturnType<typeof app.listen>;
+let server: ReturnType<typeof app.listen> | undefined;
 
 async function startServer() {
     try {
         await prisma.$connect();
         logger.info("✅ Prisma connected.");
 
-        await redis.connect();
-        logger.info("✅ Redis connected.");
+        // Connect Redis only if not already connected
+        if (redis.status === "end" || redis.status === "wait") {
+            await redis.connect();
+            logger.info("✅ Redis connected.");
+        }
 
         server = app.listen(env.PORT, () => {
             logger.info(`🚀 Server is running on port ${env.PORT}`);
@@ -27,16 +30,20 @@ async function startServer() {
 const shutdown = async (startupError?: unknown) => {
     logger.info("🧹 Graceful shutdown started...");
     try {
-        await Promise.race([
-            new Promise<void>((resolve, reject) => {
-                server.close((err) => (err ? reject(err) : resolve()));
-            }),
-            new Promise<void>((_, reject) =>
-                // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-                setTimeout(() => reject(new Error("Shutdown timeout")), 10_000)
-            ),
-        ]);
-        logger.info("✅ HTTP server closed.");
+        if (server) {
+            await Promise.race([
+                new Promise<void>((resolve, reject) => {
+                    if (server) {
+                        server.close((err) => (err ? reject(err) : resolve()));
+                    }
+                }),
+                new Promise<void>((_, reject) =>
+                    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+                    setTimeout(() => reject(new Error("Shutdown timeout")), 10_000)
+                ),
+            ]);
+            logger.info("✅ HTTP server closed.");
+        }
 
         await shutDownPrisma();
 
@@ -67,7 +74,9 @@ process.on("SIGTERM", () => {
 
 process.on("uncaughtException", (error) => {
     logger.error(
-        `🔥 Uncaught Exception: ${error instanceof Error ? (error.stack ?? error.message) : String(error)}`
+        `🔥 Uncaught Exception: ${
+            error instanceof Error ? (error.stack ?? error.message) : String(error)
+        }`
     );
     shutdown(error).catch((shutdownError) => {
         logger.error(`Shutdown error: ${String(shutdownError)}`);

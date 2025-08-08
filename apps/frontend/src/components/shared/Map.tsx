@@ -33,6 +33,19 @@ const Map = memo(({ center, zoom = 3 }: MapProps) => {
     );
   }
 
+  if (locations.length === 0) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center gap-2 bg-gray-700 p-6">
+        <p className="text-lg font-medium text-gray-200">
+          No locations available
+        </p>
+        <p className="text-sm text-gray-300">
+          Try adding some places to view them here.
+        </p>
+      </div>
+    );
+  }
+
   const validLocations = locations.filter(
     (l) => Number.isFinite(l.lat) && Number.isFinite(l.lng)
   );
@@ -43,12 +56,12 @@ const Map = memo(({ center, zoom = 3 }: MapProps) => {
 
   return (
     <div className="h-full min-h-[400px] w-full flex-1 overflow-hidden rounded-2xl border border-gray-300 bg-white shadow-lg">
-      {!hasLocations ? (
-        <div className="flex h-full flex-col items-center justify-center gap-2 p-6">
-          <p className="text-lg font-medium text-gray-600">
+      {!hasLocations && locations.length > 0 ? (
+        <div className="flex h-full flex-col items-center justify-center gap-2 bg-gray-700 p-6">
+          <p className="text-lg font-medium text-gray-200">
             No locations available
           </p>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-gray-300">
             Try adding some places to view them here.
           </p>
         </div>

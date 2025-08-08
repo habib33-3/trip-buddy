@@ -29,7 +29,7 @@ const RecentTrip = () => {
       </div>
 
       {recentTrip?.length === 0 && (
-        <p className="mt-6 text-center text-gray-500">No trips found.</p>
+        <p className="mt-6 text-center text-gray-200">No trips found.</p>
       )}
     </section>
   );

@@ -2,14 +2,15 @@
   "name": "trip-buddy",
   "private": true,
   "scripts": {
+    "dev": "turbo run dev --parallel",
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "start": "turbo run start",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint -- --fix",
     "format": "turbo run format",
-    "check-types": "turbo run check-types",
-    "prepare": "husky",
-    "seed": "turbo run seed"
+    "check-types": "turbo run type-check",
+    "seed": "turbo run seed",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.35.1",

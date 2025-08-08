@@ -28,11 +28,17 @@ const envSchema = z.object({
             }
             return result;
         }),
-
     ACCESS_TOKEN_SECRET: z
         .string()
         .trim()
         .min(1, { message: "ACCESS_TOKEN_SECRET cannot be empty" }),
+
+    ALLOWED_CORS_ORIGIN: z
+        .string()
+        .transform((val) => val.split(",").map((origin) => origin.trim().replace(/^"(.*)"$/, "$1")))
+        .refine((arr) => arr.length > 0, {
+            message: "ALLOWED_CORS_ORIGIN must have at least one origin",
+        }),
     APP_EMAIL: z
         .string()
         .trim()

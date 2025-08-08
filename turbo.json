@@ -9,20 +9,22 @@
     },
     "dev": {
       "cache": false,
-      "persistent": true,
-      "outputs": []
+      "persistent": true
+    },
+    "start": {
+      "dependsOn": ["^start"]
     },
     "lint": {
-      "dependsOn": ["^lint"],
-      "outputs": []
+      "dependsOn": ["^lint"]
+    },
+    "lint:fix": {
+      "dependsOn": ["^lint:fix"]
     },
     "format": {
-      "dependsOn": ["^format"],
-      "outputs": []
+      "dependsOn": ["^format"]
     },
-    "check-types": {
-      "dependsOn": ["^check-types"],
-      "outputs": []
+    "type-check": {
+      "dependsOn": ["^type-check"]
     },
     "db:generate": {
       "cache": false,
@@ -31,22 +33,15 @@
     },
     "db:push": {
       "cache": false,
-      "inputs": ["prisma/schema.prisma"],
-      "outputs": []
+      "inputs": ["prisma/schema.prisma"]
     },
     "db:studio": {
       "cache": false,
-      "persistent": true,
-      "outputs": []
+      "persistent": true
     },
     "seed": {
       "dependsOn": ["db:push", "^seed", "^db:push"],
-      "inputs": ["prisma/**", "scripts/seed.ts", ".env*"],
-      "outputs": []
-    },
-    "start": {
-      "dependsOn": ["build"],
-      "outputs": []
+      "inputs": ["prisma/**", "scripts/seed.ts", ".env*"]
     }
   }
 }

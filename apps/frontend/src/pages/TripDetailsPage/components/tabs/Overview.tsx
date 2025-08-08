@@ -53,10 +53,10 @@ const Overview = () => {
         </CardContent>
       </Card>
 
-      <Card className="relative h-[300px] overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md transition-shadow hover:shadow-lg">
+      <Card className="relative h-[300px] overflow-hidden rounded-2xl border border-gray-200 bg-slate-700 shadow-md transition-shadow hover:shadow-lg">
         <CardContent className="h-full p-0">
           {destinationCount === 0 ? (
-            <div className="flex h-full items-center justify-center text-sm text-gray-500">
+            <div className="flex h-full items-center justify-center text-lg text-gray-300">
               No locations available
             </div>
           ) : (
