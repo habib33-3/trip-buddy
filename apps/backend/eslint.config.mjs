@@ -18,6 +18,7 @@ const ignorePatterns = {
         "**/views/**",
         "./src/generated/**",
         "**/*.mjs",
+        "scripts/**",
     ],
 };
 
