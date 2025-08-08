@@ -1,7 +1,7 @@
 /* eslint-disable n/no-process-exit */
 import app from "./app/app";
 import { env } from "./config/env.config";
-import { prisma } from "./lib/prisma";
+import { prisma, shutDownPrisma } from "./lib/prisma";
 import { redis } from "./lib/redis";
 import { logger } from "./shared/logger";
 
@@ -9,6 +9,12 @@ let server: ReturnType<typeof app.listen>;
 
 async function startServer() {
     try {
+        await prisma.$connect();
+        logger.info("✅ Prisma connected.");
+
+        await redis.connect();
+        logger.info("✅ Redis connected.");
+
         server = app.listen(env.PORT, () => {
             logger.info(`🚀 Server is running on port ${env.PORT}`);
         });
@@ -32,10 +38,9 @@ const shutdown = async (startupError?: unknown) => {
         ]);
         logger.info("✅ HTTP server closed.");
 
-        await prisma.$disconnect();
-        logger.info("✅ Prisma disconnected.");
+        await shutDownPrisma();
 
-        redis.disconnect();
+        await redis.quit();
         logger.info("✅ Redis disconnected.");
     } catch (error) {
         const shutdownError =

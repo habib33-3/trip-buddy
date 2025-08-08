@@ -8,7 +8,8 @@
     "lint:fix": "turbo run lint -- --fix",
     "format": "turbo run format",
     "check-types": "turbo run check-types",
-    "prepare": "husky"
+    "prepare": "husky",
+    "seed": "turbo run seed"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.35.1",
