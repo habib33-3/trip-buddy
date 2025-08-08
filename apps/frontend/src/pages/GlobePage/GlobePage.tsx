@@ -1,11 +1,14 @@
+import { Suspense, lazy } from "react";
+
 import useGetStats from "@/hooks/stats/useGetStats";
 
 import ErrorComponent from "@/shared/ErrorComponent";
 import Loader from "@/shared/Loader";
 
 import CountryStats from "./components/CountryStats";
-import Globe from "./components/Globe";
 import TripStats from "./components/TripStats";
+
+const Globe = lazy(async () => import("./components/Globe"));
 
 const GlobePage = () => {
   const { stats, status } = useGetStats();
@@ -28,7 +31,9 @@ const GlobePage = () => {
             <TripStats stats={stats} />
           </div>
           <div className="flex items-center justify-center lg:col-span-6">
-            <Globe cities={stats.cities} />
+            <Suspense fallback={<Loader />}>
+              <Globe cities={stats.cities} />
+            </Suspense>
           </div>
           <div className="lg:col-span-3">
             <CountryStats stats={stats} />
