@@ -43,9 +43,6 @@ export const shutDownPrisma = async (): Promise<void> => {
         const err = error instanceof Error ? error.message : String(error);
         logger.error(`[PRISMA] ❌ Error during disconnection: ${err}`);
 
-        throw new ApiError(
-            StatusCodes.INTERNAL_SERVER_ERROR,
-            "Error during disconnection to Prisma"
-        );
+        throw err;
     }
 };

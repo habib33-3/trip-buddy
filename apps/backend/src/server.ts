@@ -9,13 +9,14 @@ let server: ReturnType<typeof app.listen>;
 
 async function startServer() {
     try {
-        server = app.listen(env.PORT, async () => {
+        await prisma.$connect();
+        logger.info("✅ Prisma connected.");
+
+        await redis.connect();
+        logger.info("✅ Redis connected.");
+
+        server = app.listen(env.PORT, () => {
             logger.info(`🚀 Server is running on port ${env.PORT}`);
-
-            await prisma.$connect();
-            logger.info("✅ Prisma connected.");
-
-            logger.info("✅ Redis connected.");
         });
     } catch (error) {
         logger.error(`❌ Failed to start server: ${String(error)}`);

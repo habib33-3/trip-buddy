@@ -40,7 +40,7 @@
       "outputs": []
     },
     "seed": {
-      "dependsOn": ["^seed"],
+      "dependsOn": ["db:push", "^seed", "^db:push"],
       "inputs": ["prisma/**", "scripts/seed.ts", ".env*"],
       "outputs": []
     },
