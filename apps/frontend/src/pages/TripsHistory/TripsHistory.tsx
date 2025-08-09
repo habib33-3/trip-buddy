@@ -44,7 +44,7 @@ const TripsHistory = () => {
             size="icon"
             className="ml-auto rounded-full bg-gray-700 p-2"
           >
-            <Funnel className="size-4" />
+            <Funnel className="size-4 text-gray-300" />
           </Button>
         </PopoverTrigger>
         <PopoverContent

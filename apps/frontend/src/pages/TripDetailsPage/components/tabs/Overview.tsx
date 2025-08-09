@@ -54,16 +54,12 @@ const Overview = () => {
       </Card>
 
       <Card className="relative h-[300px] overflow-hidden rounded-2xl border border-gray-200 bg-slate-700 shadow-md transition-shadow hover:shadow-lg">
-        <CardContent className="h-full p-0">
-          {destinationCount === 0 ? (
-            <div className="flex h-full items-center justify-center text-lg text-gray-300">
-              No locations available
-            </div>
-          ) : (
+        <CardContent className="flex h-full items-center justify-center p-0">
+          <div className="absolute top-0 left-0 h-full w-full">
             <Suspense fallback={<Loader />}>
               <Map zoom={6} />
             </Suspense>
-          )}
+          </div>
         </CardContent>
       </Card>
     </div>

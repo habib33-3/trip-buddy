@@ -71,6 +71,7 @@ const UpdateTripForm = ({ closeModal }: Props) => {
               <FormControl>
                 <Textarea
                   placeholder={trip?.description}
+                  className="resize-none text-sm font-medium text-gray-200 placeholder:text-sm placeholder:text-gray-400"
                   {...field}
                 />
               </FormControl>

@@ -23,10 +23,10 @@ type Props = {
 
 const TripCard = ({ trip }: Props) => {
   return (
-    <Card className="group relative flex h-72 flex-col justify-between rounded-2xl bg-slate-700/50 p-4 shadow-md transition-all duration-300 hover:shadow-lg">
+    <Card className="group relative flex h-72 flex-col rounded-2xl bg-slate-700/50 p-4 shadow-md transition-all duration-300 hover:shadow-lg">
       {/* Status Badge */}
       <div
-        className={`absolute top-4 right-4 rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${
+        className={`absolute top-2 right-4 rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${
           tripStatusColorMap[trip.status] || "bg-gray-600 text-white"
         }`}
         role="status"
@@ -36,20 +36,20 @@ const TripCard = ({ trip }: Props) => {
       </div>
 
       {/* Header */}
-      <CardHeader className="p-0">
-        <CardTitle className="text-2xl font-bold text-white transition-colors group-hover:text-blue-400">
+      <CardHeader className="flex-shrink-0 px-0 py-3">
+        <CardTitle className="line-clamp-1 text-2xl font-bold text-white transition-colors group-hover:text-blue-400">
           {trip.title}
         </CardTitle>
-        <CardDescription className="mt-2 line-clamp-2 text-sm text-gray-300">
-          {trip.description}
+        <CardDescription className="mt-2 line-clamp-2 min-h-[2.5rem] text-sm text-gray-300">
+          {trip.description || "\u00A0"}
         </CardDescription>
       </CardHeader>
 
       {/* Content */}
-      <CardContent className="flex h-full flex-col justify-between gap-4 p-0 pt-4">
-        <div className="flex items-center gap-2 text-sm text-gray-400">
-          <Calendar1Icon className="h-5 w-5 text-gray-400" />
-          <span className="font-medium">
+      <CardContent className="flex flex-1 flex-col justify-between gap-4 p-0 pt-4">
+        <div className="flex flex-shrink-0 items-center gap-2 text-sm text-gray-400">
+          <Calendar1Icon className="h-5 w-5 flex-shrink-0 text-gray-400" />
+          <span className="truncate font-medium">
             {formatDateRange(trip.startDate, trip.endDate)}
           </span>
         </div>
@@ -62,7 +62,7 @@ const TripCard = ({ trip }: Props) => {
               aria-label={`View details for ${trip.title}`}
             >
               <span className="font-medium">View Trip</span>
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:scale-110" />
+              <ArrowRight className="size-4 transition-transform group-hover:scale-110" />
             </Button>
           </Link>
         </div>
