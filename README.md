@@ -1,6 +1,6 @@
 # Trip Buddy 🌍✈️
 
-**Your Smart Travel Companion**
+** Your Smart Travel Companion**
 
 Plan, track, and relive your journeys with **Trip Buddy**—a travel companion that lets you create trips, manage itineraries, visualize routes on a map, and explore your travel stats in an immersive globe view.
 
