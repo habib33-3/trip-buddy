@@ -14,7 +14,7 @@ import ApiError from "@/shared/ApiError";
 
 import type { RegisterUserType } from "@/validations/auth.validations";
 
-import { findUserByEmail } from "./user.service";
+import { findUserByEmailService } from "./user.services";
 
 export const generateInitials = (name: string) => {
     if (!name || typeof name !== "string") {
@@ -36,7 +36,7 @@ export const generateInitials = (name: string) => {
 };
 
 export const registerUserService = async (data: RegisterUserType) => {
-    const isUserExists = await findUserByEmail(data.email);
+    const isUserExists = await findUserByEmailService(data.email);
 
     if (isUserExists) {
         throw new ApiError(StatusCodes.CONFLICT, "User already exists");
@@ -81,7 +81,7 @@ export const registerUserService = async (data: RegisterUserType) => {
 };
 
 export const userLoginService = async (email: string, password: string) => {
-    const user = await findUserByEmail(email);
+    const user = await findUserByEmailService(email);
 
     if (!user) {
         throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
@@ -114,7 +114,7 @@ export const userLoginService = async (email: string, password: string) => {
 export const refreshTokenService = async (refreshToken: string) => {
     const decoded = verifyToken(refreshToken, "refresh_token");
 
-    const userExists = await findUserByEmail(decoded.email);
+    const userExists = await findUserByEmailService(decoded.email);
 
     if (!userExists) {
         throw new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized");

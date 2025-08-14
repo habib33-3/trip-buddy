@@ -7,7 +7,6 @@ import {
     DEFAULT_PORT,
     DEFAULT_RATE_LIMIT_WINDOW_MS,
     DEFAULT_REDIS_EXPIRATION,
-    DEFAULT_REDIS_KEY_PREFIX,
     ENV_ENUM,
 } from "@/shared/constants";
 import { logger } from "@/shared/logger";
@@ -28,11 +27,11 @@ const envSchema = z.object({
             }
             return result;
         }),
+
     ACCESS_TOKEN_SECRET: z
         .string()
         .trim()
         .min(1, { message: "ACCESS_TOKEN_SECRET cannot be empty" }),
-
     ALLOWED_CORS_ORIGIN: z
         .string()
         .transform((val) => val.split(",").map((origin) => origin.trim().replace(/^"(.*)"$/, "$1")))
@@ -44,15 +43,27 @@ const envSchema = z.object({
         .trim()
         .email("APP_EMAIL must be a valid e-mail address")
         .default("no-reply@example.com"),
+
     APP_NAME: z
         .string()
         .trim()
         .min(1, { message: "APP_NAME cannot be empty" })
         .default("Express API Template"),
+    CLOUDINARY_API_KEY: z.string().trim().min(1, { message: "CLOUDINARY_API_KEY cannot be empty" }),
+
+    CLOUDINARY_API_SECRET: z
+        .string()
+        .trim()
+        .min(1, { message: "CLOUDINARY_API_SECRET cannot be empty" }),
+    CLOUDINARY_CLOUD_NAME: z
+        .string()
+        .trim()
+        .min(1, { message: "CLOUDINARY_CLOUD_NAME cannot be empty" }),
     DATABASE_URL: z.string().trim().url({ message: "DATABASE_URL must be a valid URL" }),
+    HASH_SECRET_PEPPER: z.string().min(1, { message: "HASH_SECRET_PEPPER cannot be empty" }),
 
     NODE_ENV: z.enum(ENV_ENUM).default("production"),
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+
     PORT: z.coerce.number().min(1).max(65535).default(DEFAULT_PORT),
 
     RATE_LIMIT_WINDOW_MS: z.coerce.number().min(1).default(DEFAULT_RATE_LIMIT_WINDOW_MS),
@@ -63,8 +74,6 @@ const envSchema = z.object({
         .regex(/^\d+$/, "Expiration must be a number")
         .transform(Number)
         .default(DEFAULT_REDIS_EXPIRATION),
-
-    REDIS_KEY_PREFIX: z.string().trim().default(DEFAULT_REDIS_KEY_PREFIX),
 
     REDIS_URL: z.string().trim().url({ message: "REDIS_URL must be a valid URL" }),
 
