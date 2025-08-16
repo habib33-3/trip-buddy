@@ -7,7 +7,7 @@ const items = [
 ];
 
 const Legend = () => (
-  <div className="absolute right-4 bottom-4 z-10 flex flex-col items-end space-y-1 rounded-xl bg-black/60 p-3 text-sm text-white shadow-md ring-1 ring-slate-600">
+  <div className="absolute right-2 bottom-2 z-10 flex flex-col items-end space-y-1 rounded-xl bg-black/60 p-2 text-sm text-white shadow-md ring-1 ring-slate-600 md:right-4 md:bottom-4 md:p-3">
     {items.map(({ count, label }) => (
       <div
         key={count}

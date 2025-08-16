@@ -13,18 +13,20 @@ const TripsPage = () => {
   const { user } = useAuthStore();
 
   return (
-    <section className="mx-auto mt-10 min-h-screen max-w-7xl rounded-2xl bg-slate-800 px-4 py-6 sm:p-6">
+    <section className="mx-auto mt-10 min-h-screen max-w-7xl rounded-2xl bg-slate-800 px-4 py-6 sm:px-6 sm:py-8">
+      {/* Top Action */}
       <div className="flex w-full justify-end">
         <CreateTripModal />
       </div>
 
-      <div className="mt-8 rounded-xl bg-gradient-to-br from-blue-900/30 via-slate-800 to-purple-800/40 px-6 py-8 shadow-lg">
-        <div className="flex items-center gap-5">
-          <div className="flex size-16 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition-transform hover:scale-105">
-            <Hand className="size-8 animate-pulse" />
+      {/* Welcome Card */}
+      <div className="mt-8 rounded-xl bg-gradient-to-br from-blue-900/30 via-slate-800 to-purple-800/40 px-4 py-6 shadow-lg sm:px-6 sm:py-8">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition-transform hover:scale-105">
+            <Hand className="h-8 w-8 animate-pulse" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-white">
+            <h2 className="text-xl font-bold text-white sm:text-2xl">
               Hello,{" "}
               <span className="text-blue-400">{user?.name ?? "Guest"}</span>
             </h2>
@@ -35,9 +37,12 @@ const TripsPage = () => {
         </div>
       </div>
 
-      <div className="mt-12 rounded-xl bg-slate-600 px-6 py-8 shadow-md">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          <h2 className="text-2xl font-semibold text-white">Upcoming Trips</h2>
+      {/* Upcoming Trips */}
+      <div className="mt-12 rounded-xl bg-slate-600 px-4 py-6 shadow-md sm:px-6 sm:py-8">
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="text-xl font-semibold text-white sm:text-2xl">
+            Upcoming Trips
+          </h2>
           <Button
             asChild
             variant="outline"

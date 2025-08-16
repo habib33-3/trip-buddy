@@ -35,53 +35,56 @@ const TripsHistory = () => {
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <TripSearchInput />
-
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            size="icon"
-            className="ml-auto rounded-full bg-gray-700 p-2"
+      {/* Search & Filter */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <TripSearchInput />
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="ml-auto rounded-full bg-gray-700 p-2"
+            >
+              <Funnel className="size-4 text-gray-300" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent
+            className="w-52 bg-slate-500"
+            side="bottom"
+            align="end"
+            sideOffset={8}
           >
-            <Funnel className="size-4 text-gray-300" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent
-          className="w-52 bg-slate-500"
-          side="top"
-          align="start"
-          sideOffset={8}
-        >
-          <div className="space-y-2">
-            {tripStatus.map((status) => (
-              <div
-                key={status}
-                className="flex items-center gap-2"
-              >
-                <Checkbox
-                  id={status}
-                  // eslint-disable-next-line security/detect-object-injection
-                  checked={filteredStatus[status]}
-                  onCheckedChange={(checked) => {
-                    setFilteredStatus((prev) => ({
-                      ...prev,
-                      [status]: checked,
-                    }));
-                  }}
-                />
-                <Label
-                  htmlFor={status}
-                  className="capitalize"
+            <div className="space-y-2">
+              {tripStatus.map((status) => (
+                <div
+                  key={status}
+                  className="flex items-center gap-2"
                 >
-                  {status.toLowerCase()}
-                </Label>
-              </div>
-            ))}
-          </div>
-        </PopoverContent>
-      </Popover>
+                  <Checkbox
+                    id={status}
+                    // eslint-disable-next-line security/detect-object-injection
+                    checked={filteredStatus[status]}
+                    onCheckedChange={(checked) =>
+                      setFilteredStatus((prev) => ({
+                        ...prev,
+                        [status]: checked,
+                      }))
+                    }
+                  />
+                  <Label
+                    htmlFor={status}
+                    className="capitalize"
+                  >
+                    {status.toLowerCase()}
+                  </Label>
+                </div>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
 
+      {/* Trips List */}
       <div className="mt-8">
         <TripsList statusArray={filteredStatusArray} />
       </div>

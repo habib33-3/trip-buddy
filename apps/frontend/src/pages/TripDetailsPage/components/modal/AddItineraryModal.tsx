@@ -26,14 +26,14 @@ const AddItineraryModal = () => {
     >
       <DialogTrigger asChild>
         <Button className="flex items-center gap-2 rounded-xl px-4 py-2 shadow-md">
-          <PlusIcon className="size-5" />
+          <PlusIcon className="h-5 w-5" />
           Add Itinerary
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="z-5000 w-full max-w-5xl p-6">
+      <DialogContent className="z-999999 w-full max-w-full p-4 sm:max-w-3xl sm:p-6 lg:max-w-5xl">
         <DialogHeader>
-          <DialogTitle className="text-center text-2xl font-semibold text-gray-300">
+          <DialogTitle className="text-center text-xl font-semibold text-gray-300 sm:text-2xl">
             Add a New Location
           </DialogTitle>
           <DialogDescription className="text-center text-sm text-gray-400">
@@ -41,15 +41,18 @@ const AddItineraryModal = () => {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="mt-6 flex flex-col gap-6 lg:flex-row">
-          <div className="h-full w-full lg:w-1/2">
+        {/* Scrollable content */}
+        <div className="mt-6 flex max-h-[80vh] flex-col gap-6 overflow-y-auto lg:flex-row">
+          <div className="w-full flex-shrink-0 lg:w-1/2">
             <AddPlaceForm />
           </div>
+
           <Separator
             orientation="vertical"
             className="hidden lg:block"
           />
-          <div className="w-full lg:w-1/2">
+
+          <div className="w-full flex-shrink-0 lg:w-1/2">
             <AddItineraryForm closeModal={() => setModalOpen(false)} />
           </div>
         </div>

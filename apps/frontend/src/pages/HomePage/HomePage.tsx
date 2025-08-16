@@ -26,17 +26,21 @@ const HomePage = () => {
 
   return (
     <main
-      className={`flex min-h-screen min-w-screen flex-col items-center justify-center text-white ${
+      className={`flex min-h-screen w-full flex-col items-center justify-center px-4 text-white sm:px-6 lg:px-12 ${
         isLogin
           ? "bg-gradient-to-br from-gray-950 via-slate-900 to-gray-800"
           : "bg-gradient-to-tr from-rose-950 via-rose-800 to-rose-700"
       }`}
     >
-      <Logo />
+      {/* Logo */}
+      <div className="py-6">
+        <Logo />
+      </div>
 
-      <section className="flex min-h-[calc(100vh-5rem)] flex-1 flex-col items-center justify-center gap-20 md:flex-row">
-        {/* Form Section */}
-        <div className="flex h-full flex-1 items-center justify-center px-6">
+      {/* Content Section */}
+      <section className="flex w-full max-w-7xl flex-1 flex-col items-center justify-center gap-12 sm:gap-16 md:flex-row md:gap-20">
+        {/* Form Container */}
+        <div className="order-1 flex w-full max-w-md flex-1 items-center justify-center md:order-none">
           {isLogin ? (
             <LoginForm navigateToRegister={() => setFormType("register")} />
           ) : (
@@ -44,15 +48,15 @@ const HomePage = () => {
           )}
         </div>
 
-        {/* Info Section */}
-        <div className="hidden flex-1 items-center justify-center md:flex">
-          <div className="max-w-md p-6 text-left">
-            <h2 className="mb-6 text-5xl font-extrabold drop-shadow-lg">
+        {/* Text Section */}
+        <div className="order-2 flex w-full max-w-md flex-1 items-center justify-center text-center md:order-none md:text-left">
+          <div className="p-4 sm:p-6">
+            <h2 className="mb-6 text-3xl font-extrabold drop-shadow-lg sm:text-4xl lg:text-5xl">
               {isLogin
                 ? "Welcome Back, Explorer!"
                 : "Join Our Travel Community"}
             </h2>
-            <p className="text-lg leading-relaxed drop-shadow-md">
+            <p className="text-base leading-relaxed drop-shadow-md sm:text-lg">
               {isLogin
                 ? "Log in to access your saved trips, track your plans, and continue your adventure with ease."
                 : "Sign up to start planning unforgettable trips, discover new destinations, and manage all your journeys in one place."}
