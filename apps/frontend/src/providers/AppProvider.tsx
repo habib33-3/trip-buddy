@@ -15,7 +15,7 @@ const AppProvider = ({ children }: PropsWithChildren) => {
         position="top-center"
         richColors
       />
-      <ReactQueryDevtools />
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 };

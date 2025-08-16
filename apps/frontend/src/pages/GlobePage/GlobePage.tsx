@@ -14,7 +14,6 @@ const GlobePage = () => {
   const { stats, status } = useGetStats();
 
   if (status === "pending") return <Loader />;
-
   if (status === "error" || !stats)
     return (
       <ErrorComponent message="Something went wrong while fetching stats" />
@@ -26,16 +25,23 @@ const GlobePage = () => {
         <h1 className="text-center text-3xl font-semibold md:text-4xl">
           Explore Your Travel Map
         </h1>
-        <div className="grid gap-8 lg:grid-cols-12">
-          <div className="lg:col-span-3">
+
+        {/* Responsive layout: stacked on mobile, tablet split 3:6:3 */}
+        <div className="flex flex-col md:flex-row md:gap-6 lg:gap-10">
+          {/* Left column - Trip Stats */}
+          <div className="mb-6 w-full md:mb-0 md:w-1/4">
             <TripStats stats={stats} />
           </div>
-          <div className="flex items-center justify-center lg:col-span-6">
+
+          {/* Center column - Globe */}
+          <div className="mb-6 flex w-full justify-center md:mb-0 md:w-1/2">
             <Suspense fallback={<Loader />}>
               <Globe cities={stats.cities} />
             </Suspense>
           </div>
-          <div className="lg:col-span-3">
+
+          {/* Right column - Country Stats */}
+          <div className="w-full md:w-1/4">
             <CountryStats stats={stats} />
           </div>
         </div>

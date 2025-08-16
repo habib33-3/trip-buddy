@@ -15,16 +15,24 @@ const TripsList = ({ statusArray }: Props) => {
 
   if (isLoading)
     return (
-      <div className="my-3">
+      <div className="flex h-64 w-full items-center justify-center">
         <Loader />
       </div>
     );
 
   if (isError) return <ErrorComponent message="Error while fetching trips" />;
 
+  if (!trips || trips.length === 0) {
+    return (
+      <p className="text-center text-gray-400">
+        No trips found for the selected filters.
+      </p>
+    );
+  }
+
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {trips?.map((trip) => (
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {trips.map((trip) => (
         <TripCard
           key={trip.id}
           trip={trip}

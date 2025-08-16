@@ -46,6 +46,7 @@ const PasswordField = <T extends FieldValues>({
                 {...field}
                 type={showPassword ? "text" : "password"}
                 placeholder={placeholder ?? "******"}
+                className="rounded-xl"
               />
               <Button
                 variant="ghost"

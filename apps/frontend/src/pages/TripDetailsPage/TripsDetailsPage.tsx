@@ -17,6 +17,7 @@ const TripsDetailsPage = () => {
   const { status, trip } = useGetSingleTrip();
 
   if (status === "pending") return <Loader />;
+
   if (status === "error" || !trip) {
     return (
       <ErrorComponent message="Something went wrong while fetching trip" />
@@ -24,8 +25,8 @@ const TripsDetailsPage = () => {
   }
 
   return (
-    <main className="mx-auto max-w-5xl space-y-10 px-4 py-12 sm:px-6 lg:px-8">
-      <section className="space-y-6 rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-800 to-purple-900 p-6 shadow-lg sm:p-8">
+    <main className="mx-auto max-w-5xl space-y-10 px-4 py-8 sm:px-6 lg:px-8">
+      <section className="space-y-6 rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-800 to-purple-900 p-4 shadow-lg sm:p-6">
         <header className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
           {/* Title & Description */}
           <div className="flex-1 space-y-4">
@@ -39,15 +40,18 @@ const TripsDetailsPage = () => {
               {trip.status}
             </Badge>
 
-            <h1 className="text-4xl font-extrabold text-white">{trip.title}</h1>
+            <h1 className="text-2xl font-extrabold break-words text-white sm:text-4xl">
+              {trip.title}
+            </h1>
+
             {trip.description ? (
-              <p className="max-w-2xl text-lg text-gray-300">
+              <p className="max-w-full text-base break-words text-gray-300 sm:max-w-2xl sm:text-lg">
                 {trip.description}
               </p>
             ) : null}
           </div>
 
-          <div className="flex flex-wrap justify-start gap-3">
+          <div className="flex flex-wrap justify-start gap-3 sm:justify-end">
             <UpdateTripModal />
             <DeleteTripModal />
             <ChangeTripStatusSelect trip={trip} />
@@ -59,7 +63,7 @@ const TripsDetailsPage = () => {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-white/10 bg-gradient-to-br from-slate-800 via-slate-900 to-purple-950 p-6 shadow-lg sm:p-8">
+      <section className="rounded-2xl border border-white/10 bg-gradient-to-br from-slate-800 via-slate-900 to-purple-950 p-4 shadow-lg sm:p-6">
         <TripTabsContainer />
       </section>
     </main>

@@ -23,14 +23,14 @@ const UpdateTripForm = ({ closeModal }: Props) => {
 
   if (isLoading || status === "pending") {
     return (
-      <div className="flex items-center justify-center">
-        <Loader />
+      <div className="flex h-32 items-center justify-center">
+        <Loader className="h-6 w-6 animate-spin text-gray-300" />
       </div>
     );
   }
 
   if (status === "error") {
-    return <p>Something went wrong</p>;
+    return <p className="text-center text-red-400">Something went wrong</p>;
   }
 
   const onSubmit = (data: UpdateTripSchemaType) => {
@@ -41,9 +41,8 @@ const UpdateTripForm = ({ closeModal }: Props) => {
   return (
     <Form {...form}>
       <form
-        action=""
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-4 p-3"
+        className="flex max-h-[70vh] flex-col gap-4 overflow-y-auto px-2 sm:px-0"
       >
         <FormField
           control={form.control}
@@ -54,14 +53,16 @@ const UpdateTripForm = ({ closeModal }: Props) => {
               <FormControl>
                 <Input
                   type="text"
-                  placeholder={trip?.title}
+                  placeholder={trip?.title ?? "Trip Title"}
                   {...field}
+                  className="w-full text-gray-200 placeholder:text-gray-400"
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="description"
@@ -70,8 +71,8 @@ const UpdateTripForm = ({ closeModal }: Props) => {
               <Label>Description</Label>
               <FormControl>
                 <Textarea
-                  placeholder={trip?.description}
-                  className="resize-none text-sm font-medium text-gray-200 placeholder:text-sm placeholder:text-gray-400"
+                  placeholder={trip?.description ?? "Trip Description"}
+                  className="w-full resize-none text-sm font-medium text-gray-200 placeholder:text-sm placeholder:text-gray-400"
                   {...field}
                 />
               </FormControl>
