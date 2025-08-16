@@ -31,23 +31,20 @@ const UpdateTripModal = () => {
           title="Edit"
           className="rounded-full p-2"
         >
-          <PenIcon className="size-5" />
-          <div className="sr-only">Edit</div>
+          <PenIcon className="h-5 w-5" />
+          <span className="sr-only">Edit</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+
+      <DialogContent className="z-99999 w-full px-4 py-6 sm:max-w-[425px] sm:px-6 sm:py-8">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-semibold text-gray-200">
+          <DialogTitle className="text-xl font-semibold text-gray-200 sm:text-2xl">
             Edit Trip Details
           </DialogTitle>
           <DialogDescription />
         </DialogHeader>
 
-        <UpdateTripForm
-          closeModal={() => {
-            setIsModalOpen(false);
-          }}
-        />
+        <UpdateTripForm closeModal={() => setIsModalOpen(false)} />
 
         <DialogFooter>
           <DialogClose asChild>

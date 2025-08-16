@@ -1,5 +1,13 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import { Suspense, lazy, useEffect, useRef, useState } from "react";
+import {
+  Suspense,
+  lazy,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { Loader } from "lucide-react";
 import type { GlobeMethods } from "react-globe.gl";
@@ -18,34 +26,38 @@ type Props = {
 };
 
 const Globe = ({ cities }: Props) => {
-  const globeRef = useRef<GlobeMethods | undefined>(undefined);
+  const globeRef = useRef<GlobeMethods>(undefined);
   const [dimensions, setDimensions] = useState({ height: 600, width: 800 });
 
-  useEffect(() => {
-    const handleResize = () => {
-      setDimensions({
-        height: window.innerWidth < 768 ? 360 : 600,
-        width: window.innerWidth < 768 ? window.innerWidth - 40 : 800,
-      });
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+  const handleResize = useCallback(() => {
+    setDimensions({
+      height:
+        window.innerWidth < 768 ? 360 : window.innerWidth < 1024 ? 500 : 600,
+      width:
+        window.innerWidth < 768
+          ? window.innerWidth - 40
+          : window.innerWidth < 1024
+            ? 600
+            : 800,
+    });
   }, []);
 
   useEffect(() => {
-    const initializeGlobe = () => {
-      if (globeRef.current) {
-        globeRef.current.pointOfView({ altitude: 2, lat: 0, lng: 0 }, 0);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [handleResize]);
 
-        const controls = globeRef.current.controls() as
-          | OrbitControls
-          | undefined;
-        if (controls) {
-          controls.autoRotate = true;
-          controls.autoRotateSpeed = 0.9;
-        }
+  useEffect(() => {
+    const initializeGlobe = () => {
+      if (!globeRef.current) return;
+
+      globeRef.current.pointOfView({ altitude: 2, lat: 0, lng: 0 }, 0);
+
+      const controls = globeRef.current.controls() as OrbitControls | undefined;
+      if (controls) {
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.9;
       }
     };
 
@@ -53,7 +65,10 @@ const Globe = ({ cities }: Props) => {
     return () => clearTimeout(timeoutId);
   }, [cities.length]);
 
-  const maxCount = Math.max(...cities.map((city) => city.count || 1));
+  const maxCount = useMemo(
+    () => Math.max(...cities.map((city) => city.count || 1)),
+    [cities]
+  );
 
   return (
     <div className="relative w-full">

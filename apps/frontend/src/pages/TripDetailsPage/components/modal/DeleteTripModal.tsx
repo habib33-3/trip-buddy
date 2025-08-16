@@ -31,14 +31,14 @@ const DeleteTripModal = () => {
           <div className="sr-only">Delete</div>
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent className="bg-slate-800">
+      <AlertDialogContent className="z-9999 bg-slate-800">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-white">
             Are you absolutely sure?
           </AlertDialogTitle>
           <AlertDialogDescription className="text-gray-300">
-            This action cannot be undone. This will permanently delete this trip
-            and all associated itineraries.
+            This will permanently delete this trip and all associated
+            itineraries.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

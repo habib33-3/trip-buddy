@@ -25,9 +25,8 @@ const CreateTripForm = ({ closeModal }: Props) => {
   return (
     <Form {...form}>
       <form
-        action=""
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4 overflow-y-auto p-4"
+        className="max-h-[70vh] space-y-4 overflow-y-auto px-2 sm:px-0"
       >
         <FormField
           control={form.control}
@@ -40,13 +39,14 @@ const CreateTripForm = ({ closeModal }: Props) => {
                   type="text"
                   placeholder="Trip Title"
                   {...field}
-                  className="text-gray-200 placeholder:text-gray-400"
+                  className="w-full text-gray-200 placeholder:text-gray-400"
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="description"
@@ -56,8 +56,8 @@ const CreateTripForm = ({ closeModal }: Props) => {
               <FormControl>
                 <Textarea
                   placeholder="Trip Description"
-                  className="text-gray-200 placeholder:text-gray-400"
                   {...field}
+                  className="w-full text-gray-200 placeholder:text-gray-400"
                 />
               </FormControl>
               <FormMessage />

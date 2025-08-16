@@ -9,27 +9,31 @@ const RecentTrip = () => {
 
   if (status === "pending")
     return (
-      <div className="my-3">
+      <div className="my-6 flex justify-center">
         <Loader />
       </div>
     );
 
   if (status === "error")
-    return <ErrorComponent message="Error while fetching trips" />;
+    return (
+      <div className="my-6 flex justify-center">
+        <ErrorComponent message="Error while fetching trips" />
+      </div>
+    );
 
   return (
-    <section className="px-4 py-8 sm:px-6 lg:px-8">
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {recentTrip?.map((trip) => (
-          <TripCard
-            key={trip.id}
-            trip={trip}
-          />
-        ))}
-      </div>
-
-      {recentTrip?.length === 0 && (
+    <section className="px-2 py-6 sm:px-4 lg:px-8">
+      {recentTrip?.length === 0 ? (
         <p className="mt-6 text-center text-gray-200">No trips found.</p>
+      ) : (
+        <div className="grid auto-rows-fr gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {recentTrip?.map((trip) => (
+            <TripCard
+              key={trip.id}
+              trip={trip}
+            />
+          ))}
+        </div>
       )}
     </section>
   );

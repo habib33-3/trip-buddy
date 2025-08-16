@@ -10,7 +10,7 @@ const ItineraryTab = () => {
 
   if (status === "pending") {
     return (
-      <div className="flex h-full w-full items-center justify-center">
+      <div className="flex h-64 w-full items-center justify-center">
         <Loader />
       </div>
     );
@@ -24,14 +24,14 @@ const ItineraryTab = () => {
 
   if (!locations || locations.length === 0) {
     return (
-      <div className="flex h-full w-full items-center justify-center text-center text-lg font-medium text-gray-500">
+      <div className="flex h-64 w-full items-center justify-center text-center text-lg font-medium text-gray-500">
         No itineraries found.
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-4 p-4 md:p-6">
+    <div className="flex max-h-[70vh] flex-col gap-4 overflow-y-auto p-4 sm:p-6 md:gap-6">
       {locations.map((itinerary) => (
         <ItineraryCard
           key={itinerary.id}

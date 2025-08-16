@@ -2,11 +2,10 @@ import { useState } from "react";
 
 import useGetItineraries from "@/hooks/itinerary/useGetItineraries";
 
+import ErrorComponent from "@/shared/ErrorComponent";
 import Loader from "@/shared/Loader";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
-
-import ErrorPage from "@/pages/ErrorPage/ErrorPage";
 
 import ItineraryTab from "./tabs/ItineraryTab";
 import MapTab from "./tabs/MapTab";
@@ -16,12 +15,13 @@ type TripTab = "itinerary" | "maps" | "overview";
 
 const TripTabsContainer = () => {
   const [activeTab, setActiveTab] = useState<TripTab>("overview");
-
   const { locations, status } = useGetItineraries();
 
   if (status === "pending") return <Loader />;
-  if (status === "error") return <ErrorPage />;
-  if (!locations) return null;
+  if (status === "error" || !locations)
+    return (
+      <ErrorComponent message="Something went wrong while fetching itineraries" />
+    );
 
   return (
     <Tabs
@@ -29,30 +29,21 @@ const TripTabsContainer = () => {
       onValueChange={(value) => setActiveTab(value as TripTab)}
       className="w-full"
     >
-      <div className="flex justify-center border-b border-gray-300 p-3 shadow-sm">
-        <TabsList className="flex space-x-4 rounded-lg bg-gray-800">
-          <TabsTrigger
-            value="overview"
-            className="rounded-lg px-4 py-2 text-sm font-semibold text-gray-200 hover:bg-gray-100 hover:text-gray-700 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-md"
-          >
-            Overview
-          </TabsTrigger>
-          <TabsTrigger
-            value="itinerary"
-            className="rounded-lg px-4 py-2 text-sm font-semibold text-gray-200 hover:bg-gray-100 hover:text-gray-700 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-md"
-          >
-            Itinerary
-          </TabsTrigger>
-          <TabsTrigger
-            value="maps"
-            className="rounded-lg px-4 py-2 text-sm font-semibold text-gray-200 hover:bg-gray-100 hover:text-gray-700 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-md"
-          >
-            Maps
-          </TabsTrigger>
+      <div className="overflow-x-auto border-b border-gray-300 p-2 shadow-sm">
+        <TabsList className="flex w-max space-x-2 rounded-lg bg-gray-800">
+          {["overview", "itinerary", "maps"].map((tab) => (
+            <TabsTrigger
+              key={tab}
+              value={tab}
+              className="flex-shrink-0 rounded-lg px-3 py-2 text-sm font-semibold text-gray-200 hover:bg-gray-100 hover:text-gray-700 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-md"
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </TabsTrigger>
+          ))}
         </TabsList>
       </div>
 
-      <div className="mt-6">
+      <div className="mt-4">
         <TabsContent value="overview">
           <Overview />
         </TabsContent>
