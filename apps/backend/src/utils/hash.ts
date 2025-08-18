@@ -1,12 +1,15 @@
 import * as argon2 from "argon2";
+import { StatusCodes } from "http-status-codes";
 
 import { env } from "@/config/env.config";
+
+import ApiError from "@/shared/ApiError";
 
 const PEPPER = env.HASH_SECRET_PEPPER;
 
 export const hashData = async (data: string) => {
     if (typeof data !== "string" || !data.trim()) {
-        throw new Error("Data to hash must be a non-empty string");
+        throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid data");
     }
 
     return argon2.hash(data, {

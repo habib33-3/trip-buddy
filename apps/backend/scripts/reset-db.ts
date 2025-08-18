@@ -1,4 +1,3 @@
-// reset-db.ts
 import "dotenv/config";
 import Redis from "ioredis";
 
@@ -30,10 +29,10 @@ const resetRedis = async () => {
     const redis = new Redis();
 
     try {
-        const rawPrefix = process.env.REDIS_KEY_PREFIX;
-        if (!rawPrefix) {
-            logger.warn("⚠️ REDIS_KEY_PREFIX is not set. Skipping Redis key deletion.");
-            return;
+        const rawPrefix = `${process.env.APP_NAME}-cache`;
+
+        if (process.env.NODE_ENV !== "production") {
+            logger.debug(`🧹 Redis prefix: ${rawPrefix}`);
         }
 
         const prefix = `${encodeURIComponent(rawPrefix)}:*`;

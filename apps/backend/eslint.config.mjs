@@ -289,6 +289,16 @@ const commonJsBestPractices = {
                 message:
                     "for..in loops iterate over the entire prototype chain. Use Object.{keys,values,entries} and iterate over the resulting array.",
             },
+            {
+                selector: 'FunctionDeclaration:not(:has(Parent[type="MethodDefinition"]))',
+                message:
+                    "Use arrow functions instead of function declarations (except class methods).",
+            },
+            {
+                selector: 'FunctionExpression:not(:has(Parent[type="MethodDefinition"]))',
+                message:
+                    "Use arrow functions instead of function expressions (except class methods).",
+            },
         ],
         "no-alert": "off",
         "no-return-await": "error",

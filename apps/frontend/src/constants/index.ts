@@ -7,7 +7,7 @@ export const navLinks = [
   },
   {
     name: "Globes",
-    path: "/trips/globe",
+    path: "/globe",
   },
 ];
 

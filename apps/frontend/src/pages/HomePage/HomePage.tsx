@@ -32,14 +32,11 @@ const HomePage = () => {
           : "bg-gradient-to-tr from-rose-950 via-rose-800 to-rose-700"
       }`}
     >
-      {/* Logo */}
       <div className="py-6">
         <Logo />
       </div>
 
-      {/* Content Section */}
       <section className="flex w-full max-w-7xl flex-1 flex-col items-center justify-center gap-12 sm:gap-16 md:flex-row md:gap-20">
-        {/* Form Container */}
         <div className="order-1 flex w-full max-w-md flex-1 items-center justify-center md:order-none">
           {isLogin ? (
             <LoginForm navigateToRegister={() => setFormType("register")} />
@@ -48,7 +45,6 @@ const HomePage = () => {
           )}
         </div>
 
-        {/* Text Section */}
         <div className="order-2 flex w-full max-w-md flex-1 items-center justify-center text-center md:order-none md:text-left">
           <div className="p-4 sm:p-6">
             <h2 className="mb-6 text-3xl font-extrabold drop-shadow-lg sm:text-4xl lg:text-5xl">

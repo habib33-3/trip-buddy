@@ -18,9 +18,7 @@ const TripsHistory = lazy(
 const NotFoundPage = lazy(
   async () => import("@/pages/NotFoundPage/NotFoundPage")
 );
-const TripDashboardLayout = lazy(
-  async () => import("@/layouts/TripDashboardLayout")
-);
+const RootLayout = lazy(async () => import("@/layouts/RootLayout"));
 
 const router = createBrowserRouter([
   {
@@ -33,11 +31,11 @@ const router = createBrowserRouter([
         children: [
           {
             element: suspenseWrapper(TripsPage),
-            path: "",
+            path: "trips",
           },
           {
             element: suspenseWrapper(TripsDetailsPage),
-            path: ":tripId",
+            path: "trips/:tripId",
           },
           {
             element: suspenseWrapper(GlobePage),
@@ -45,12 +43,13 @@ const router = createBrowserRouter([
           },
           {
             element: suspenseWrapper(TripsHistory),
-            path: "history",
+            path: "trips/history",
           },
         ],
-        element: suspenseWrapper(TripDashboardLayout),
-        path: "trips",
+        element: suspenseWrapper(RootLayout),
+        path: "",
       },
+
       {
         element: suspenseWrapper(NotFoundPage),
         path: "*",

@@ -2,9 +2,9 @@ import { Navigate, Outlet } from "react-router";
 
 import { useAuthStore } from "@/stores/useAuthStore";
 
-import Navbar from "./TripDashboardLayout/Navbar/Navbar";
+import Navbar from "./RootLayout/Navbar/Navbar";
 
-const TripDashboardLayout = () => {
+const RootLayout = () => {
   const { user } = useAuthStore();
 
   if (!user) {
@@ -21,4 +21,4 @@ const TripDashboardLayout = () => {
   );
 };
 
-export default TripDashboardLayout;
+export default RootLayout;

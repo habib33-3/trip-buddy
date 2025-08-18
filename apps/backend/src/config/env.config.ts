@@ -51,14 +51,14 @@ const envSchema = z.object({
         .default("Express API Template"),
     CLOUDINARY_API_KEY: z.string().trim().min(1, { message: "CLOUDINARY_API_KEY cannot be empty" }),
 
-    CLOUDINARY_API_SECRET: z
-        .string()
-        .trim()
-        .min(1, { message: "CLOUDINARY_API_SECRET cannot be empty" }),
     CLOUDINARY_CLOUD_NAME: z
         .string()
         .trim()
         .min(1, { message: "CLOUDINARY_CLOUD_NAME cannot be empty" }),
+    CLOUDINARY_SECRET_KEY: z
+        .string()
+        .trim()
+        .min(1, { message: "CLOUDINARY_SECRET_KEY cannot be empty" }),
     DATABASE_URL: z.string().trim().url({ message: "DATABASE_URL must be a valid URL" }),
     HASH_SECRET_PEPPER: z.string().min(1, { message: "HASH_SECRET_PEPPER cannot be empty" }),
 
