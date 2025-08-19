@@ -1,7 +1,7 @@
 import useGetSingleTrip from "@/hooks/trip/useGetSingleTrip";
 
 import ErrorComponent from "@/shared/ErrorComponent";
-import Loader from "@/shared/Loader";
+import LoadingComponent from "@/shared/LoadingComponent";
 
 import { tripStatusColorMap } from "@/constants/index";
 
@@ -16,7 +16,7 @@ import UpdateTripModal from "./components/modal/UpdateTripModal";
 const TripsDetailsPage = () => {
   const { status, trip } = useGetSingleTrip();
 
-  if (status === "pending") return <Loader />;
+  if (status === "pending") return <LoadingComponent />;
 
   if (status === "error" || !trip) {
     return (

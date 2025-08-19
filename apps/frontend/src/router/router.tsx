@@ -7,13 +7,13 @@ import { suspenseWrapper } from "@/shared/suspense-wrapper";
 import ErrorPage from "@/pages/ErrorPage/ErrorPage";
 
 const HomePage = lazy(async () => import("@/pages/HomePage/HomePage"));
-const TripsPage = lazy(async () => import("@/pages/TripsPage/TripsPage"));
+const TripsPage = lazy(async () => import("@/pages/trips/TripsPage/TripsPage"));
 const TripsDetailsPage = lazy(
-  async () => import("@/pages/TripDetailsPage/TripsDetailsPage")
+  async () => import("@/pages/trips/TripDetailsPage/TripsDetailsPage")
 );
 const GlobePage = lazy(async () => import("@/pages/GlobePage/GlobePage"));
 const TripsHistory = lazy(
-  async () => import("@/pages/TripsHistory/TripsHistory")
+  async () => import("@/pages/trips/TripsHistory/TripsHistory")
 );
 const NotFoundPage = lazy(
   async () => import("@/pages/NotFoundPage/NotFoundPage")

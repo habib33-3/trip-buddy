@@ -1,7 +1,7 @@
 import useGetItineraries from "@/hooks/itinerary/useGetItineraries";
 
 import ErrorComponent from "@/shared/ErrorComponent";
-import Loader from "@/shared/Loader";
+import LoadingComponent from "@/shared/LoadingComponent";
 
 import ItineraryCard from "./components/ItineraryCard";
 
@@ -9,11 +9,7 @@ const ItineraryTab = () => {
   const { locations, status } = useGetItineraries();
 
   if (status === "pending") {
-    return (
-      <div className="flex h-64 w-full items-center justify-center">
-        <Loader />
-      </div>
-    );
+    return <LoadingComponent />;
   }
 
   if (status === "error") {

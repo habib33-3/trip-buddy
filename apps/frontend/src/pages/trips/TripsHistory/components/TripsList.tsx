@@ -1,7 +1,7 @@
 import useGetAllTrips from "@/hooks/trip/useGetAllTrips";
 
 import ErrorComponent from "@/shared/ErrorComponent";
-import Loader from "@/shared/Loader";
+import LoadingComponent from "@/shared/LoadingComponent";
 import TripCard from "@/shared/TripCard";
 
 import type { TripStatus } from "@/types/index";
@@ -13,12 +13,7 @@ type Props = {
 const TripsList = ({ statusArray }: Props) => {
   const { isError, isLoading, trips } = useGetAllTrips(statusArray);
 
-  if (isLoading)
-    return (
-      <div className="flex h-64 w-full items-center justify-center">
-        <Loader />
-      </div>
-    );
+  if (isLoading) return <LoadingComponent />;
 
   if (isError) return <ErrorComponent message="Error while fetching trips" />;
 

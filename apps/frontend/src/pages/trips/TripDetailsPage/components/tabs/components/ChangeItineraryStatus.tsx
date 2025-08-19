@@ -1,6 +1,6 @@
-import { Loader } from "lucide-react";
-
 import useChangeItineraryStatus from "@/hooks/itinerary/useChangeItineraryStatus";
+
+import LoadingComponent from "@/shared/LoadingComponent";
 
 import { cn } from "@/lib/utils";
 
@@ -78,7 +78,7 @@ const ChangeItineraryStatus = ({ itinerary }: Props) => {
 
       {isLoading ? (
         <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-          <Loader className="size-4 animate-spin" />
+          <LoadingComponent />
           Updating status...
         </p>
       ) : null}

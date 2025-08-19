@@ -1,12 +1,12 @@
 import { useState } from "react";
 
-import { Loader } from "lucide-react";
-
 import useAddPlace from "@/hooks/place/useAddPlace";
 import useGetPlaces from "@/hooks/place/useGetPlaces";
 import useDebounce from "@/hooks/useDebounce";
 
 import { usePlaceStore } from "@/stores/usePlaceStore";
+
+import LoadingComponent from "@/shared/LoadingComponent";
 
 import type { Place } from "@/types/index";
 
@@ -73,10 +73,7 @@ const AddPlaceForm = () => {
         <div className="mt-2 h-full max-h-60 space-y-1 overflow-y-auto pr-2">
           {status === "pending" ? (
             <div className="flex items-center justify-center">
-              <Loader
-                className="h-4 w-4 animate-spin"
-                aria-label="Loading search results"
-              />
+              <LoadingComponent />
             </div>
           ) : searchQuery.length < 3 ? (
             <p className="text-sm text-stone-200">

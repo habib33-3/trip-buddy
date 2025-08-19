@@ -1,7 +1,7 @@
-import { Loader } from "lucide-react";
-
 import useGetSingleTrip from "@/hooks/trip/useGetSingleTrip";
 import useUpdateTrip from "@/hooks/trip/useUpdateTrip";
+
+import LoadingComponent from "@/shared/LoadingComponent";
 
 import type { UpdateTripSchemaType } from "@/validations/tripValidation";
 
@@ -24,7 +24,7 @@ const UpdateTripForm = ({ closeModal }: Props) => {
   if (isLoading || status === "pending") {
     return (
       <div className="flex h-32 items-center justify-center">
-        <Loader className="h-6 w-6 animate-spin text-gray-300" />
+        <LoadingComponent />
       </div>
     );
   }

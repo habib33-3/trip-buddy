@@ -5,7 +5,7 @@ import { Calendar1Icon, MapPin } from "lucide-react";
 import useGetSingleTrip from "@/hooks/trip/useGetSingleTrip";
 
 import ErrorComponent from "@/shared/ErrorComponent";
-import Loader from "@/shared/Loader";
+import LoadingComponent from "@/shared/LoadingComponent";
 
 import { formatDateRange } from "@/utils/date";
 
@@ -16,7 +16,7 @@ const Map = lazy(async () => import("@/shared/Map"));
 const Overview = () => {
   const { destinationCount, status, trip } = useGetSingleTrip();
 
-  if (status === "pending") return <Loader />;
+  if (status === "pending") return <LoadingComponent />;
   if (status === "error" || !trip)
     return (
       <ErrorComponent message="Something went wrong while fetching trip" />
@@ -64,7 +64,7 @@ const Overview = () => {
       <Card className="relative h-64 overflow-hidden rounded-2xl border border-gray-200 bg-slate-700 shadow-md transition-shadow hover:shadow-lg sm:h-80 md:h-[300px]">
         <CardContent className="flex h-full items-center justify-center p-0">
           <div className="absolute inset-0">
-            <Suspense fallback={<Loader />}>
+            <Suspense fallback={<LoadingComponent />}>
               <Map zoom={6} />
             </Suspense>
           </div>

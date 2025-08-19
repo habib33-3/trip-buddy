@@ -3,7 +3,7 @@ import { useState } from "react";
 import useGetItineraries from "@/hooks/itinerary/useGetItineraries";
 
 import ErrorComponent from "@/shared/ErrorComponent";
-import Loader from "@/shared/Loader";
+import LoadingComponent from "@/shared/LoadingComponent";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 
@@ -17,7 +17,7 @@ const TripTabsContainer = () => {
   const [activeTab, setActiveTab] = useState<TripTab>("overview");
   const { locations, status } = useGetItineraries();
 
-  if (status === "pending") return <Loader />;
+  if (status === "pending") return <LoadingComponent />;
   if (status === "error" || !locations)
     return (
       <ErrorComponent message="Something went wrong while fetching itineraries" />

@@ -1,18 +1,13 @@
 import useGetRecentTrip from "@/hooks/trip/useGetRecentTrip";
 
 import ErrorComponent from "@/shared/ErrorComponent";
-import Loader from "@/shared/Loader";
+import LoadingComponent from "@/shared/LoadingComponent";
 import TripCard from "@/shared/TripCard";
 
 const RecentTrip = () => {
   const { recentTrip, status } = useGetRecentTrip();
 
-  if (status === "pending")
-    return (
-      <div className="my-6 flex justify-center">
-        <Loader />
-      </div>
-    );
+  if (status === "pending") return <LoadingComponent />;
 
   if (status === "error")
     return (

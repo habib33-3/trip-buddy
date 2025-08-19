@@ -1,5 +1,3 @@
-import { Loader } from "lucide-react";
-
 import {
   Select,
   SelectContent,
@@ -9,6 +7,8 @@ import {
 } from "@/components/ui/select";
 
 import useChangeTripStatus from "@/hooks/trip/useChangeTripStatus";
+
+import LoadingComponent from "@/shared/LoadingComponent";
 
 import { cn } from "@/lib/utils";
 
@@ -76,7 +76,7 @@ const ChangeTripStatusSelect = ({ trip }: Props) => {
 
       {isLoading ? (
         <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-          <Loader className="size-4 animate-spin" />
+          <LoadingComponent />
           Updating status...
         </p>
       ) : null}
