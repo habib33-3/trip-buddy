@@ -4,7 +4,8 @@ import { createBrowserRouter } from "react-router";
 
 import { suspenseWrapper } from "@/shared/suspense-wrapper";
 
-import ErrorPage from "@/pages/ErrorPage/ErrorPage";
+import ErrorPage from "@/pages/others/ErrorPage";
+import NotFoundPage from "@/pages/others/NotFoundPage";
 
 const HomePage = lazy(async () => import("@/pages/HomePage/HomePage"));
 const TripsPage = lazy(async () => import("@/pages/trips/TripsPage/TripsPage"));
@@ -15,10 +16,16 @@ const GlobePage = lazy(async () => import("@/pages/GlobePage/GlobePage"));
 const TripsHistory = lazy(
   async () => import("@/pages/trips/TripsHistory/TripsHistory")
 );
-const NotFoundPage = lazy(
-  async () => import("@/pages/NotFoundPage/NotFoundPage")
+
+const RootLayout = lazy(async () => import("@/layouts/RootLayout/RootLayout"));
+
+const SettingsPage = lazy(
+  async () => import("@/pages/settings/SettingsPage/SettingsPage")
 );
-const RootLayout = lazy(async () => import("@/layouts/RootLayout"));
+
+const SettingsLayout = lazy(
+  async () => import("@/layouts/SettingsLayout/SettingsLayout")
+);
 
 const router = createBrowserRouter([
   {
@@ -49,9 +56,19 @@ const router = createBrowserRouter([
         element: suspenseWrapper(RootLayout),
         path: "",
       },
+      {
+        children: [
+          {
+            element: suspenseWrapper(SettingsPage),
+            path: "",
+          },
+        ],
+        element: suspenseWrapper(SettingsLayout),
+        path: "settings",
+      },
 
       {
-        element: suspenseWrapper(NotFoundPage),
+        element: <NotFoundPage />,
         path: "*",
       },
     ],

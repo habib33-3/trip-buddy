@@ -2,7 +2,7 @@ import { Navigate, Outlet } from "react-router";
 
 import { useAuthStore } from "@/stores/useAuthStore";
 
-import Navbar from "./RootLayout/Navbar/Navbar";
+import Navbar from "./Navbar/Navbar";
 
 const RootLayout = () => {
   const { user } = useAuthStore();
