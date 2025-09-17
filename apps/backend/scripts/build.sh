@@ -1,31 +1,33 @@
 #!/bin/bash
-set -e
+set -euo pipefail
+
+log() {
+    echo -e "\n$1"
+}
+
+run_step() {
+    local name="$1"
+    shift
+    log "$name..."
+    local start=$(date +%s)
+    "$@"
+    local end=$(date +%s)
+    local duration=$((end - start))
+    echo "✅ ${name/…/} completed in ${duration}s"
+}
+
+# Track total time
+BUILD_START=$(date +%s)
 
 echo "🚀 Starting build..."
 
-# Clean old dist
-echo "🧹 Cleaning dist folder..."
-rimraf dist || { echo "❌ Failed to clean dist"; exit 1; }
-echo "✅ Cleaned dist"
+run_step "🧹 Cleaning dist folder" rimraf dist
+run_step "🔄 Generating Prisma client" pnpm prisma generate
+run_step "🔍 Running type-check" pnpm type-check
+run_step "🏗️ Compiling with tsc" tsc --skipLibCheck
+run_step "🔧 Running tsc-alias" tsc-alias
 
-# Generate prisma client
-echo "🔄 Generating Prisma client..."
-pnpm prisma generate || { echo "❌ Prisma generation failed"; exit 1; }
-echo "✅ Prisma client generated"
+BUILD_END=$(date +%s)
+TOTAL_DURATION=$((BUILD_END - BUILD_START))
 
-# Type check
-echo "🔍 Running type-check..."
-pnpm type-check || { echo "❌ Type check failed"; exit 1; }
-echo "✅ Type check passed"
-
-# Build
-echo "🏗️ Compiling with tsc..."
-tsc --skipLibCheck || { echo "❌ tsc failed"; exit 1; }
-echo "✅ tsc completed"
-
-# Fix paths
-echo "🔧 Running tsc-alias..."
-tsc-alias || { echo "❌ tsc-alias failed"; exit 1; }
-echo "✅ tsc-alias completed"
-
-echo "🎉 Build completed successfully!"
+echo -e "\n🎉 Build completed successfully in ${TOTAL_DURATION}s!"
