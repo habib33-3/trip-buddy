@@ -4,5 +4,11 @@
       "mode": "auto"
     }
   ],
-  "cSpell.words": ["geolocation", "mydatabase", "nodeuser", "nosniff"]
+  "cSpell.words": [
+    "geolocation",
+    "mydatabase",
+    "nodeuser",
+    "nosniff",
+    "WATCHPACK"
+  ]
 }
