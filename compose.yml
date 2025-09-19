@@ -1,3 +1,5 @@
+# compose.yml
+
 name: trip-buddy
 
 services:
@@ -45,7 +47,7 @@ services:
         condition: service_healthy
     env_file:
       - ./apps/frontend/.env
-
+ 
   db:
     container_name: trip_buddy_db
     image: postgres:16-alpine

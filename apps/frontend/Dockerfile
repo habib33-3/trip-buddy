@@ -1,3 +1,5 @@
+# frontend/Dockerfile
+
 # ---------- Base Builder ----------
 FROM node:22-alpine AS base
 RUN corepack enable
@@ -11,6 +13,24 @@ COPY . .
 # ARG for target app
 ARG BUILD_APP
 RUN pnpm turbo prune ${BUILD_APP} --docker
+
+
+# ---------- Dev ----------
+FROM base AS dev
+
+WORKDIR /app/apps/frontend
+
+# Expose Vite dev port + HMR websocket port
+EXPOSE 5173 24678
+
+# Enable polling so HMR works with bind-mounted volumes in Docker
+ENV CHOKIDAR_USEPOLLING=true
+ENV WATCHPACK_POLLING=true
+
+# Run Vite in dev mode, binding to all interfaces
+CMD ["pnpm", "dev", "--host", "0.0.0.0"]
+
+
 
 
 # ---------- Pruned Builder ----------

@@ -1,5 +1,4 @@
-
-
+# backend/Dockerfile
 # ---------- Base Builder ----------
 FROM node:22-alpine AS base
 
@@ -22,6 +21,37 @@ COPY --chown=nodeuser:nodejs . .
 # ARG to define which app to prune
 ARG BUILD_APP
 RUN pnpm turbo prune ${BUILD_APP} --docker
+
+
+
+# ---------- Dev ----------
+# ---------- Dev ----------
+# ---------- Dev ----------
+# ---------- Dev ----------
+FROM base AS dev
+
+WORKDIR /app
+
+ENV NODE_ENV=development
+ENV CHOKIDAR_USEPOLLING=true
+
+# Ensure prisma schema and relevant files are copied for generation
+COPY --chown=nodeuser:nodejs apps/backend/prisma/ ./apps/backend/prisma
+COPY --chown=nodeuser:nodejs apps/backend/package.json ./apps/backend/package.json
+
+WORKDIR /app/apps/backend
+
+# install deps only for backend
+RUN pnpm install --filter=trip-buddy-backend...
+
+# Generate client inside dev container
+RUN pnpm --filter=trip-buddy-backend prisma generate
+
+# Expose ports and run the dev command
+EXPOSE 5000 5555
+CMD ["pnpm", "dev"]
+
+
 
 
 # ---------- Builder ----------
