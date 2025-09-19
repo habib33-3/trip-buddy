@@ -12,7 +12,6 @@ services:
         BUILD_APP: trip-buddy-backend
     ports:
       - "5000:5000"
-      - "5555:5555"
     env_file:
       - ./apps/backend/.env
     networks:
