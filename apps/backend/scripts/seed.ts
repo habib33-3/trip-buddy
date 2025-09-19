@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker";
+import * as argon2 from "argon2";
 import "dotenv/config";
 
 import {
@@ -11,10 +12,7 @@ import {
     UserRole,
 } from "../src/generated/prisma";
 import { logger } from "../src/shared/logger";
-import { hashData } from "../src/utils/hash";
 import { resetDBData } from "./reset-db";
-
-const prisma = new PrismaClient();
 
 const countryFlags = [
     {
@@ -145,8 +143,22 @@ const countryFlags = [
     },
 ];
 
-// Modular function to seed users
-async function seedUsers() {
+const PEPPER = process.env.HASH_SECRET_PEPPER!;
+
+const hashData = async (data: string) => {
+    return argon2.hash(data, {
+        hashLength: 32,
+        memoryCost: 2 ** 16,
+        parallelism: 2,
+        secret: Buffer.from(PEPPER),
+        timeCost: 4,
+        type: argon2.argon2id,
+    });
+};
+
+const prisma = new PrismaClient();
+
+const seedUsers = async () => {
     const demoUser = await prisma.user.create({
         data: {
             email: "demo@email.com",
@@ -174,10 +186,9 @@ async function seedUsers() {
     );
 
     return [...users, demoUser];
-}
+};
 
-// Modular function to seed places
-async function seedPlaces() {
+const seedPlaces = async () => {
     const places = await Promise.all(
         countryFlags.map(({ country, flagUrl, lat, lng, city }) =>
             prisma.place.create({
@@ -192,11 +203,11 @@ async function seedPlaces() {
             })
         )
     );
-    return places;
-}
 
-// Modular function to seed trips and itineraries with transactions
-async function seedTripsAndItineraries(users: User[], places: Place[]) {
+    return places;
+};
+
+const seedTripsAndItineraries = async (users: User[], places: Place[]) => {
     for (const user of users) {
         const tripCount = faker.number.int({ min: 1, max: 3 });
 
@@ -255,9 +266,9 @@ async function seedTripsAndItineraries(users: User[], places: Place[]) {
             }
         }
     }
-}
+};
 
-async function main() {
+const main = async () => {
     try {
         logger.info("🧹 Cleaning database...");
         await resetDBData();
@@ -284,6 +295,6 @@ async function main() {
         );
         throw error;
     }
-}
+};
 
 main();

@@ -4,22 +4,27 @@ import { createBrowserRouter } from "react-router";
 
 import { suspenseWrapper } from "@/shared/suspense-wrapper";
 
-import ErrorPage from "@/pages/ErrorPage/ErrorPage";
+import ErrorPage from "@/pages/others/ErrorPage";
+import NotFoundPage from "@/pages/others/NotFoundPage";
 
 const HomePage = lazy(async () => import("@/pages/HomePage/HomePage"));
-const TripsPage = lazy(async () => import("@/pages/TripsPage/TripsPage"));
+const TripsPage = lazy(async () => import("@/pages/trips/TripsPage/TripsPage"));
 const TripsDetailsPage = lazy(
-  async () => import("@/pages/TripDetailsPage/TripsDetailsPage")
+  async () => import("@/pages/trips/TripDetailsPage/TripsDetailsPage")
 );
 const GlobePage = lazy(async () => import("@/pages/GlobePage/GlobePage"));
 const TripsHistory = lazy(
-  async () => import("@/pages/TripsHistory/TripsHistory")
+  async () => import("@/pages/trips/TripsHistory/TripsHistory")
 );
-const NotFoundPage = lazy(
-  async () => import("@/pages/NotFoundPage/NotFoundPage")
+
+const RootLayout = lazy(async () => import("@/layouts/RootLayout/RootLayout"));
+
+const SettingsPage = lazy(
+  async () => import("@/pages/settings/SettingsPage/SettingsPage")
 );
-const TripDashboardLayout = lazy(
-  async () => import("@/layouts/TripDashboardLayout")
+
+const SettingsLayout = lazy(
+  async () => import("@/layouts/SettingsLayout/SettingsLayout")
 );
 
 const router = createBrowserRouter([
@@ -33,11 +38,11 @@ const router = createBrowserRouter([
         children: [
           {
             element: suspenseWrapper(TripsPage),
-            path: "",
+            path: "trips",
           },
           {
             element: suspenseWrapper(TripsDetailsPage),
-            path: ":tripId",
+            path: "trips/:tripId",
           },
           {
             element: suspenseWrapper(GlobePage),
@@ -45,14 +50,25 @@ const router = createBrowserRouter([
           },
           {
             element: suspenseWrapper(TripsHistory),
-            path: "history",
+            path: "trips/history",
           },
         ],
-        element: suspenseWrapper(TripDashboardLayout),
-        path: "trips",
+        element: suspenseWrapper(RootLayout),
+        path: "",
       },
       {
-        element: suspenseWrapper(NotFoundPage),
+        children: [
+          {
+            element: suspenseWrapper(SettingsPage),
+            path: "",
+          },
+        ],
+        element: suspenseWrapper(SettingsLayout),
+        path: "settings",
+      },
+
+      {
+        element: <NotFoundPage />,
         path: "*",
       },
     ],

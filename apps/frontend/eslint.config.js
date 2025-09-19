@@ -352,6 +352,21 @@ const commonJsBestPractices = {
     "no-implicit-coercion": "warn",
     "no-implied-eval": "error",
     "no-lonely-if": "warn",
+    "no-restricted-syntax": [
+      "error",
+      {
+        message:
+          "Use arrow functions instead of function declarations (except class methods).",
+        selector:
+          'FunctionDeclaration:not(:has(Parent[type="MethodDefinition"]))',
+      },
+      {
+        message:
+          "Use arrow functions instead of function expressions (except class methods).",
+        selector:
+          'FunctionExpression:not(:has(Parent[type="MethodDefinition"]))',
+      },
+    ],
     "no-return-await": "error",
     "no-throw-literal": "warn",
     "no-unused-expressions": "error",
