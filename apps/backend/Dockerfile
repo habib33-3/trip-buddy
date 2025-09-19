@@ -1,4 +1,3 @@
-# backend/Dockerfile
 # ---------- Base Builder ----------
 FROM node:22-alpine AS base
 
@@ -22,11 +21,6 @@ COPY --chown=nodeuser:nodejs . .
 ARG BUILD_APP
 RUN pnpm turbo prune ${BUILD_APP} --docker
 
-
-
-# ---------- Dev ----------
-# ---------- Dev ----------
-# ---------- Dev ----------
 # ---------- Dev ----------
 FROM base AS dev
 
@@ -50,8 +44,6 @@ RUN pnpm --filter=trip-buddy-backend prisma generate
 # Expose ports and run the dev command
 EXPOSE 5000 5555
 CMD ["pnpm", "dev"]
-
-
 
 
 # ---------- Builder ----------
@@ -102,6 +94,6 @@ COPY --chown=nodeuser:nodejs apps/backend/scripts/docker-run.sh ./docker-run.sh
 RUN chmod +x ./docker-run.sh
 
 USER nodeuser
-EXPOSE 5000 5555
+EXPOSE 5000 
 ENTRYPOINT ["dumb-init", "--"]
 CMD ["./docker-run.sh"]
