@@ -4,16 +4,17 @@ import ChangePasswordForm from "./forms/ChangePasswordForm";
 
 const ChangePassword = () => {
   return (
-    <Card className="w-full max-w-md rounded-2xl border border-white/10 bg-slate-900/80 p-6 shadow-xl backdrop-blur-md sm:p-8">
+    <Card
+      id="change-password"
+      className="mx-auto w-full max-w-lg rounded-2xl border border-white/10 bg-slate-800/70 p-6 shadow-2xl backdrop-blur-md"
+    >
       <CardHeader>
-        <h2 className="text-2xl font-bold tracking-tight text-slate-100">
-          Change Password
-        </h2>
-        <p className="text-sm text-slate-400">
+        <h2 className="text-2xl font-bold tracking-tight">Change Password</h2>
+        <p className="mt-1 text-sm text-slate-400">
           Keep your account secure by updating your password regularly.
         </p>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-4">
         <ChangePasswordForm />
       </CardContent>
     </Card>

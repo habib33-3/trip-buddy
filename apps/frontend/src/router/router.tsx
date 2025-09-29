@@ -23,10 +23,6 @@ const SettingsPage = lazy(
   async () => import("@/pages/settings/SettingsPage/SettingsPage")
 );
 
-const SettingsLayout = lazy(
-  async () => import("@/layouts/SettingsLayout/SettingsLayout")
-);
-
 const router = createBrowserRouter([
   {
     children: [
@@ -57,13 +53,7 @@ const router = createBrowserRouter([
         path: "",
       },
       {
-        children: [
-          {
-            element: suspenseWrapper(SettingsPage),
-            path: "",
-          },
-        ],
-        element: suspenseWrapper(SettingsLayout),
+        element: suspenseWrapper(SettingsPage),
         path: "settings",
       },
 
