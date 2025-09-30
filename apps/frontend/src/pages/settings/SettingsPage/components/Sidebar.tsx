@@ -1,10 +1,15 @@
-import { KeySquareIcon } from "lucide-react";
+import { Image, KeySquareIcon } from "lucide-react";
 
 const sidebarMenus = [
   {
     icon: <KeySquareIcon className="size-5" />,
     name: "Change Password",
     path: "#change-password",
+  },
+  {
+    icon: <Image className="size-5" />,
+    name: "Change Avatar",
+    path: "#change-avatar",
   },
 ];
 

@@ -1,5 +1,6 @@
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
+import ChangeAvatar from "./components/settings/ChangeAvatar";
 import ChangePassword from "./components/settings/ChangePassword";
 
 const SettingsPage = () => {
@@ -13,8 +14,9 @@ const SettingsPage = () => {
         </aside>
 
         {/* Main Content */}
-        <section className="flex-1 p-6 md:p-10">
+        <section className="mx-auto flex w-full flex-1 flex-col items-center justify-center gap-6 p-6 md:p-10">
           <ChangePassword />
+          <ChangeAvatar />
         </section>
       </div>
     </div>

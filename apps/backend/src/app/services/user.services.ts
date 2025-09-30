@@ -87,6 +87,13 @@ export const changeUserPasswordService = async (
 ) => {
     const { currentPassword, newPassword } = payload;
 
+    if (currentPassword === newPassword) {
+        throw new ApiError(
+            StatusCodes.BAD_REQUEST,
+            "New password cannot be the same as the current password"
+        );
+    }
+
     const user = await findUserByIdService(userId);
 
     if (!user) {
@@ -96,14 +103,18 @@ export const changeUserPasswordService = async (
     const isPasswordMatch = await compareHashData(user.password, currentPassword);
 
     if (!isPasswordMatch) {
-        throw new ApiError(StatusCodes.UNAUTHORIZED, "Current password is incorrect");
+        throw new ApiError(StatusCodes.BAD_REQUEST, "Current password is incorrect");
     }
 
     const hashedPassword = await hashData(newPassword);
 
-    return prisma.user.update({
+    await cacheInvalidate(cacheKeyUser(userId));
+
+    await prisma.user.update({
         data: { password: hashedPassword },
         omit: { password: true },
         where: { id: userId },
     });
+
+    return { message: "Password changed successfully" };
 };
