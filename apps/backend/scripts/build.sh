@@ -1,5 +1,9 @@
-#!/bin/bash
-set -euo pipefail
+#!/usr/bin/env bash
+# Use bash if available; fallback to sh compatibility
+set -eu
+
+# If bash supports pipefail, enable it (avoids BusyBox sh error)
+(set -o pipefail 2>/dev/null) || true
 
 log() {
     echo -e "\n$1"

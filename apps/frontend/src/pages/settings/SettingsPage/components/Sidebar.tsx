@@ -1,4 +1,3 @@
-// Sidebar.tsx
 import { Image, KeySquare } from "lucide-react";
 
 const sidebarMenus = [

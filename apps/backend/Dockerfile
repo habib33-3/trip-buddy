@@ -89,11 +89,11 @@ COPY --from=builder --chown=nodeuser:nodejs /app/prod/node_modules ./node_module
 COPY --from=builder --chown=nodeuser:nodejs /app/apps/backend/dist ./dist
 COPY --from=builder --chown=nodeuser:nodejs /app/apps/backend/prisma ./prisma
 COPY --from=builder --chown=nodeuser:nodejs /app/apps/backend/package.json ./package.json
+COPY --from=builder --chown=nodeuser:nodejs /app/apps/backend/scripts/docker-run.sh ./docker-run.sh
 
-COPY --chown=nodeuser:nodejs apps/backend/scripts/docker-run.sh ./docker-run.sh
-RUN chmod +x ./docker-run.sh
+RUN dos2unix ./docker-run.sh && chmod +x ./docker-run.sh
 
 USER nodeuser
-EXPOSE 5000 
+EXPOSE 5000
 ENTRYPOINT ["dumb-init", "--"]
 CMD ["./docker-run.sh"]
