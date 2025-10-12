@@ -1,7 +1,7 @@
 import type { JSX, LazyExoticComponent } from "react";
 import { Suspense } from "react";
 
-import { Loader } from "lucide-react";
+import LoadingComponent from "./LoadingComponent";
 
 export const suspenseWrapper = (
   Component: LazyExoticComponent<() => JSX.Element>
@@ -9,7 +9,7 @@ export const suspenseWrapper = (
   <Suspense
     fallback={
       <div className="flex min-h-screen w-full items-center justify-center">
-        <Loader />
+        <LoadingComponent />
       </div>
     }
   >

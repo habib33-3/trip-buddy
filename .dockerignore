@@ -1,0 +1,56 @@
+# dockerignore
+
+
+
+# Node dependencies
+node_modules
+**/node_modules
+.pnpm-store
+.pnp.*
+.pnpm-debug.log
+
+# Build outputs
+.next
+out
+build
+**/.turbo
+**/.next
+**/out
+**/build
+
+# Logs
+*.log
+logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor/OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.tmp
+*.bak
+*.old
+*.orig
+.vscode
+.idea
+*.tsbuildinfo
+
+# Docker related
+/Dockerfile
+/.dockerignore
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# Cache
+.cache
+**/.cache
+
+
+apps/backend/src/generated/prisma

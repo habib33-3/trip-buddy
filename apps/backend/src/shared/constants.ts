@@ -17,5 +17,3 @@ export type TokenTypes = (typeof tokenTypes)[number];
 export const DEFAULT_REDIS_EXPIRATION = "3600";
 
 export const CACHE_TTL_SECONDS = 60 * 60 * 24;
-
-export const DEFAULT_REDIS_KEY_PREFIX = "trip-buddy-redis";

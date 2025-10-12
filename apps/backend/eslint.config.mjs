@@ -70,7 +70,10 @@ const typescriptRules = {
             "warn",
             {
                 enforceConst: true,
-                ignore: [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 200, 400, 401, 403, 404, 500, 0.0001],
+                ignore: [
+                    -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 200, 400, 401, 403, 404, 500, 0.0001, 16, 32,
+                    65535,
+                ],
             },
         ],
         "@typescript-eslint/no-misused-promises": ["error", { checksVoidReturn: false }],
@@ -271,7 +274,7 @@ const perfectionistRules = {
 
 const commonJsBestPractices = {
     rules: {
-        "no-console": ["warn", { allow: ["warn", "error", "info"] }],
+        "no-console": "warn",
         "no-implicit-coercion": "warn",
         "prefer-const": "error",
         "no-else-return": "warn",
@@ -285,6 +288,16 @@ const commonJsBestPractices = {
                 selector: "ForInStatement",
                 message:
                     "for..in loops iterate over the entire prototype chain. Use Object.{keys,values,entries} and iterate over the resulting array.",
+            },
+            {
+                selector: 'FunctionDeclaration:not(:has(Parent[type="MethodDefinition"]))',
+                message:
+                    "Use arrow functions instead of function declarations (except class methods).",
+            },
+            {
+                selector: 'FunctionExpression:not(:has(Parent[type="MethodDefinition"]))',
+                message:
+                    "Use arrow functions instead of function expressions (except class methods).",
             },
         ],
         "no-alert": "off",

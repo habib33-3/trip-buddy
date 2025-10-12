@@ -3,10 +3,12 @@ import { env } from "@/config/env.config";
 import type { SearchTripParamSchemaType } from "@/validations/trip.validations";
 
 const withPrefix = (...parts: string[]): string =>
-    `${env.REDIS_KEY_PREFIX}:${parts.map((p) => encodeURIComponent(p)).join(":")}`;
+    `${env.APP_NAME}-cache:${parts.map((p) => encodeURIComponent(p)).join(":")}`;
 
 // 👤 User-related
 export const cacheKeyUser = (userId: string): string => withPrefix("user", userId);
+
+export const cacheKeyUserEmail = (email: string): string => withPrefix("user", "email", email);
 
 export const cacheKeyRefreshToken = (userId: string): string => withPrefix("refreshToken", userId);
 

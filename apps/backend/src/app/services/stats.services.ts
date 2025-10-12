@@ -9,7 +9,7 @@ import ApiError from "@/shared/ApiError";
 
 import type { CityStat, Stat } from "@/types";
 
-import { findUserById } from "./user.service";
+import { findUserByIdService } from "./user.services";
 
 const generateStatReport = async (userId: string): Promise<Stat> => {
     const [itineraries, tripsCount, itineraryCount, tripStatusCounts] = await Promise.all([
@@ -113,7 +113,7 @@ const generateStatReport = async (userId: string): Promise<Stat> => {
 };
 
 export const getUserStatisticsService = async (userId: string) => {
-    const user = await findUserById(userId);
+    const user = await findUserByIdService(userId);
     if (!user) {
         throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
     }
