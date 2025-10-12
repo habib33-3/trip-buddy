@@ -4,6 +4,8 @@ import type { ApiResponse } from "@/types/response";
 
 import type { ChangePasswordSchemaType } from "@/validations/userValidations";
 
+import type { User } from "../types";
+
 export const changePasswordApi = async ({
   currentPassword,
   newPassword,
@@ -14,6 +16,19 @@ export const changePasswordApi = async ({
       currentPassword,
       newPassword,
     }
+  );
+
+  return res.data;
+};
+
+export const changeAvatarApi = async (file: File) => {
+  const formData = new FormData();
+
+  formData.append("avatar", file);
+
+  const res = await axiosPrivate.put<ApiResponse<User>>(
+    "/user/change-avatar",
+    formData
   );
 
   return res.data;

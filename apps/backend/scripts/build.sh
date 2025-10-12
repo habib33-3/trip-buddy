@@ -1,19 +1,20 @@
-#!/bin/bash
-set -euo pipefail
+#!/bin/sh
+set -eu
 
 log() {
-    echo -e "\n$1"
+    printf "\n%s\n" "$1"
 }
 
 run_step() {
-    local name="$1"
+    name="$1"
     shift
     log "$name..."
-    local start=$(date +%s)
+    start=$(date +%s)
     "$@"
-    local end=$(date +%s)
-    local duration=$((end - start))
-    echo "✅ ${name/…/} completed in ${duration}s"
+    end=$(date +%s)
+    duration=$((end - start))
+    # Remove bash-specific string substitution ${name/…/}
+    echo "✅ $name completed in ${duration}s"
 }
 
 # Track total time
@@ -30,4 +31,4 @@ run_step "🔧 Running tsc-alias" tsc-alias
 BUILD_END=$(date +%s)
 TOTAL_DURATION=$((BUILD_END - BUILD_START))
 
-echo -e "\n🎉 Build completed successfully in ${TOTAL_DURATION}s!"
+printf "\n🎉 Build completed successfully in %ss!\n" "$TOTAL_DURATION"

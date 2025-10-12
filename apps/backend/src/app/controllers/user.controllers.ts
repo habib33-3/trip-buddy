@@ -29,8 +29,8 @@ export const changeUserPasswordHandler = asyncHandler(
         const result = await changeUserPasswordService(req.body, userId);
 
         sendResponse(req, res, {
-            data: result,
-            message: "User password changed successfully",
+            data: result.message,
+            message: result.message,
             statusCode: StatusCodes.OK,
             success: true,
         });
