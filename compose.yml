@@ -1,0 +1,93 @@
+# compose.yml
+
+name: trip-buddy
+
+services:
+  backend:
+    container_name: trip_buddy_backend
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+      args:
+        BUILD_APP: trip-buddy-backend
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./apps/backend/.env
+    networks:
+      - app-network
+      - internal-network
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:5000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  frontend:
+    container_name: trip_buddy_frontend
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+      args:
+        BUILD_APP: trip-buddy-frontend
+        VITE_BACKEND_API_URL: "http://localhost:5000"
+    ports:
+      - "8080:80"
+    networks:
+      - app-network
+    depends_on:
+      backend:
+        condition: service_healthy
+    env_file:
+      - ./apps/frontend/.env
+ 
+  db:
+    container_name: trip_buddy_db
+    image: postgres:16-alpine
+    env_file:
+      - ./apps/backend/.env
+    restart: always
+    environment:
+      POSTGRES_USER: postgres             
+      POSTGRES_PASSWORD: postgres          
+      POSTGRES_DB: trip_buddy 
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    networks:
+      - internal-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    container_name: trip_buddy_redis
+    image: redis:8.2.1-alpine
+    restart: always
+    volumes:
+      - redis-data:/data
+    networks:
+      - internal-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge
+  internal-network:
+    driver: bridge
+    internal: true
+
+volumes:
+  pg-data:
+  redis-data:
