@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
-import { Loader2 } from "lucide-react";
+import LoadingComponent from "@/shared/LoadingComponent";
 
 import { cn } from "@/lib/utils";
 
@@ -28,7 +28,7 @@ const SubmitButton = ({
     >
       {loading ? (
         <div className="flex items-center justify-center gap-2">
-          <Loader2 className="size-4 animate-spin" />
+          <LoadingComponent />
           <span>{loadingText ?? "Submitting..."}</span>
         </div>
       ) : (

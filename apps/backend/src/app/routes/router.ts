@@ -5,6 +5,7 @@ import { itineraryRouter } from "./itinerary.routes";
 import { placeRouter } from "./place.routes";
 import { statsRouter } from "./stats.routes";
 import { tripRouter } from "./trip.routes";
+import { userRouter } from "./user.routes";
 
 const router = Router();
 
@@ -28,6 +29,10 @@ const routes: { path: string; router: Router }[] = [
     {
         path: "/place",
         router: placeRouter,
+    },
+    {
+        path: "/user",
+        router: userRouter,
     },
 ];
 

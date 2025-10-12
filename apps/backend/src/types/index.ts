@@ -42,3 +42,11 @@ export type Stat = {
         planned: number;
     };
 };
+
+export type ImageTypes = "avatars" | "place" | "trip-covers" | "trip";
+
+export type FoldersOptions =
+    | { type: "avatars"; userId: string }
+    | { type: "place"; placeId: string }
+    | { type: "trip-covers"; tripId: string }
+    | { type: "trip"; tripId: string };

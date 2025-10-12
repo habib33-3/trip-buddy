@@ -3,12 +3,12 @@ import { memo } from "react";
 import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 import "leaflet/dist/leaflet.css";
-import { Loader } from "lucide-react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
 import useGetPlacesByTrip from "@/hooks/place/useGetPlacesByTrip";
 
 import ErrorComponent from "./ErrorComponent";
+import LoadingComponent from "./LoadingComponent";
 
 type MapProps = {
   center?: [number, number];
@@ -21,7 +21,7 @@ const Map = memo(({ center, zoom = 3 }: MapProps) => {
   if (status === "pending") {
     return (
       <div className="flex h-full items-center justify-center gap-2 text-gray-500">
-        <Loader className="animate-spin" />
+        <LoadingComponent />
         <span className="text-sm">Loading map...</span>
       </div>
     );

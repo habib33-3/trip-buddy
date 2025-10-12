@@ -9,9 +9,10 @@ import {
   useState,
 } from "react";
 
-import { Loader } from "lucide-react";
 import type { GlobeMethods } from "react-globe.gl";
 import type { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+
+import LoadingComponent from "@/shared/LoadingComponent";
 
 import { getCityColorByCount } from "@/lib/utils";
 
@@ -73,7 +74,7 @@ const Globe = ({ cities }: Props) => {
   return (
     <div className="relative w-full">
       <div className="flex aspect-square max-w-full items-center justify-center overflow-hidden rounded-2xl bg-slate-800/90 shadow-2xl ring-1 ring-slate-700/50 backdrop-blur-md">
-        <Suspense fallback={<Loader />}>
+        <Suspense fallback={<LoadingComponent />}>
           <ReactGlobe
             ref={globeRef}
             globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
