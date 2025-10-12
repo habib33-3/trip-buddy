@@ -3,7 +3,7 @@ import { Suspense, lazy } from "react";
 import useGetStats from "@/hooks/stats/useGetStats";
 
 import ErrorComponent from "@/shared/ErrorComponent";
-import Loader from "@/shared/Loader";
+import LoadingComponent from "@/shared/LoadingComponent";
 
 import CountryStats from "./components/CountryStats";
 import TripStats from "./components/TripStats";
@@ -13,7 +13,7 @@ const Globe = lazy(async () => import("./components/Globe"));
 const GlobePage = () => {
   const { stats, status } = useGetStats();
 
-  if (status === "pending") return <Loader />;
+  if (status === "pending") return <LoadingComponent />;
   if (status === "error" || !stats)
     return (
       <ErrorComponent message="Something went wrong while fetching stats" />
@@ -35,7 +35,7 @@ const GlobePage = () => {
 
           {/* Center column - Globe */}
           <div className="mb-6 flex w-full justify-center md:mb-0 md:w-1/2">
-            <Suspense fallback={<Loader />}>
+            <Suspense fallback={<LoadingComponent />}>
               <Globe cities={stats.cities} />
             </Suspense>
           </div>
