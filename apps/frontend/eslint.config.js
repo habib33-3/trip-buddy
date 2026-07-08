@@ -436,4 +436,4 @@ export default defineConfig([
   noUnsanitizedRules,
   enforceAliasImports,
   prettier,
-]);     
+]);
